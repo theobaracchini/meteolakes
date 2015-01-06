@@ -3,6 +3,10 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
     var tickTimerId = null;
     var loopType = "repeat";
 
+    // ------------------------------------------------------------------------
+    // BOUND TO THE HTML
+    // ------------------------------------------------------------------------
+
 	$scope.play = function() {
 		$("#playButton span").toggleClass("glyphicon-play glyphicon-pause")
 
@@ -57,12 +61,25 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 		return new Date(firstDay).toLocaleDateString() + " - " + new Date(lastDay).toLocaleDateString()
 	}
 
+	$scope.ChangeWeek = function(week) {
+		$scope.selectWeek(week);
+		emitFullReload();
+	}
+
+	$scope.ChangeYear = function(year) {
+		$scope.selectYear(year);
+		emitFullReload();
+	}
+
+	// ------------------------------------------------------------------------
+	// UTILITY METHODS
+	// ------------------------------------------------------------------------
 	$scope.selectWeek = function(week) {
-		// Make sure the given week number is not out  of bounds with the 
+		// Make sure the given week number is not out of bounds with the 
 		// current year, and change year if necessary.
 		var numberOfWeeks = NumberOfWeeks($scope.SelectedYear);
 		if(week >= numberOfWeeks) {
-			$scope.SelectedYear ++;
+			$scope.selectYear($scope.SelectedYear+1);
 			$scope.selectWeek(week - numberOfWeeks + 1);
 			return;
 		} else if(week < 0) {
@@ -71,37 +88,46 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 			return;
 		}
 
-		$scope.SelectedWeek = week
-		emitReload()
+		$scope.SelectedWeek = week;
 	}
 
 	$scope.selectYear = function(year) {
-		$scope.SelectedYear = year
-		emitReload()
+		$scope.SelectedYear = year;
 	}
 
     function tick() {
-    	Time.increase(true)
+    	Time.increase(true);
 
     	if(Time.tIndex == 0) {
     		// we looped. Decide whether we play again the current week
     		// or if we play the next week
     		if(loopType == "continue") {
-    		    $scope.selectWeek($scope.SelectedWeek+1)
+    		    $scope.selectWeek($scope.SelectedWeek+1);
+    		    emitReload();
     		}
     	}
 
-
-		$scope.$apply()
+		$scope.$apply();
     }
 
+    /**
+     * Emit a "reloadWeek" message, indicating that the time has passed to 
+     * a new week.
+     */
 	function emitReload() {
-		$rootScope.$emit("reloadWeek", {week:$scope.SelectedWeek, year:$scope.SelectedYear})
+		$rootScope.$emit("reloadWeek", {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:false});
+	}
+	/**
+	 * Emit a "reloadWeek" message, indicating that the user changed a 
+	 * parameter in the time fields and that all data needs to be reloaded.
+	 */
+	function emitFullReload() {
+		$rootScope.$emit("reloadWeek", {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:true});
 	}
 
 	// Available weeks to select from
 	var now = new Date()
-	var lastWeekNumber = (new Date(now.getFullYear(),11,31)).getWeek() // months are 0-indexed
+	var lastWeekNumber = NumberOfWeeks(now.getFullYear()); // months are 0-indexed
 	$scope.Weeks = d3.range(1, lastWeekNumber)
 	$scope.SelectedWeek = now.getWeek()
 

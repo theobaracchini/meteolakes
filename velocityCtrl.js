@@ -6,7 +6,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 		var currentFilename = "data/velocity/" + time.year + "/data_week" + time.week + ".csv"
 		var nextFilename = "data/velocity/" + time.year + "/data_week" + (time.week+1) + ".csv"
 
-		if($scope.tData && $scope.tData.HasNextData()) {
+		if($scope.tData && $scope.tData.HasNextData() && !time.fullReload) {
 			// If we have already loaded the next values file, swap it and load the one after that
 			$scope.tData.SwitchToNextData().PrepareNextFiles(nextFilename)
 

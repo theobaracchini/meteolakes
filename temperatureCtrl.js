@@ -6,7 +6,7 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 		var currentFilename = "data/temperature/" + time.year + "/data_week" + time.week + ".csv"
 		var nextFilename = "data/temperature/" + time.year + "/data_week" + (time.week+1) + ".csv"
 
-		if($scope.tData && $scope.tData.HasNextData()) {
+		if($scope.tData && $scope.tData.HasNextData() && !time.fullReload) {
 			// If we have already loaded the next values file, swap it and load the one after that
 			$scope.tData.SwitchToNextData().PrepareNextFiles(nextFilename)
 
