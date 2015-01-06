@@ -1,32 +1,8 @@
 app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($rootScope, $scope, Time) {
 
-	$rootScope.$on("reloadWeek", function(evt, time) {
-		isDataReady = false
-
-		var currentFilename = "data/temperature/" + time.year + "/data_week" + time.week + ".csv"
-		var nextFilename = "data/temperature/" + time.year + "/data_week" + (time.week+1) + ".csv"
-
-		if($scope.tData && $scope.tData.HasNextData() && !time.fullReload) {
-			// If we have already loaded the next values file, swap it and load the one after that
-			$scope.tData.SwitchToNextData().PrepareNextFiles(nextFilename)
-
-			dataReady();
-		} else {
-			// First time initialization
-			$scope.tData = new TemporalData(currentFilename, 1, 56, function() {
-				dataReady();
-				prepareGraphics();
-
-				// Load the next file
-		    	$scope.tData.PrepareNextFiles(nextFilename)
-			})
-		}
-	})
-
-	$scope.Chart = new Chart($scope, Time, "#tempPlot", function(d) { return d })
-	$rootScope.$on("reloadChart", function(evt, pointIndex) {
-		$scope.Chart.SelectPoint(pointIndex)
-	})
+	// ========================================================================
+	// PROPERTIES
+	// ========================================================================
 
 	var webgl = PrepareWebGLContext("#tempContainer", true, 2)
 	var width = webgl.width
@@ -36,17 +12,54 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 	var markerSprite;
 	var sprites = [];
 
-	var isDataReady = false
+	var isDataReady = false;
 
 	var x,y,c; // d3 axis
 	var rectSize;
 
-	var colorLegend = prepareLegend()
+	var colorLegend = prepareLegend();
 
-	// start the renderer
-	d3.timer(animate)
+	var mouseDown = false;
 
-	$rootScope.$emit("scopeReady")
+	Initialize();
+
+	// ========================================================================
+	// INIT (I know, code above is also some initialization. Deal with it.)
+	// ========================================================================
+	function Initialize() {
+		$rootScope.$on("reloadWeek", function(evt, time) {
+			isDataReady = false
+
+			var currentFilename = "data/temperature/" + time.year + "/data_week" + time.week + ".csv"
+			var nextFilename = "data/temperature/" + time.year + "/data_week" + (time.week+1) + ".csv"
+
+			if($scope.tData && $scope.tData.HasNextData() && !time.fullReload) {
+				// If we have already loaded the next values file, swap it and load the one after that
+				$scope.tData.SwitchToNextData().PrepareNextFiles(nextFilename)
+
+				dataReady();
+			} else {
+				// First time initialization
+				$scope.tData = new TemporalData(currentFilename, 1, 56, function() {
+					dataReady();
+					prepareGraphics();
+
+					// Load the next file
+			    	$scope.tData.PrepareNextFiles(nextFilename)
+				})
+			}
+		})
+
+		$scope.Chart = new Chart($scope, Time, "#tempPlot", function(d) { return d })
+		$rootScope.$on("reloadChart", function(evt, pointIndex) {
+			$scope.Chart.SelectPoint(pointIndex)
+		})
+
+		// start the renderer
+		d3.timer(animate)
+
+		$rootScope.$emit("scopeReady");		
+	}
 
 	// ========================================================================
     // UTILITY FUNCTIONS
@@ -70,7 +83,6 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 	    isDataReady = true
 	}
 
-	var mouseDown = false;
 	function prepareGraphics() {
 	    var rectSize = x(700) - x(0)
 

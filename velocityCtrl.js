@@ -1,27 +1,8 @@
 app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootScope, $scope, Time) {
 
-	$rootScope.$on("reloadWeek", function(evt, time) {
-		isDataReady = false
-
-		var currentFilename = "data/velocity/" + time.year + "/data_week" + time.week + ".csv"
-		var nextFilename = "data/velocity/" + time.year + "/data_week" + (time.week+1) + ".csv"
-
-		if($scope.tData && $scope.tData.HasNextData() && !time.fullReload) {
-			// If we have already loaded the next values file, swap it and load the one after that
-			$scope.tData.SwitchToNextData().PrepareNextFiles(nextFilename)
-
-			dataReady();
-		} else {
-			// First time initialization
-			$scope.tData = new TemporalData(currentFilename, 2, 56, function() {
-				dataReady();
-				prepareGraphics();
-
-				// Load the next file
-		    	$scope.tData.PrepareNextFiles(nextFilename)
-			})
-		}
-	})
+	// ========================================================================
+	// PROPERTIES
+	// ========================================================================
 
 	var webgl = PrepareWebGLContext("#velContainer", true, 2)
 	var width = webgl.width
@@ -31,23 +12,54 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	var markerSprite;
 	var sprites = [];
 
-	$scope.Chart = new Chart($scope, Time, "#velPlot", function(d) { return norm(d) })
-    $rootScope.$on("reloadChart", function(evt, pointIndex) {
-    	console.log($scope.tData.Data[pointIndex]);
-		$scope.Chart.SelectPoint(pointIndex)
-	})
-
-    var colorLegend = prepareLegend()
-
-	var x,y,c, o; // d3 axis (x,y, color, opacity)
-	var rectSize;
-
 	var isDataReady = false;
 
-	// start the renderer
-	d3.timer(animate)
+    var x,y,c, o; // d3 axis (x,y, color, opacity)
+	var rectSize;
+
+    var colorLegend = prepareLegend();
+
+	var mouseDown = false;
 	
-	$rootScope.$emit("scopeReady")
+	Initialize();
+
+	// ========================================================================
+	// INIT (I know, code above is also initialization. Deal with it.)
+	// ========================================================================
+	function Initialize() {
+		$rootScope.$on("reloadWeek", function(evt, time) {
+			isDataReady = false
+
+			var currentFilename = "data/velocity/" + time.year + "/data_week" + time.week + ".csv"
+			var nextFilename = "data/velocity/" + time.year + "/data_week" + (time.week+1) + ".csv"
+
+			if($scope.tData && $scope.tData.HasNextData() && !time.fullReload) {
+				// If we have already loaded the next values file, swap it and load the one after that
+				$scope.tData.SwitchToNextData().PrepareNextFiles(nextFilename)
+
+				dataReady();
+			} else {
+				// First time initialization
+				$scope.tData = new TemporalData(currentFilename, 2, 56, function() {
+					dataReady();
+					prepareGraphics();
+
+					// Load the next file
+			    	$scope.tData.PrepareNextFiles(nextFilename)
+				})
+			}
+		})
+
+		$scope.Chart = new Chart($scope, Time, "#velPlot", function(d) { return norm(d) })
+	    $rootScope.$on("reloadChart", function(evt, pointIndex) {
+			$scope.Chart.SelectPoint(pointIndex)
+		})
+
+		// start the renderer
+		d3.timer(animate)
+	
+		$rootScope.$emit("scopeReady")
+	}
 
 	// ========================================================================
 	// UTILITY FUNCTIONS
@@ -71,7 +83,6 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	    isDataReady = true;
 	}
 
-	var mouseDown = false
 	function prepareGraphics() {
 	    var rectSize = (x(700) - x(0))
 
