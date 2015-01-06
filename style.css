@@ -1,0 +1,31 @@
+.x.axis {
+	stroke:black;
+	fill: none;
+}
+
+.y.axis {
+	stroke:black;
+	fill: none;
+}
+
+.plot {
+	stroke: blue;
+	fill: none;
+}
+
+.timeLine {
+	stroke:black;
+	stroke-width:2px;
+}
+
+.scrollable-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+}
+
+.sidebar {
+	position:fixed;
+	top: 10px;
+	left: 10px;
+}

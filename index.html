@@ -1,0 +1,117 @@
+<html ng-app="app">
+
+	<head>
+		<meta charset="UTF-8">
+
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<link rel="stylesheet" href="style.css"></link>
+	</head>
+
+	<body>
+
+		<div class="container" style="margin-bottom:20px">
+			<div class="row" style="margin-left:50px">
+				<div class="row">
+					<div class="col-lg-12" ng-controller="timeCtrl">
+						<!-- Side toolbar to display when the normal time tools are hidden -->
+						<div class="btn-group-vertical sidebar" role="group">
+							<button type="button" class="btn btn-default" ng-click="backward()"><span class="glyphicon glyphicon-step-backward"></span></button>
+							<button id="playButton" type="button" class="btn btn-default" ng-click="play()"><span class="glyphicon glyphicon-play"></span></button>
+							<button type="button" class="btn btn-default" ng-click="playAll()"><span class="glyphicon glyphicon-forward"></span></button>
+							<button type="button" class="btn btn-default" ng-click="stop()"><span class="glyphicon glyphicon-stop"></span></button>
+							<button type="button" class="btn btn-default" ng-click="forward()"><span class="glyphicon glyphicon-step-forward"></span></button>
+						</div>
+
+						<h2>Time: <small ng-bind="getTime()"></small></h2>
+						
+						<div class="row">
+							<div class="col-lg-12" id="timeControls">
+								<div class="btn-group">
+								    <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">{{ "Year " + SelectedYear + " " }}<span class="caret"></span></button>
+								    <ul class="dropdown-menu scrollable-menu" role="menu">
+								    	<li ng-repeat="year in Years"><a href="#" ng-click="selectYear(year)">{{ year }}</a></li>
+								    </ul>
+								</div>							
+								<div class="btn-group">
+								    <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">{{ "Week " + SelectedWeek + " " }}<span class="caret"></span></button>
+								    <ul class="dropdown-menu scrollable-menu" role="menu">
+								    	<li ng-repeat="week in Weeks"><a href="#" ng-click="selectWeek(week)">{{ "Week " + week + " (" + PrettyPrintWeek(week) + ")" }}</a></li>
+								    </ul>
+								</div>
+							</div>
+						</div>
+
+						<input type="range" ng-model="Time.tIndex" min="0" max="{{ Time.nT - 1 }}" style="margin:10px">
+
+						<div class="btn-group" role="group">
+							<button type="button" class="btn btn-default" ng-click="backward()"><span class="glyphicon glyphicon-step-backward"></span></button>
+							<button id="playButton" type="button" class="btn btn-default" ng-click="play()"><span class="glyphicon glyphicon-play"></span></button>
+							<button type="button" class="btn btn-default" ng-click="playAll()"><span class="glyphicon glyphicon-forward"></span></button>
+							<button type="button" class="btn btn-default" ng-click="stop()"><span class="glyphicon glyphicon-stop"></span></button>
+							<button type="button" class="btn btn-default" ng-click="forward()"><span class="glyphicon glyphicon-step-forward"></span></button>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-lg-6" ng-controller="temperatureCtrl">
+						<h1>TEMPERATURE</h1>
+
+						<div id="tempContainer" class="col-lg-12">
+							<!-- WebGL container will be created here -->
+						</div>
+						<div id="tempLegend" class="col-lg-12"></div>
+
+						<div class="col-lg-12">
+							<div class="row" id="tempPlot">
+								<h5><button class="close" type="button" ng-click="Chart.Close()">x</button>TEMPERATURE OVER TIME (&deg;C)</h5>
+								<div class="col-lg-6" style="width:100%; height:25%">
+									<!-- SVG Plot for temperature over time will be created here -->
+								</div>
+							</div>
+
+							<div class="row">
+								<span class="label label-info">{{ "X: " + tData.Data[pointIndex].x + " km" }}</span>
+								<span class="label label-info">{{ "Y: " + tData.Data[pointIndex].y + " km" }}</span>
+							</div>
+						</div>					
+					</div>
+
+					<div class="col-lg-6" ng-controller="velocityCtrl">
+						<h1>VELOCITY</h1>
+						<div id="velContainer" class="col-lg-12">
+							<!-- WebGL container will be created here -->
+						</div>
+						<div id="velLegend" class="col-lg-12"></div>
+
+
+						<div class="col-lg-12">
+							<div class="row" id="velPlot">
+								<h5><button class="close" type="button" ng-click="Chart.Close()">x</button>VELOCITY OVER TIME (m/s)</h5>
+								<div class="col-lg-6" style="width:100%; height:25%">
+									<!-- SVG Plot for velocity over time will be created here -->
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="js/pixi.js"></script>
+		<script src="js/angular.min.js"></script>
+		<script src="js/d3.min.js"></script>
+		<script src="js/jquery-2.1.1.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		
+
+		<script src="app.js"></script>
+		<script src="models/dateplusplus.js"></script>
+		<script src="models/temporalData.js"></script>
+		<script src="models/chart.js"></script>
+		<script src="temperatureCtrl.js"></script>
+		<script src="velocityCtrl.js"></script>
+		<script src="timeCtrl.js"></script>
+	</body>
+
+</html>
