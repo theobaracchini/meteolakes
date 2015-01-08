@@ -96,7 +96,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	        var doc = rectangle(x(d.x), y(d.y),
 	            rectSize,
 	            rectSize,
-	            parseInt(c(norm(d.value[Time.tIndex])).toString().replace("#", "0x"))):
+	            parseInt(c(norm(d.value[Time.tIndex])).toString().replace("#", "0x")));
 	        stage.addChild(doc.graphic);
 	        sprites[i] = doc;
 	        sprites[i].sprite.interactive = true;
