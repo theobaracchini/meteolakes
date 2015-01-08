@@ -4,11 +4,11 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	// PROPERTIES
 	// ========================================================================
 
-	var webgl = PrepareWebGLContext("#velContainer", true, 2)
-	var width = webgl.width
-	var height = webgl.height
-	var stage = webgl.stage
-	var renderer = webgl.renderer
+	var webgl = PrepareWebGLContext("#velContainer", true, 2);
+	var width = webgl.width;
+	var height = webgl.height;
+	var stage = webgl.stage;
+	var renderer = webgl.renderer;
 	var markerSprite;
 	var sprites = [];
 
@@ -35,7 +35,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 
 			if($scope.tData && $scope.tData.HasNextData() && !time.fullReload) {
 				// If we have already loaded the next values file, swap it and load the one after that
-				$scope.tData.SwitchToNextData().PrepareNextFiles(nextFilename)
+				$scope.tData.SwitchToNextData().PrepareNextFiles(nextFilename);
 
 				dataReady();
 			} else {
@@ -45,20 +45,20 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 					prepareGraphics();
 
 					// Load the next file
-			    	$scope.tData.PrepareNextFiles(nextFilename)
+			    	$scope.tData.PrepareNextFiles(nextFilename);
 				})
 			}
 		})
 
-		$scope.Chart = new Chart($scope, Time, "#velPlot", function(d) { return norm(d) })
+		$scope.Chart = new Chart($scope, Time, "#velPlot", function(d) { return norm(d); })
 	    $rootScope.$on("reloadChart", function(evt, pointIndex) {
-			$scope.Chart.SelectPoint(pointIndex)
+			$scope.Chart.SelectPoint(pointIndex);
 		})
 
 		// start the renderer
-		d3.timer(animate)
+		d3.timer(animate);
 	
-		$rootScope.$emit("scopeReady")
+		$rootScope.$emit("scopeReady");
 	}
 
 	// ========================================================================
@@ -73,18 +73,18 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	    var minVel = d3.min($scope.tData.Data.map(function(d) { return d3.min(d.value.map(function(v) { return norm(v); })) }));
 		var maxVel = d3.max($scope.tData.Data.map(function(d) { return d3.max(d.value.map(function(v) { return norm(v); })) }));
 
-	    c = d3.scale.linear().domain([minVel, maxVel]).range(["gray", "black"])
-	    o = d3.scale.linear().domain([minVel, maxVel]).range([0.1, 1])
+	    c = d3.scale.linear().domain([minVel, maxVel]).range(["gray", "black"]);
+	    o = d3.scale.linear().domain([minVel, maxVel]).range([0.1, 1]);
 
 	    // Prepare all thingies
-	    updateLegend(minVel, maxVel)
-	    $scope.Chart.UpdateChart().Max(maxVel).Min(minVel)
+	    updateLegend(minVel, maxVel);
+	    $scope.Chart.UpdateChart().Max(maxVel).Min(minVel);
 
 	    isDataReady = true;
 	}
 
 	function prepareGraphics() {
-	    var rectSize = (x(700) - x(0))
+	    var rectSize = (x(700) - x(0));
 
 	    // Clear the stage
 	    for (var i = stage.children.length - 1; i >= 0; i--) {
@@ -96,21 +96,21 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	        var doc = rectangle(x(d.x), y(d.y),
 	            rectSize,
 	            rectSize,
-	            parseInt(c(norm(d.value[Time.tIndex])).toString().replace("#", "0x")))
+	            parseInt(c(norm(d.value[Time.tIndex])).toString().replace("#", "0x"))):
 	        stage.addChild(doc.graphic);
-	        sprites[i] = doc
-	        sprites[i].sprite.interactive = true
+	        sprites[i] = doc;
+	        sprites[i].sprite.interactive = true;
 	        sprites[i].sprite.mousedown = function(mouseData) { $rootScope.$emit("reloadChart", i); mouseDown = true; }
 	        sprites[i].sprite.mouseover = function(mouseData) { if(!mouseDown) return; $rootScope.$emit("reloadChart", i); }
-	        sprites[i].sprite.mouseup = function(mouseData) { mouseDown = false }
+	        sprites[i].sprite.mouseup = function(mouseData) { mouseDown = false; }
 	    })
 
 	    // Prepare the marker symbol
-	    markerSprite = new PIXI.Sprite.fromImage("marker.png")
-	    markerSprite.width = 50
-	    markerSprite.height = 50
-	    stage.addChild(markerSprite)
-	    markerSprite.visible = false
+	    markerSprite = new PIXI.Sprite.fromImage("marker.png");
+	    markerSprite.width = 50;
+	    markerSprite.height = 50;
+	    stage.addChild(markerSprite);
+	    markerSprite.visible = false;
 	}
 
 	function prepareLegend() {
@@ -119,31 +119,31 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 		legend = key.append("defs").append("svg:linearGradient").attr("id", "gradient").attr("x1", "0%").attr("y1", "100%").attr("x2", "100%").attr("y2", "100%").attr("spreadMethod", "pad");
 		legend.append("stop").attr("offset", "0%").attr("stop-color", "gray").attr("stop-opacity", 0.1);
 		legend.append("stop").attr("offset", "100%").attr("stop-color", "black").attr("stop-opacity", 1);
-		key.append("rect").attr("width", w - 100).attr("height", h - 100).style("fill", "url(#gradient)")
-		var color = key.append("g").attr("class", "x axis").attr("transform", "translate(0,22)")
+		key.append("rect").attr("width", w - 100).attr("height", h - 100).style("fill", "url(#gradient)");
+		var color = key.append("g").attr("class", "x axis").attr("transform", "translate(0,22)");
 		color.append("text").attr("y", 42).attr("dx", ".71em").style("text-anchor", "start").text("Velocity (m/s)");		
-		return color
+		return color;
 	}
 
 	function updateLegend(minVel, maxVel) {
 		var x = d3.scale.linear().range([0, 200]).domain([minVel, maxVel]);
 		var xAxis = d3.svg.axis().scale(x).ticks(4).orient("bottom");
-		colorLegend.call(xAxis)
+		colorLegend.call(xAxis);
 	}
 
 	function animate() {
-		if(!isDataReady) return
+		if(!isDataReady) return;
 
 		// Protect against out-of-bounds exceptions
-		if(Time.tIndex >= $scope.tData.nT) return
+		if(Time.tIndex >= $scope.tData.nT) return;
 
 	    // Animate the stuff here (transitions, color updates etc.)
-		var rectSize = x(700) - x(0)
+		var rectSize = x(700) - x(0);
 	    $scope.tData.Data.forEach(function(d, i) {
-	    	var vec = d.value[Time.tIndex]
-        	var color = parseInt(c(norm(vec)).toString().replace("#", "0x"))
-        	sprites[i].sprite.tint = color
-        	sprites[i].sprite.alpha = o(norm(vec))
+	    	var vec = d.value[Time.tIndex];
+        	var color = parseInt(c(norm(vec)).toString().replace("#", "0x"));
+        	sprites[i].sprite.tint = color;
+        	sprites[i].sprite.alpha = o(norm(vec));
         	sprites[i].graphic.position.x = x(d.x)-rectSize/2;
 	        sprites[i].graphic.position.y = y(d.y)-rectSize/2;
 	        sprites[i].sprite.width = rectSize;
@@ -159,7 +159,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	    	markerSprite.position.y = y($scope.tData.Data[$scope.pointIndex].y) - markerSprite.height / 2
 	    }
 
-	    $scope.$apply()
+	    $scope.$apply();
 
 	    // render the stage
 	    renderer.render(stage);

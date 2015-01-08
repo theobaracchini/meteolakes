@@ -8,57 +8,57 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
     // ------------------------------------------------------------------------
 
 	$scope.play = function() {
-		$("#playButton span").toggleClass("glyphicon-play glyphicon-pause")
+		$("#playButton span").toggleClass("glyphicon-play glyphicon-pause");
 
 		loopType = "repeat";
 
 		if(tickTimerId == null)
-			tickTimerId = setInterval(tick, 100)
+			tickTimerId = setInterval(tick, 100);
 		else
-			$scope.pause()
+			$scope.pause();
 	}
 
 	$scope.playAll = function() {
 		// Play, but instead of looping move to the next week
-		$scope.play()
-		loopType = "continue"
+		$scope.play();
+		loopType = "continue";
 	}
 
 	$scope.pause = function() {
-		clearInterval(tickTimerId)
-		tickTimerId = null
+		clearInterval(tickTimerId);
+		tickTimerId = null;
 	}
 	$scope.backward = function() {
-		Time.decrease()
+		Time.decrease();
 	}
 	$scope.forward = function() {
-		Time.increase(true)
+		Time.increase(true);
 	}
 
 	$scope.stop = function() {
 		if(tickTimerId != null)
-			$("#playButton span").toggleClass("glyphicon-play glyphicon-pause")
+			$("#playButton span").toggleClass("glyphicon-play glyphicon-pause");
 
-		$scope.pause()
-		Time.tIndex = 0
+		$scope.pause();
+		Time.tIndex = 0;
 	}	
 
     $scope.getTime = function() {
-    	return $scope.PrettyPrintTime(Time.tIndex, $scope.SelectedWeek, $scope.SelectedYear)
+    	return $scope.PrettyPrintTime(Time.tIndex, $scope.SelectedWeek, $scope.SelectedYear);
     }
 
 	$scope.PrettyPrintTime = function(ti, weekNo, year) {
-		var refDate = (new Date()).FirstDayOfWeek(weekNo, year)
+		var refDate = (new Date()).FirstDayOfWeek(weekNo, year);
 
 		// tIndex is in 3-hours, so we need to convert it into milliseconds
-		var currentDate = new Date(refDate + ti*3*60*60*1000)
-		return currentDate.toLocaleDateString() + ":" + currentDate.getHours() + "h"    	
+		var currentDate = new Date(refDate + ti*3*60*60*1000);
+		return currentDate.toLocaleDateString() + ":" + currentDate.getHours() + "h"; 	
 	}
 
 	$scope.PrettyPrintWeek = function(week) {
-		var firstDay = (new Date()).FirstDayOfWeek(week, $scope.SelectedYear)
-		var lastDay = (new Date()).LastDayOfWeek(week, $scope.SelectedYear)
-		return new Date(firstDay).toLocaleDateString() + " - " + new Date(lastDay).toLocaleDateString()
+		var firstDay = (new Date()).FirstDayOfWeek(week, $scope.SelectedYear);
+		var lastDay = (new Date()).LastDayOfWeek(week, $scope.SelectedYear);
+		return new Date(firstDay).toLocaleDateString() + " - " + new Date(lastDay).toLocaleDateString();
 	}
 
 	$scope.ChangeWeek = function(week) {
@@ -126,20 +126,20 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 	}
 
 	// Available weeks to select from
-	var now = new Date()
+	var now = new Date();
 	var lastWeekNumber = NumberOfWeeks(now.getFullYear()); // months are 0-indexed
-	$scope.Weeks = d3.range(1, lastWeekNumber)
-	$scope.SelectedWeek = now.getWeek()
+	$scope.Weeks = d3.range(1, lastWeekNumber);
+	$scope.SelectedWeek = now.getWeek();
 
 	// Available years to select from
-	$scope.Years = [2009, 2014]
+	$scope.Years = [2009, 2014];
 	$scope.SelectedYear = now.getFullYear();
 
-	$scope.Time = Time
+	$scope.Time = Time;
 
 	// When a controller is ready, tell it the selected year/week to load
 	$rootScope.$on("scopeReady", function() {
-		emitReload()
+		emitReload();
 	})
 
 	// UI Logic to hide/show the sidebar time controls when scrolling
@@ -161,4 +161,4 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 
 	    return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
 	}	
-}])
+}]);

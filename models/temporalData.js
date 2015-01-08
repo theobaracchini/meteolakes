@@ -48,7 +48,7 @@ TemporalData.prototype.PrepareNextFiles = function(valuesFile) {
 		me.NextData = arr;
 	});
 
-	return this
+	return this;
 }
 
 TemporalData.prototype.X = function(arr, index) {
@@ -83,9 +83,9 @@ TemporalData.prototype.V = function(arr, index) {
 TemporalData.prototype.SwitchToNextData = function() {
 	if(this.HasNextData()) {
 		// free memory
-		this.Data = null
-		this.Data = this.NextData
-		this.NextData = null
+		this.Data = null;
+		this.Data = this.NextData;
+		this.NextData = null;
 	}
 
 	return this;
