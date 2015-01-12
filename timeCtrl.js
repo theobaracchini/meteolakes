@@ -13,7 +13,7 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 		loopType = "repeat";
 
 		if(tickTimerId == null)
-			tickTimerId = setInterval(tick, 100);
+			tickTimerId = setInterval(tick, 1000);
 		else
 			$scope.pause();
 	}
@@ -97,6 +97,8 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 
     function tick() {
     	Time.increase(true);
+
+    	$rootScope.$emit("tick");
 
     	if(Time.tIndex == 0) {
     		// we looped. Decide whether we play again the current week

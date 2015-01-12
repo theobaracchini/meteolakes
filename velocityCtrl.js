@@ -10,12 +10,12 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	var stage = webgl.stage;
 	var renderer = webgl.renderer;
 	var markerSprite;
-	var sprites = [];
 
 	var isDataReady = false;
 
     var x,y,c, o; // d3 axis (x,y, color, opacity)
 	var rectSize;
+	var particleSystems = [];
 
     var colorLegend = prepareLegend();
 
@@ -55,6 +55,8 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 			$scope.Chart.SelectPoint(pointIndex);
 		})
 
+		$rootScope.$on("tick", TimeTick);
+
 		// start the renderer
 		d3.timer(animate);
 	
@@ -73,7 +75,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	    var minVel = d3.min($scope.tData.Data.map(function(d) { return d3.min(d.value.map(function(v) { return norm(v); })) }));
 		var maxVel = d3.max($scope.tData.Data.map(function(d) { return d3.max(d.value.map(function(v) { return norm(v); })) }));
 
-	    c = d3.scale.linear().domain([minVel, maxVel]).range(["gray", "black"]);
+	    c = d3.scale.linear().domain([minVel, maxVel]).range(["gray", "white"]);
 	    o = d3.scale.linear().domain([minVel, maxVel]).range([0.1, 1]);
 
 	    // Prepare all thingies
@@ -84,25 +86,21 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	}
 
 	function prepareGraphics() {
-	    var rectSize = (x(700) - x(0));
+	    rectSize = (x(350) - x(0));
 
 	    // Clear the stage
 	    for (var i = stage.children.length - 1; i >= 0; i--) {
 			stage.removeChild(stage.children[i]);
 		};
 
-		// Add one sprite per data point
+		// Add one particle emitter per data point
 	    $scope.tData.Data.forEach(function(d, i) {
-	        var doc = rectangle(x(d.x), y(d.y),
-	            rectSize,
-	            rectSize,
-	            parseInt(c(norm(d.value[Time.tIndex])).toString().replace("#", "0x")));
-	        stage.addChild(doc.graphic);
-	        sprites[i] = doc;
-	        sprites[i].sprite.interactive = true;
-	        sprites[i].sprite.mousedown = function(mouseData) { $rootScope.$emit("reloadChart", i); mouseDown = true; }
-	        sprites[i].sprite.mouseover = function(mouseData) { if(!mouseDown) return; $rootScope.$emit("reloadChart", i); }
-	        sprites[i].sprite.mouseup = function(mouseData) { mouseDown = false; }
+	    	particleSystems[i] = new ParticleEmitter(x(d.x), y(d.y), rectSize);
+	    	particleSystems[i].SetRenderer(stage);
+	        // sprites[i].sprite.interactive = true;
+	        // sprites[i].sprite.mousedown = function(mouseData) { $rootScope.$emit("reloadChart", i); mouseDown = true; }
+	        // sprites[i].sprite.mouseover = function(mouseData) { if(!mouseDown) return; $rootScope.$emit("reloadChart", i); }
+	        // sprites[i].sprite.mouseup = function(mouseData) { mouseDown = false; }
 	    })
 
 	    // Prepare the marker symbol
@@ -131,6 +129,19 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 		colorLegend.call(xAxis);
 	}
 
+	function TimeTick() {
+	    $scope.tData.Data.forEach(function(d, i) {
+	    	var vec = d.value[Time.tIndex];
+        	var color = parseInt(c(norm(vec)).toString().replace("#", "0x"));
+        	// We need to divide by 1000 because the speed is given in m/s and we
+        	// want it in km/s (because the position axis are in km).
+        	var velocityScale = 20000000;
+        	var dx = x(vec[0]/1000) - x(0);
+        	var dy = y(vec[1]/1000) - y(0);
+        	particleSystems[i].Emit(dx*velocityScale, dy*velocityScale, color, o(norm(vec)));
+	    });
+	}
+
 	function animate() {
 		if(!isDataReady) return;
 
@@ -138,25 +149,15 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 		if(Time.tIndex >= $scope.tData.nT) return;
 
 	    // Animate the stuff here (transitions, color updates etc.)
-		var rectSize = x(700) - x(0);
 	    $scope.tData.Data.forEach(function(d, i) {
-	    	var vec = d.value[Time.tIndex];
-        	var color = parseInt(c(norm(vec)).toString().replace("#", "0x"));
-        	sprites[i].sprite.tint = color;
-        	sprites[i].sprite.alpha = o(norm(vec));
-        	sprites[i].graphic.position.x = x(d.x)-rectSize/2;
-	        sprites[i].graphic.position.y = y(d.y)-rectSize/2;
-	        sprites[i].sprite.width = rectSize;
-	        sprites[i].sprite.height = rectSize;
-
-        	//d.sprite.rotation = Math.atan2(vec[1], vec[0])
-	    })
+        	particleSystems[i].Tick(1/60);
+	    });
 
 	    // Put the marker sprite at the correct position
-	    markerSprite.visible = $scope.pointIndex != undefined
+	    markerSprite.visible = $scope.pointIndex != undefined;
 	    if($scope.pointIndex != undefined) {
-	    	markerSprite.position.x = x($scope.tData.Data[$scope.pointIndex].x) - markerSprite.width / 2
-	    	markerSprite.position.y = y($scope.tData.Data[$scope.pointIndex].y) - markerSprite.height / 2
+	    	markerSprite.position.x = x($scope.tData.Data[$scope.pointIndex].x) - markerSprite.width / 2;
+	    	markerSprite.position.y = y($scope.tData.Data[$scope.pointIndex].y) - markerSprite.height / 2;
 	    }
 
 	    $scope.$apply();
@@ -169,6 +170,6 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	}
 
     function norm(vec) {
-    	return vec[0]*vec[0] + vec[1]*vec[1]
+    	return vec[0]*vec[0] + vec[1]*vec[1];
     }
 }])
