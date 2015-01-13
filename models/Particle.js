@@ -40,9 +40,8 @@ Particle.prototype.SetRenderer = function(stage) {
     return this;
 }
 
-Particle.prototype.SetColor = function(color, alpha) {
+Particle.prototype.SetColor = function(color) {
 	this._graphic.sprite.tint = color;
-	//this._graphic.sprite.alpha = alpha;
 
 	return this;
 }

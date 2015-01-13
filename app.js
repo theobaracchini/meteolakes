@@ -89,7 +89,7 @@ function rectangle(x, y, width, height, backgroundColor) {
 
 function circle(x, y, radius, backgroundColor) { 
     var box = new PIXI.DisplayObjectContainer();
-    var background = new PIXI.Sprite(getCircleTexture(0xFFFFFF));
+    var background = new PIXI.Sprite.fromImage("dot.png");//(getCircleTexture(0xFFFFFF));
     background.tint = backgroundColor;
     background.width = radius*2;
     background.height = radius*2;

@@ -21,13 +21,13 @@ ParticleEmitter.prototype.SetRenderer = function(stage) {
 		this._particles[i].SetRenderer(stage);
 }
 
-ParticleEmitter.prototype.Emit = function(xVel, yVel, color, alpha) {
+ParticleEmitter.prototype.Emit = function(xVel, yVel, color) {
 	var p = this.getFreeParticle();
 
 	if(p == null) return;
 
 	p.Shoot(xVel, yVel, this._particleLifespan)
-		.SetColor(color, alpha);
+		.SetColor(color);
 }
 
 ParticleEmitter.prototype.getFreeParticle = function() {

@@ -13,7 +13,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 
 	var isDataReady = false;
 
-    var x,y,c, o; // d3 axis (x,y, color, opacity)
+    var x,y,c; // d3 axis (x,y, color)
 	var rectSize;
 	var particleSystems = [];
 
@@ -76,7 +76,6 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 		var maxVel = d3.max($scope.tData.Data.map(function(d) { return d3.max(d.value.map(function(v) { return norm(v); })) }));
 
 	    c = d3.scale.linear().domain([minVel, maxVel]).range(["gray", "white"]);
-	    o = d3.scale.linear().domain([minVel, maxVel]).range([0.1, 1]);
 
 	    // Prepare all thingies
 	    updateLegend(minVel, maxVel);
@@ -138,7 +137,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
         	var velocityScale = 20000000;
         	var dx = x(vec[0]/1000) - x(0);
         	var dy = y(vec[1]/1000) - y(0);
-        	particleSystems[i].Emit(dx*velocityScale, dy*velocityScale, color, o(norm(vec)));
+        	particleSystems[i].Emit(dx*velocityScale, dy*velocityScale, color);
 	    });
 	}
 
