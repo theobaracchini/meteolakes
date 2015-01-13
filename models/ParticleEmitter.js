@@ -1,7 +1,7 @@
 var ParticleEmitter = function(xPos, yPos, particleSize, lifespan, maxParticles) {
 	// Default values for parameters
-	lifespan = typeof lifespan !== 'undefined' ? lifespan : 1;
-	maxParticles = typeof maxParticles !== 'undefined' ? maxParticles : 5;
+	lifespan = typeof lifespan !== 'undefined' ? lifespan : 0.5;
+	maxParticles = typeof maxParticles !== 'undefined' ? maxParticles : 4;
 
 	this._particles = [];
 	for(var i = 0 ; i < maxParticles ; ++i)

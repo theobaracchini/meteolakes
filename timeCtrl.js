@@ -13,7 +13,7 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 		loopType = "repeat";
 
 		if(tickTimerId == null)
-			tickTimerId = setInterval(tick, 200);
+			tickTimerId = setInterval(tick, 60);
 		else
 			$scope.pause();
 	}
@@ -74,7 +74,7 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 	// ------------------------------------------------------------------------
 	// UTILITY METHODS
 	// ------------------------------------------------------------------------
-	
+
 	$scope.selectWeek = function(week) {
 		// Make sure the given week number is not out of bounds with the 
 		// current year, and change year if necessary.

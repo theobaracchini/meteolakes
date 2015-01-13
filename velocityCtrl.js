@@ -134,9 +134,11 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
         	var color = parseInt(c(norm(vec)).toString().replace("#", "0x"));
         	// We need to divide by 1000 because the speed is given in m/s and we
         	// want it in km/s (because the position axis are in km).
-        	var velocityScale = 20000000;
         	var dx = x(vec[0]/1000) - x(0);
         	var dy = y(vec[1]/1000) - y(0);
+        	// Also, because of the scale of the visualization, we amplify all 
+        	// movements so we can see them better 
+        	var velocityScale = 30000000;
         	particleSystems[i].Emit(dx*velocityScale, dy*velocityScale, color);
 	    });
 	}
