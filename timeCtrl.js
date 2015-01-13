@@ -13,7 +13,7 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 		loopType = "repeat";
 
 		if(tickTimerId == null)
-			tickTimerId = setInterval(tick, 1000);
+			tickTimerId = setInterval(tick, 200);
 		else
 			$scope.pause();
 	}
