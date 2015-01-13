@@ -96,11 +96,11 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	    $scope.tData.Data.forEach(function(d, i) {
 	    	particleSystems[i] = new ParticleEmitter(x(d.x), y(d.y), rectSize);
 	    	particleSystems[i].SetRenderer(stage);
-	        // sprites[i].sprite.interactive = true;
-	        // sprites[i].sprite.mousedown = function(mouseData) { $rootScope.$emit("reloadChart", i); mouseDown = true; }
-	        // sprites[i].sprite.mouseover = function(mouseData) { if(!mouseDown) return; $rootScope.$emit("reloadChart", i); }
-	        // sprites[i].sprite.mouseup = function(mouseData) { mouseDown = false; }
-	    })
+	    	particleSystems[i].EnableParticleInteractivity(
+	    		function(mouseData) { $rootScope.$emit("reloadChart", i); mouseDown = true; },
+	    		function(mouseData) { if(!mouseDown) return; $rootScope.$emit("reloadChart", i); },
+	    		function(mouseData) { mouseDown = false; });
+	    });
 
 	    // Prepare the marker symbol
 	    markerSprite = new PIXI.Sprite.fromImage("marker.png");

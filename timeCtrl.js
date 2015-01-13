@@ -74,6 +74,7 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 	// ------------------------------------------------------------------------
 	// UTILITY METHODS
 	// ------------------------------------------------------------------------
+	
 	$scope.selectWeek = function(week) {
 		// Make sure the given week number is not out of bounds with the 
 		// current year, and change year if necessary.

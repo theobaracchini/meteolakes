@@ -1,7 +1,7 @@
 var ParticleEmitter = function(xPos, yPos, particleSize, lifespan, maxParticles) {
 	// Default values for parameters
 	lifespan = typeof lifespan !== 'undefined' ? lifespan : 1;
-	maxParticles = typeof maxParticles !== 'undefined' ? maxParticles : 4;
+	maxParticles = typeof maxParticles !== 'undefined' ? maxParticles : 5;
 
 	this._particles = [];
 	for(var i = 0 ; i < maxParticles ; ++i)
@@ -19,6 +19,11 @@ ParticleEmitter.prototype.Tick = function(dT) {
 ParticleEmitter.prototype.SetRenderer = function(stage) {
 	for(var i = 0 ; i < this._particles.length ; ++i)
 		this._particles[i].SetRenderer(stage);
+}
+
+ParticleEmitter.prototype.EnableParticleInteractivity = function(mousedown, mouseover, mouseup) {
+	for(var i = 0 ; i < this._particles.length ; ++i)
+		this._particles[i].EnableInteractivity(mousedown, mouseover, mouseup);
 }
 
 ParticleEmitter.prototype.Emit = function(xVel, yVel, color) {

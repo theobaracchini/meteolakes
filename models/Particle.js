@@ -40,6 +40,13 @@ Particle.prototype.SetRenderer = function(stage) {
     return this;
 }
 
+Particle.prototype.EnableInteractivity = function(mousedown, mouseover, mouseup) {
+    this._graphic.sprite.interactive = true;
+    this._graphic.sprite.mousedown = mousedown;
+    this._graphic.sprite.mouseover = mouseover;
+    this._graphic.sprite.mouseup = mouseup;
+}
+
 Particle.prototype.SetColor = function(color) {
 	this._graphic.sprite.tint = color;
 
