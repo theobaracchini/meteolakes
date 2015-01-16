@@ -66,6 +66,12 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	// ========================================================================
 	// UTILITY FUNCTIONS
 	// ========================================================================
+
+	/*
+	 * Call this method whenever a new bunch of data has been read and is ready
+	 * to be displayed. 
+	 * Updates the legend and the axis.
+	 */
 	function dataReady() {
 	    var xmargin = width*0.1;
 	    var ymargin = height*0.1;
@@ -84,6 +90,9 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	    isDataReady = true;
 	}
 
+	/*
+	 * 
+	 */
 	function prepareGraphics() {
 	    rectSize = (x(350) - x(0));
 
@@ -128,7 +137,13 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 		colorLegend.call(xAxis);
 	}
 
+	/*
+	 * This function is called at each time control ticks.
+	 * It is bound to the "tick" event sent by the rootScope.
+	 * Do not call this directly.
+	 */
 	function TimeTick() {
+		// Emit new particles for each grid point.
 	    $scope.tData.Data.forEach(function(d, i) {
 	    	var vec = d.value[Time.tIndex];
         	var color = parseInt(c(norm(vec)).toString().replace("#", "0x"));
@@ -143,6 +158,11 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	    });
 	}
 
+	/*
+	 * This function runs under a timer. It is in charge of ticking
+	 * the particle emitters and rendering the canvas.
+	 * Do not call this directly.
+	 */
 	function animate() {
 		if(!isDataReady) return;
 
@@ -170,6 +190,10 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	    $scope.Chart.UpdateTimeLine()
 	}
 
+	/*
+	 * Returns the norm of a vector.
+	 * The vector is expected to be an array [x,y].
+	 */
     function norm(vec) {
     	return vec[0]*vec[0] + vec[1]*vec[1];
     }
