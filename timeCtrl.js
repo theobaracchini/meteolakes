@@ -135,7 +135,7 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 	$scope.SelectedWeek = now.getWeek();
 
 	// Available years to select from
-	$scope.Years = [2009, 2014];
+	$scope.Years = [2009, 2014, 2015];
 	$scope.SelectedYear = now.getFullYear();
 
 	$scope.Time = Time;
