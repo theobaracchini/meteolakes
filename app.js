@@ -62,8 +62,6 @@ function findDimensions(container, aspectRatio) {
 
     // adapt the height to fit the given width
     return {width:width, height:width/aspectRatio};
-	
-	//return {width:width, height:height}
 }
 
 function zip(arrays) {

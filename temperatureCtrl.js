@@ -40,7 +40,7 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 				dataReady();
 			} else {
 				// First time initialization
-				$scope.tData = new TemporalData(currentFilename, 1, 56, function() {
+				$scope.tData = new TemporalData(currentFilename, 1, 7*24*60/INTERVAL, function() {
 					dataReady();
 					prepareGraphics();
 

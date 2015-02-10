@@ -50,8 +50,9 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 	$scope.PrettyPrintTime = function(ti, weekNo, year) {
 		var refDate = (new Date()).FirstDayOfWeek(weekNo, year);
 
-		// tIndex is in 3-hours, so we need to convert it into milliseconds
-		var currentDate = new Date(refDate + ti*3*60*60*1000);
+		// tIndex corresponds to intervals, which are given by the global INTERVAL
+		// in minutes, so we need to convert it into milliseconds
+		var currentDate = new Date(refDate + ti*INTERVAL*60*1000);
 		return currentDate.toLocaleDateString() + ":" + currentDate.getHours() + "h"; 	
 	}
 

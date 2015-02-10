@@ -40,7 +40,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 				dataReady();
 			} else {
 				// First time initialization
-				$scope.tData = new TemporalData(currentFilename, 2, 56, function() {
+				$scope.tData = new TemporalData(currentFilename, 2, 7*24*60/INTERVAL, function() {
 					dataReady();
 					prepareGraphics();
 
