@@ -601,8 +601,8 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 		$rootScope.$on("reloadWeek", function(evt, time) {
 			isDataReady = false;
 
-			var currentFilename = DATA_HOST + "data/temperature/" + time.year + "/data_week" + time.week + ".csv";
-			var nextFilename = DATA_HOST + "data/temperature/" + time.year + "/data_week" + (time.week+1) + ".csv";
+			var currentFilename = DATA_HOST + "data/" + time.year + "/temperature/" + "/data_week" + time.week + ".csv";
+			var nextFilename = DATA_HOST + "data/" + time.year + "/temperature/" + "/data_week" + (time.week+1) + ".csv";
 
 			if($scope.tData && $scope.tData.HasNextData() && !time.fullReload) {
 				// If we have already loaded the next values file, swap it and load the one after that
@@ -766,8 +766,8 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 		$rootScope.$on("reloadWeek", function(evt, time) {
 			isDataReady = false;
 
-			var currentFilename = DATA_HOST + "data/velocity/" + time.year + "/data_week" + time.week + ".csv";
-			var nextFilename = DATA_HOST + "data/velocity/" + time.year + "/data_week" + (time.week+1) + ".csv";
+			var currentFilename = DATA_HOST + "data/" + time.year + "/velocity/" + "/data_week" + time.week + ".csv";
+			var nextFilename = DATA_HOST + "data/" + time.year + "/velocity/" + "/data_week" + (time.week+1) + ".csv";
 
 			if($scope.tData && $scope.tData.HasNextData() && !time.fullReload) {
 				// If we have already loaded the next values file, swap it and load the one after that
