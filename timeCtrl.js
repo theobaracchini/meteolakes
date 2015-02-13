@@ -48,7 +48,7 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
     }
 
 	$scope.PrettyPrintTime = function(ti, weekNo, year) {
-		var refDate = (new Date()).FirstDayOfWeek(weekNo, year);
+		var refDate = FirstDayOfWeek(weekNo, year);
 
 		// tIndex corresponds to intervals, which are given by the global INTERVAL
 		// in minutes, so we need to convert it into milliseconds
@@ -57,8 +57,8 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 	}
 
 	$scope.PrettyPrintWeek = function(week) {
-		var firstDay = (new Date()).FirstDayOfWeek(week, $scope.SelectedYear);
-		var lastDay = (new Date()).LastDayOfWeek(week, $scope.SelectedYear);
+		var firstDay = FirstDayOfWeek(week, $scope.SelectedYear);
+		var lastDay = LastDayOfWeek(week, $scope.SelectedYear);
 		return new Date(firstDay).toLocaleDateString() + " - " + new Date(lastDay).toLocaleDateString();
 	}
 

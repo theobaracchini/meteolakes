@@ -4,7 +4,7 @@ Date.prototype.getWeek = function() {
     return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()+1)/7);
 } 
 
-Date.prototype.FirstDayOfWeek = function(week, year) { 
+function FirstDayOfWeek(week, year) { 
 
     if (year==null) {
         year = (new Date()).getFullYear();
@@ -18,7 +18,7 @@ Date.prototype.FirstDayOfWeek = function(week, year) {
 
 }
 
-Date.prototype.LastDayOfWeek = function(week, year) { 
+function LastDayOfWeek(week, year) { 
 
     if (year==null) {
         year = (new Date()).getFullYear();
