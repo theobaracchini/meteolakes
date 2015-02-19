@@ -133,12 +133,11 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 	function animate() {
 		if(!isDataReady) return;
 
-		// Protect against out-of-bounds ex
-		if(Time.tIndex >= $scope.tData.nT) return;
-
 	    // Animate the stuff here (transitions, color updates etc.)
 		var rectSize = x(700) - x(0);
 	    $scope.tData.Data.forEach(function(d, i) {
+	    	if(Time.tIndex >= d.value.length) return;
+	    	
 	        var value = d.value[Time.tIndex];
 	        sprites[i].sprite.visible = !isNaN(d.value[Time.tIndex]);
 	        sprites[i].graphic.position.x = x(d.x)-rectSize/2;

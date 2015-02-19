@@ -1,74 +1,61 @@
 var TemporalData = function(valuesFile, callback) {
 	var me = this;
 
-	// Empty array used when the data is not available
-	//this.PrepareFallbackArray();
-	
-	// Read the initial data
-	this.readArray(valuesFile, function(arr) { 
-		me.Data = arr;
-		callback();
-	});
-}
-
-// @OBSOLETE (Remove that, find another way to handle missing data)
-TemporalData.prototype.PrepareFallbackArray = function() {
-	var fallback = [];
-	var vals = [];
-	for(var t = 0 ; t < this.nT ; ++t) {
-		var data = [];
-		for(var i = 0 ; i < this.numberOfValues ; ++i) {
-			data.push(0);
+	// Read the initial data config
+	d3.json(valuesFile + ".json", function(err, config) {
+		if(err) {
+			console.log("File not found (" + valuesFile + ") falling back to default array");
+			callback();
+			return;	
 		}
-		if(this.numberOfValues == 1)
-			vals.push(data[0]);
-		else
-			vals.push(data);
-	}
 
-    for(var i = 0 ; i < this.gridWidth*this.gridHeight ; ++i) {
-    	var v =
-    		{
-    			x:0,
-    			y:0,
-    			value:vals
-    		};
-    	fallback.push(v);
-    }
-
-    this.fallBackArray = fallback;
+		// Read the initial data
+		me.readArray(valuesFile, config, function(arr) { 
+			me.Data = arr;
+			callback();
+		});
+	});
 }
 
 TemporalData.prototype.PrepareNextFiles = function(valuesFile) {
 	var me = this;
-	this.readArray(valuesFile, function(arr) { 
-		me.NextData = arr;
+
+	// Read the next data config
+	d3.json(valuesFile + ".json", function(err, config) {
+		if(err) {
+			console.log("File not found (" + valuesFile + ") falling back to default array");
+			return;	
+		}
+
+		me.readArray(valuesFile, config, function(arr) { 
+			me.NextData = arr;
+		});
 	});
 
 	return this;
 }
 
-TemporalData.prototype.X = function(arr, index) {
-	var idx = this.gridHeight*(2+this.numberOfValues*this.nT)*parseInt(index/this.gridHeight) + (index % this.gridHeight);
+TemporalData.prototype.X = function(arr, index, config) {
+	var idx = config.GridHeight*(2+config.NumberOfValues*config.Timesteps)*parseInt(index/config.GridHeight) + (index % config.GridHeight);
 	return arr[idx];
 }
 
-TemporalData.prototype.Y = function(arr, index) {
-	var idx = this.gridHeight*(2+this.numberOfValues*this.nT)*parseInt(index/this.gridHeight) + (index % this.gridHeight) + this.gridHeight;
+TemporalData.prototype.Y = function(arr, index, config) {
+	var idx = config.GridHeight*(2+config.NumberOfValues*config.Timesteps)*parseInt(index/config.GridHeight) + (index % config.GridHeight) + config.GridHeight;
 	return arr[idx];
 }
 
-TemporalData.prototype.V = function(arr, index) {
-	var from = this.gridHeight*(2+this.numberOfValues*this.nT)*parseInt(index/this.gridHeight) + (index % this.gridHeight) + 2*this.gridHeight;
+TemporalData.prototype.V = function(arr, index, config) {
+	var from = config.GridHeight*(2+config.NumberOfValues*config.Timesteps)*parseInt(index/config.GridHeight) + (index % config.GridHeight) + 2*config.GridHeight;
 
 	var vals = [];
-	for(var t = 0 ; t < this.nT ; ++t) {
+	for(var t = 0 ; t < config.Timesteps ; ++t) {
 		var data = [];
-		for(var i = 0 ; i < this.numberOfValues ; ++i) {
-			var idx = from + i*this.nT*this.gridHeight + t*this.gridHeight;
+		for(var i = 0 ; i < config.NumberOfValues ; ++i) {
+			var idx = from + i*config.Timesteps*config.GridHeight + t*config.GridHeight;
 			data.push(arr[idx]);
 		}
-		if(this.numberOfValues == 1)
+		if(config.NumberOfValues == 1)
 			vals.push(data[0]);
 		else
 			vals.push(data);
@@ -88,47 +75,31 @@ TemporalData.prototype.SwitchToNextData = function() {
 	return this;
 }
 
-TemporalData.prototype.readArray = function(file, callback) {
+TemporalData.prototype.readArray = function(file, config, callback) {
 	var me = this;
 
-	// The json file contains minimal configuration information
-	// about the data file (number of timesteps, grid dimensions)
-	d3.json(file + ".json", function(err, config) {
+	d3.text(file, function(err, data) {
 		if(err) {
 			console.log("File not found (" + file + ") falling back to default array");
 			callback([]);
-			return;	
+			return;
 		}
+        // split data at line breaks and commas and parse the numbers
+        var arr =  data.split(/[,\n]/).map(function(d) { return parseFloat(d); });
+        var res = [];
+        for(var i = 0 ; i < config.GridWidth*config.GridHeight ; ++i) {
+        	var v =
+        		{
+        			x:me.X(arr, i, config),
+        			y:me.Y(arr, i, config),
+        			value:me.V(arr, i, config)
+        		};
+        	res.push(v);
+        }
 
-		me.numberOfValues = config.NumberOfValues;
-		me.gridWidth = config.GridWidth;
-		me.gridHeight = config.GridHeight;
-		me.nT = config.Timesteps;
+        me.recomputeBounds(res);
 
-		d3.text(file, function(err, data) {
-			if(err) {
-				console.log("File not found (" + file + ") falling back to default array");
-				callback(me.fallBackArray);
-				return;
-			}
-	        // split data at line breaks and commas and parse the numbers
-	        var arr =  data.split(/[,\n]/).map(function(d) { return parseFloat(d); });
-	        var res = [];
-	        for(var i = 0 ; i < me.gridWidth*me.gridHeight ; ++i) {
-	        	var v =
-	        		{
-	        			x:me.X(arr, i),
-	        			y:me.Y(arr, i),
-	        			value:me.V(arr, i)
-	        		};
-	        	res.push(v);
-	        }
-
-	        me.recomputeBounds(res);
-
-			callback(res);
-		});
-
+		callback(res);
 	});
 
 	return this;

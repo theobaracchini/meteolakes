@@ -15,7 +15,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 
     var x,y,c; // d3 axis (x,y, color)
 	var rectSize;
-	var particleSystems = [];
+	var sprites = [];
 
     var colorLegend = prepareLegend();
 
@@ -55,8 +55,6 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 			$scope.Chart.SelectPoint(pointIndex);
 		})
 
-		$rootScope.$on("tick", TimeTick);
-
 		// start the renderer
 		d3.timer(animate);
 	
@@ -81,7 +79,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	    var minVel = d3.min($scope.tData.Data.map(function(d) { return d3.min(d.value.map(function(v) { return norm(v); })) }));
 		var maxVel = d3.max($scope.tData.Data.map(function(d) { return d3.max(d.value.map(function(v) { return norm(v); })) }));
 
-	    c = d3.scale.linear().domain([minVel, maxVel]).range(["gray", "white"]);
+	    c = d3.scale.linear().domain([minVel, (minVel+maxVel)/2, maxVel]).range(["blue", "lime", "red"]);
 
 	    // Prepare all thingies
 	    updateLegend(minVel, maxVel);
@@ -94,21 +92,23 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	 * 
 	 */
 	function prepareGraphics() {
-	    rectSize = (x(350) - x(0));
+	    var rectSize = x(700) - x(0);
 
 	    // Clear the stage
 	    for (var i = stage.children.length - 1; i >= 0; i--) {
 			stage.removeChild(stage.children[i]);
 		};
 
-		// Add one particle emitter per data point
 	    $scope.tData.Data.forEach(function(d, i) {
-	    	particleSystems[i] = new ParticleEmitter(x(d.x), y(d.y), rectSize);
-	    	particleSystems[i].SetRenderer(stage);
-	    	particleSystems[i].EnableParticleInteractivity(
-	    		function(mouseData) { $rootScope.$emit("reloadChart", i); mouseDown = true; },
-	    		function(mouseData) { if(!mouseDown) return; $rootScope.$emit("reloadChart", i); },
-	    		function(mouseData) { mouseDown = false; });
+	        var doc = rectangle(x(d.x)-rectSize/2, y(d.y)-rectSize/2,
+	            rectSize,rectSize,
+	            parseInt(c(norm(d.value[Time.tIndex])).toString().replace("#", "0x")));
+	        stage.addChild(doc.graphic);
+	        sprites[i] = doc;
+	        sprites[i].sprite.interactive = true;
+	        sprites[i].sprite.mousedown = function(mouseData) { $rootScope.$emit("reloadChart", i); mouseDown = true; }
+	        sprites[i].sprite.mouseover = function(mouseData) { if(!mouseDown) return; $rootScope.$emit("reloadChart", i); }
+	        sprites[i].sprite.mouseup = function(mouseData) { mouseDown = false; }
 	    });
 
 	    // Prepare the marker symbol
@@ -138,41 +138,26 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	}
 
 	/*
-	 * This function is called at each time control ticks.
-	 * It is bound to the "tick" event sent by the rootScope.
-	 * Do not call this directly.
-	 */
-	function TimeTick() {
-		// Emit new particles for each grid point.
-	    $scope.tData.Data.forEach(function(d, i) {
-	    	var vec = d.value[Time.tIndex];
-        	var color = parseInt(c(norm(vec)).toString().replace("#", "0x"));
-        	// We need to divide by 1000 because the speed is given in m/s and we
-        	// want it in km/s (because the position axis are in km).
-        	var dx = x(vec[0]/1000) - x(0);
-        	var dy = y(vec[1]/1000) - y(0);
-        	// Also, because of the scale of the visualization, we amplify all 
-        	// movements so we can see them better 
-        	var velocityScale = 30000000;
-        	particleSystems[i].Emit(dx*velocityScale, dy*velocityScale, color);
-	    });
-	}
-
-	/*
-	 * This function runs under a timer. It is in charge of ticking
-	 * the particle emitters and rendering the canvas.
+	 * This function runs under a timer. It is in charge of rendering the canvas.
 	 * Do not call this directly.
 	 */
 	function animate() {
 		if(!isDataReady) return;
 
-		// Protect against out-of-bounds exceptions
-		if(Time.tIndex >= $scope.tData.nT) return;
-
 	    // Animate the stuff here (transitions, color updates etc.)
+		var rectSize = x(700) - x(0);
 	    $scope.tData.Data.forEach(function(d, i) {
-        	particleSystems[i].Tick(1/60);
-	    });
+	    	if(Time.tIndex >= d.value.length) return;
+
+	        var value = d.value[Time.tIndex];
+	        sprites[i].sprite.visible = !isNaN(norm(d.value[Time.tIndex]));
+	        sprites[i].graphic.position.x = x(d.x)-rectSize/2;
+	        sprites[i].graphic.position.y = y(d.y)-rectSize/2;
+	        sprites[i].sprite.width = rectSize;
+	        sprites[i].sprite.height = rectSize;
+     	   	var color = parseInt(c(norm(value)).toString().replace("#", "0x"));
+			sprites[i].sprite.tint = color;
+	    })
 
 	    // Put the marker sprite at the correct position
 	    markerSprite.visible = $scope.pointIndex != undefined;
