@@ -11,12 +11,14 @@
 				<div class="row">
 					<div class="col-lg-12" ng-controller="timeCtrl">
 						<!-- Side toolbar to display when the normal time tools are hidden -->
-						<div class="btn-group-vertical sidebar" role="group">
-							<button type="button" class="btn btn-default" ng-click="backward()"><span class="glyphicon glyphicon-step-backward"></span></button>
-							<button id="playButton" type="button" class="btn btn-default" ng-click="play()"><span class="glyphicon glyphicon-play"></span></button>
-							<button type="button" class="btn btn-default" ng-click="playAll()"><span class="glyphicon glyphicon-forward"></span></button>
-							<button type="button" class="btn btn-default" ng-click="stop()"><span class="glyphicon glyphicon-stop"></span></button>
-							<button type="button" class="btn btn-default" ng-click="forward()"><span class="glyphicon glyphicon-step-forward"></span></button>
+						<div class="sidebar">
+							<div class="btn-group-vertical" role="group">
+								<button type="button" class="btn btn-default" ng-click="backward()"><span class="glyphicon glyphicon-step-backward"></span></button>
+								<button id="playButton" type="button" class="btn btn-default" ng-click="play()"><span class="glyphicon glyphicon-play"></span></button>
+								<button type="button" class="btn btn-default" ng-click="playAll()"><span class="glyphicon glyphicon-forward"></span></button>
+								<button type="button" class="btn btn-default" ng-click="stop()"><span class="glyphicon glyphicon-stop"></span></button>
+								<button type="button" class="btn btn-default" ng-click="forward()"><span class="glyphicon glyphicon-step-forward"></span></button>
+							</div>
 						</div>
 
 						<h2>Time: <small ng-bind="getTime()"></small></h2>

@@ -4,9 +4,9 @@ var INTERVAL = 180;
 var DATA_HOST = "http://aphyspc1.epfl.ch/meteolac/";
  
 // Get the week number for the created date
-Date.prototype.getWeek = function() {
-    var onejan = new Date(this.getFullYear(),0,1);
-    return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()+1)/7);
+function GetWeek(date) {
+    var onejan = new Date(date.getFullYear(),0,1);
+    return Math.ceil((((date - onejan) / 86400000) + onejan.getDay()+1)/7);
 } 
 
 function FirstDayOfWeek(week, year) { 
@@ -81,7 +81,7 @@ function firstWeekday(firstOfJanuaryDate) {
  */
 function NumberOfWeeks(year) {
     var dec31 = new Date(year,11, 31);
-    return dec31.getWeek();
+    return GetWeek(dec31);
 } 
 var TemporalData = function(valuesFile, numberOfValues, numberOfTimesteps, callback) {
 	var me = this;
@@ -601,8 +601,8 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 		$rootScope.$on("reloadWeek", function(evt, time) {
 			isDataReady = false;
 
-			var currentFilename = DATA_HOST + "data/" + time.year + "/temperature/" + "/data_week" + time.week + ".csv";
-			var nextFilename = DATA_HOST + "data/" + time.year + "/temperature/" + "/data_week" + (time.week+1) + ".csv";
+			var currentFilename = DATA_HOST + "data/" + time.year + "/temperature/data_week" + time.week + ".csv";
+			var nextFilename = DATA_HOST + "data/" + time.year + "/temperature/data_week" + (time.week+1) + ".csv";
 
 			if($scope.tData && $scope.tData.HasNextData() && !time.fullReload) {
 				// If we have already loaded the next values file, swap it and load the one after that
@@ -766,8 +766,8 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 		$rootScope.$on("reloadWeek", function(evt, time) {
 			isDataReady = false;
 
-			var currentFilename = DATA_HOST + "data/" + time.year + "/velocity/" + "/data_week" + time.week + ".csv";
-			var nextFilename = DATA_HOST + "data/" + time.year + "/velocity/" + "/data_week" + (time.week+1) + ".csv";
+			var currentFilename = DATA_HOST + "data/" + time.year + "/velocity/data_week" + time.week + ".csv";
+			var nextFilename = DATA_HOST + "data/" + time.year + "/velocity/data_week" + (time.week+1) + ".csv";
 
 			if($scope.tData && $scope.tData.HasNextData() && !time.fullReload) {
 				// If we have already loaded the next values file, swap it and load the one after that
@@ -1069,7 +1069,7 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 	var now = new Date();
 	var lastWeekNumber = NumberOfWeeks(now.getFullYear()); // months are 0-indexed
 	$scope.Weeks = d3.range(1, lastWeekNumber);
-	$scope.SelectedWeek = now.getWeek();
+	$scope.SelectedWeek = GetWeek(now);
 
 	// Available years to select from
 	$scope.Years = [2009, 2014, 2015];

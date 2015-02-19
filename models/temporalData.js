@@ -1,12 +1,8 @@
-var TemporalData = function(valuesFile, numberOfValues, numberOfTimesteps, callback) {
+var TemporalData = function(valuesFile, callback) {
 	var me = this;
-	this.numberOfValues = numberOfValues;
-	this.gridWidth = 182;
-	this.gridHeight = 36;
-	this.nT = numberOfTimesteps;
 
 	// Empty array used when the data is not available
-	this.PrepareFallbackArray();
+	//this.PrepareFallbackArray();
 	
 	// Read the initial data
 	this.readArray(valuesFile, function(arr) { 
@@ -15,6 +11,7 @@ var TemporalData = function(valuesFile, numberOfValues, numberOfTimesteps, callb
 	});
 }
 
+// @OBSOLETE (Remove that, find another way to handle missing data)
 TemporalData.prototype.PrepareFallbackArray = function() {
 	var fallback = [];
 	var vals = [];
@@ -93,29 +90,46 @@ TemporalData.prototype.SwitchToNextData = function() {
 
 TemporalData.prototype.readArray = function(file, callback) {
 	var me = this;
-	d3.text(file, function(err, data) {
+
+	// The json file contains minimal configuration information
+	// about the data file (number of timesteps, grid dimensions)
+	d3.json(file + ".json", function(err, config) {
 		if(err) {
 			console.log("File not found (" + file + ") falling back to default array");
-			callback(me.fallBackArray);
-			return;
+			callback([]);
+			return;	
 		}
-        // split data at line breaks and commas and parse the numbers
-        var arr =  data.split(/[,\n]/).map(function(d) { return parseFloat(d); });
-        var res = [];
-        for(var i = 0 ; i < me.gridWidth*me.gridHeight ; ++i) {
-        	var v =
-        		{
-        			x:me.X(arr, i),
-        			y:me.Y(arr, i),
-        			value:me.V(arr, i)
-        		};
-        	res.push(v);
-        }
 
-        me.recomputeBounds(res);
+		me.numberOfValues = config.NumberOfValues;
+		me.gridWidth = config.GridWidth;
+		me.gridHeight = config.GridHeight;
+		me.nT = config.Timesteps;
 
-		callback(res);
-	})
+		d3.text(file, function(err, data) {
+			if(err) {
+				console.log("File not found (" + file + ") falling back to default array");
+				callback(me.fallBackArray);
+				return;
+			}
+	        // split data at line breaks and commas and parse the numbers
+	        var arr =  data.split(/[,\n]/).map(function(d) { return parseFloat(d); });
+	        var res = [];
+	        for(var i = 0 ; i < me.gridWidth*me.gridHeight ; ++i) {
+	        	var v =
+	        		{
+	        			x:me.X(arr, i),
+	        			y:me.Y(arr, i),
+	        			value:me.V(arr, i)
+	        		};
+	        	res.push(v);
+	        }
+
+	        me.recomputeBounds(res);
+
+			callback(res);
+		});
+
+	});
 
 	return this;
 }

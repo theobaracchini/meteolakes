@@ -6,7 +6,7 @@ app.factory("Time", function() {
 
     return { 
         tIndex: 0,
-        nT: 24*7/3, // number of time steps in a week  
+        nT: 24*7*60/INTERVAL, // number of time steps in a week  
         increase: function(loop) {
             if(loop) {
                 this.tIndex ++;

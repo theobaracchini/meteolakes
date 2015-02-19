@@ -133,10 +133,10 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 	var now = new Date();
 	var lastWeekNumber = NumberOfWeeks(now.getFullYear()); // months are 0-indexed
 	$scope.Weeks = d3.range(1, lastWeekNumber);
-	$scope.SelectedWeek = now.getWeek();
+	$scope.SelectedWeek = GetWeek(now);
 
 	// Available years to select from
-	$scope.Years = [2009, 2014, 2015];
+	$scope.Years = [2009, 2013, 2014, 2015];
 	$scope.SelectedYear = now.getFullYear();
 
 	$scope.Time = Time;

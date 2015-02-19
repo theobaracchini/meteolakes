@@ -1,7 +1,7 @@
 // Get the week number for the created date
-Date.prototype.getWeek = function() {
-    var onejan = new Date(this.getFullYear(),0,1);
-    return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()+1)/7);
+function GetWeek(date) {
+    var onejan = new Date(date.getFullYear(),0,1);
+    return Math.ceil((((date - onejan) / 86400000) + onejan.getDay()+1)/7);
 } 
 
 function FirstDayOfWeek(week, year) { 
@@ -76,5 +76,5 @@ function firstWeekday(firstOfJanuaryDate) {
  */
 function NumberOfWeeks(year) {
     var dec31 = new Date(year,11, 31);
-    return dec31.getWeek();
+    return GetWeek(dec31);
 }

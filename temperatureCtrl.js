@@ -30,8 +30,8 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 		$rootScope.$on("reloadWeek", function(evt, time) {
 			isDataReady = false;
 
-			var currentFilename = DATA_HOST + "data/" + time.year + "/temperature/" + "/data_week" + time.week + ".csv";
-			var nextFilename = DATA_HOST + "data/" + time.year + "/temperature/" + "/data_week" + (time.week+1) + ".csv";
+			var currentFilename = DATA_HOST + "data_biel/" + time.year + "/temperature/data_week" + time.week + ".csv";
+			var nextFilename = DATA_HOST + "data_biel/" + time.year + "/temperature/data_week" + (time.week+1) + ".csv";
 
 			if($scope.tData && $scope.tData.HasNextData() && !time.fullReload) {
 				// If we have already loaded the next values file, swap it and load the one after that
@@ -40,7 +40,7 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 				dataReady();
 			} else {
 				// First time initialization
-				$scope.tData = new TemporalData(currentFilename, 1, 7*24*60/INTERVAL, function() {
+				$scope.tData = new TemporalData(currentFilename, function() {
 					dataReady();
 					prepareGraphics();
 
