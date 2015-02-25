@@ -95,6 +95,10 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 
 	$scope.selectYear = function(year) {
 		$scope.SelectedYear = year;
+		$scope.Weeks = [];
+		for(var week in $scope.Dates[$scope.SelectedLake]["data"][$scope.SelectedYear]) {
+			$scope.Weeks.push(week);
+		}
 	}
 
     function tick() {
@@ -119,32 +123,68 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
      * a new week.
      */
 	function emitReload() {
-		$rootScope.$emit("reloadWeek", {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:false});
+		$rootScope.$emit("reloadWeek", {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:false, folder:$scope.Dates[$scope.SelectedLake]["folder"]});
 	}
 	/**
 	 * Emit a "reloadWeek" message, indicating that the user changed a 
 	 * parameter in the time fields and that all data needs to be reloaded.
 	 */
 	function emitFullReload() {
-		$rootScope.$emit("reloadWeek", {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:true});
+		$rootScope.$emit("reloadWeek", {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:true, folder:$scope.Dates[$scope.SelectedLake]["folder"]});
 	}
 
-	// Available weeks to select from
-	var now = new Date();
-	var lastWeekNumber = NumberOfWeeks(now.getFullYear()); // months are 0-indexed
-	$scope.Weeks = d3.range(1, lastWeekNumber);
-	$scope.SelectedWeek = GetWeek(now);
+	function loadAvailableDates(callback) {
+		$scope.Weeks = [];
+		$scope.SelectedWeek = undefined;
+		$scope.Years = [];
+		$scope.SelectedYear = undefined;
 
-	// Available years to select from
-	$scope.Years = [2009, 2013, 2014, 2015];
-	$scope.SelectedYear = now.getFullYear();
+		d3.json(DATA_HOST + "available_data.json", function(err, data) {
+			$scope.Dates = data;
+			$scope.SelectedLake = 0; // first one in the array of lakes (i.e. data[0])
+			callback();
+		});
+	}
 
-	$scope.Time = Time;
+	function selectDateClosestToNow() {
+		var now = new Date();
+		var currentYear = now.getFullYear();
+		var currentWeek = GetWeek(now);
+
+		// Find the year closest to now
+		var diffYear = Number.MAX_VALUE; // take a large initial value for year diff
+		$scope.Years = [];
+		for(var year in $scope.Dates[$scope.SelectedLake]["data"]) {
+			$scope.Years.push(year);
+			if(Math.abs(year-currentYear) < diffYear) {
+				$scope.SelectedYear = year;
+			}
+		}
+
+		// Find the week closest to now
+		var diffWeek = Number.MAX_VALUE; // large initial value for week diff
+		$scope.Weeks = [];
+		for(var i = 0 ; i <  $scope.Dates[$scope.SelectedLake]["data"][$scope.SelectedYear].length ; ++i) {
+			var week = $scope.Dates[$scope.SelectedLake]["data"][$scope.SelectedYear][i];
+			
+			$scope.Weeks.push(week);
+			if(Math.abs(week - currentWeek) < diffWeek) {
+				$scope.SelectedWeek = week;
+			}
+		}
+
+		emitReload();
+	}
+
+	loadAvailableDates(selectDateClosestToNow);
 
 	// When a controller is ready, tell it the selected year/week to load
 	$rootScope.$on("scopeReady", function() {
 		emitReload();
 	})
+
+	$scope.Time = Time;
+
 
 	// UI Logic to hide/show the sidebar time controls when scrolling
 	$(".sidebar").hide()
