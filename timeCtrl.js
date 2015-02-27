@@ -3,6 +3,8 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
     var tickTimerId = null;
     var loopType = "repeat";
 
+    $scope.Interval = 0;
+
     // ------------------------------------------------------------------------
     // BOUND TO THE HTML
     // ------------------------------------------------------------------------
@@ -52,7 +54,7 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 
 		// tIndex corresponds to intervals, which are given by the global INTERVAL
 		// in minutes, so we need to convert it into milliseconds
-		var currentDate = new Date(refDate + ti*INTERVAL*60*1000);
+		var currentDate = new Date(refDate + ti*$scope.Interval*60*1000);
 		return currentDate.toLocaleDateString() + ":" + currentDate.getHours() + "h"; 	
 	}
 
@@ -96,7 +98,7 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 	$scope.selectYear = function(year) {
 		$scope.SelectedYear = year;
 		$scope.Weeks = [];
-		for(var week in $scope.Dates[$scope.SelectedLake]["data"][$scope.SelectedYear]) {
+		for(var week in $scope.Dates[$scope.SelectedLake]["data"]["Y" + $scope.SelectedYear]) {
 			$scope.Weeks.push(week);
 		}
 	}
@@ -142,36 +144,44 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 		d3.json(DATA_HOST + "available_data.json", function(err, data) {
 			$scope.Dates = data;
 			$scope.SelectedLake = 0; // first one in the array of lakes (i.e. data[0])
+			Time.recomputeTimesteps(data[$scope.SelectedLake].interval);
 			callback();
 		});
 	}
 
-	function selectDateClosestToNow() {
+	function selectWeekClosestToNow() {
 		var now = new Date();
-		var currentYear = now.getFullYear();
 		var currentWeek = GetWeek(now);
-
-		// Find the year closest to now
-		var diffYear = Number.MAX_VALUE; // take a large initial value for year diff
-		$scope.Years = [];
-		for(var year in $scope.Dates[$scope.SelectedLake]["data"]) {
-			$scope.Years.push(year);
-			if(Math.abs(year-currentYear) < diffYear) {
-				$scope.SelectedYear = year;
-			}
-		}
 
 		// Find the week closest to now
 		var diffWeek = Number.MAX_VALUE; // large initial value for week diff
 		$scope.Weeks = [];
-		for(var i = 0 ; i <  $scope.Dates[$scope.SelectedLake]["data"][$scope.SelectedYear].length ; ++i) {
-			var week = $scope.Dates[$scope.SelectedLake]["data"][$scope.SelectedYear][i];
+		for(var i = 0 ; i <  $scope.Dates[$scope.SelectedLake]["data"]["Y" + $scope.SelectedYear].length ; ++i) {
+			var week = $scope.Dates[$scope.SelectedLake]["data"]["Y" + $scope.SelectedYear][i];
 			
 			$scope.Weeks.push(week);
 			if(Math.abs(week - currentWeek) < diffWeek) {
 				$scope.SelectedWeek = week;
 			}
 		}
+	}
+
+	function selectDateClosestToNow() {
+		var now = new Date();
+		var currentYear = now.getFullYear();
+		
+		// Find the year closest to now
+		var diffYear = Number.MAX_VALUE; // take a large initial value for year diff
+		$scope.Years = [];
+		for(var syear in $scope.Dates[$scope.SelectedLake]["data"]) {
+			var year = parseInt(syear.substring(1));
+			$scope.Years.push(year);
+			if(Math.abs(year-currentYear) < diffYear) {
+				$scope.SelectedYear = year;
+			}
+		}
+
+		selectWeekClosestToNow();
 
 		emitReload();
 	}
