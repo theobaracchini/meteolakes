@@ -190,7 +190,8 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 
 	// When a controller is ready, tell it the selected year/week to load
 	$rootScope.$on("scopeReady", function() {
-		emitReload();
+		if($scope.Dates)
+			emitReload();
 	})
 
 	$scope.Time = Time;

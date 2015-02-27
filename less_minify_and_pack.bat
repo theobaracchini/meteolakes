@@ -6,9 +6,9 @@ call lessc css\bootstrap.less > css\bootstrap.less.css
 
 :: CSS
 
-type css\bootstrap.less.css > css\style.min.css
-echo. >> css\style.min.css
-..\jsmin < css\style.css >> css\style.min.css
+type css\bootstrap.less.css > style.min.css
+echo. >> style.min.css
+..\jsmin < css\style.css >> style.min.css
 
 :: JS
 
@@ -34,3 +34,10 @@ type timeCtrl.js >> code.js
 echo. >> code.js
 
 ..\jsmin < code.js > code.min.js
+
+
+:: Delete the old archive
+del package.zip
+
+:: Package the new page
+"C:\Program Files (x86)\7-Zip\7z.exe" u -tZip package.zip code.min.js style.min.css dot.png marker.png fonts

@@ -1,5 +1,3 @@
-// Interval (in minutes) between 2 data points
-var INTERVAL = 180;
 
 var DATA_HOST = "http://aphyspc1.epfl.ch/meteolac/";
  
@@ -83,80 +81,64 @@ function NumberOfWeeks(year) {
     var dec31 = new Date(year,11, 31);
     return GetWeek(dec31);
 } 
-var TemporalData = function(valuesFile, numberOfValues, numberOfTimesteps, callback) {
+var TemporalData = function(valuesFile, callback) {
 	var me = this;
-	this.numberOfValues = numberOfValues;
-	this.gridWidth = 182;
-	this.gridHeight = 36;
-	this.nT = numberOfTimesteps;
 
-	// Empty array used when the data is not available
-	this.PrepareFallbackArray();
-	
-	// Read the initial data
-	this.readArray(valuesFile, function(arr) { 
-		me.Data = arr;
-		callback();
-	});
-}
-
-TemporalData.prototype.PrepareFallbackArray = function() {
-	var fallback = [];
-	var vals = [];
-	for(var t = 0 ; t < this.nT ; ++t) {
-		var data = [];
-		for(var i = 0 ; i < this.numberOfValues ; ++i) {
-			data.push(0);
+	// Read the initial data config
+	d3.json(valuesFile + ".json", function(err, config) {
+		if(err) {
+			console.log("File not found (" + valuesFile + ") falling back to default array");
+			callback();
+			return;	
 		}
-		if(this.numberOfValues == 1)
-			vals.push(data[0]);
-		else
-			vals.push(data);
-	}
 
-    for(var i = 0 ; i < this.gridWidth*this.gridHeight ; ++i) {
-    	var v =
-    		{
-    			x:0,
-    			y:0,
-    			value:vals
-    		};
-    	fallback.push(v);
-    }
-
-    this.fallBackArray = fallback;
+		// Read the initial data
+		me.readArray(valuesFile, config, function(arr) { 
+			me.Data = arr;
+			callback();
+		});
+	});
 }
 
 TemporalData.prototype.PrepareNextFiles = function(valuesFile) {
 	var me = this;
-	this.readArray(valuesFile, function(arr) { 
-		me.NextData = arr;
+
+	// Read the next data config
+	d3.json(valuesFile + ".json", function(err, config) {
+		if(err) {
+			console.log("File not found (" + valuesFile + ") falling back to default array");
+			return;	
+		}
+
+		me.readArray(valuesFile, config, function(arr) { 
+			me.NextData = arr;
+		});
 	});
 
 	return this;
 }
 
-TemporalData.prototype.X = function(arr, index) {
-	var idx = this.gridHeight*(2+this.numberOfValues*this.nT)*parseInt(index/this.gridHeight) + (index % this.gridHeight);
+TemporalData.prototype.X = function(arr, index, config) {
+	var idx = config.GridHeight*(2+config.NumberOfValues*config.Timesteps)*parseInt(index/config.GridHeight) + (index % config.GridHeight);
 	return arr[idx];
 }
 
-TemporalData.prototype.Y = function(arr, index) {
-	var idx = this.gridHeight*(2+this.numberOfValues*this.nT)*parseInt(index/this.gridHeight) + (index % this.gridHeight) + this.gridHeight;
+TemporalData.prototype.Y = function(arr, index, config) {
+	var idx = config.GridHeight*(2+config.NumberOfValues*config.Timesteps)*parseInt(index/config.GridHeight) + (index % config.GridHeight) + config.GridHeight;
 	return arr[idx];
 }
 
-TemporalData.prototype.V = function(arr, index) {
-	var from = this.gridHeight*(2+this.numberOfValues*this.nT)*parseInt(index/this.gridHeight) + (index % this.gridHeight) + 2*this.gridHeight;
+TemporalData.prototype.V = function(arr, index, config) {
+	var from = config.GridHeight*(2+config.NumberOfValues*config.Timesteps)*parseInt(index/config.GridHeight) + (index % config.GridHeight) + 2*config.GridHeight;
 
 	var vals = [];
-	for(var t = 0 ; t < this.nT ; ++t) {
+	for(var t = 0 ; t < config.Timesteps ; ++t) {
 		var data = [];
-		for(var i = 0 ; i < this.numberOfValues ; ++i) {
-			var idx = from + i*this.nT*this.gridHeight + t*this.gridHeight;
+		for(var i = 0 ; i < config.NumberOfValues ; ++i) {
+			var idx = from + i*config.Timesteps*config.GridHeight + t*config.GridHeight;
 			data.push(arr[idx]);
 		}
-		if(this.numberOfValues == 1)
+		if(config.NumberOfValues == 1)
 			vals.push(data[0]);
 		else
 			vals.push(data);
@@ -176,23 +158,24 @@ TemporalData.prototype.SwitchToNextData = function() {
 	return this;
 }
 
-TemporalData.prototype.readArray = function(file, callback) {
+TemporalData.prototype.readArray = function(file, config, callback) {
 	var me = this;
+
 	d3.text(file, function(err, data) {
 		if(err) {
 			console.log("File not found (" + file + ") falling back to default array");
-			callback(me.fallBackArray);
+			callback([]);
 			return;
 		}
         // split data at line breaks and commas and parse the numbers
         var arr =  data.split(/[,\n]/).map(function(d) { return parseFloat(d); });
         var res = [];
-        for(var i = 0 ; i < me.gridWidth*me.gridHeight ; ++i) {
+        for(var i = 0 ; i < config.GridWidth*config.GridHeight ; ++i) {
         	var v =
         		{
-        			x:me.X(arr, i),
-        			y:me.Y(arr, i),
-        			value:me.V(arr, i)
+        			x:me.X(arr, i, config),
+        			y:me.Y(arr, i, config),
+        			value:me.V(arr, i, config)
         		};
         	res.push(v);
         }
@@ -200,7 +183,7 @@ TemporalData.prototype.readArray = function(file, callback) {
         me.recomputeBounds(res);
 
 		callback(res);
-	})
+	});
 
 	return this;
 }
@@ -443,7 +426,7 @@ app.factory("Time", function() {
 
     return { 
         tIndex: 0,
-        nT: 24*7/3, // number of time steps in a week  
+        nT: 7*24*60, // number of time steps in a week
         increase: function(loop) {
             if(loop) {
                 this.tIndex ++;
@@ -454,8 +437,10 @@ app.factory("Time", function() {
         },
         decrease: function() {
             this.tIndex = Math.max(0, this.tIndex-1);
+        },
+        recomputeTimesteps: function(interval) {
+            this.nT = 7*24*60/interval;
         }
-
     };
 })
 
@@ -601,8 +586,8 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 		$rootScope.$on("reloadWeek", function(evt, time) {
 			isDataReady = false;
 
-			var currentFilename = DATA_HOST + "data/" + time.year + "/temperature/data_week" + time.week + ".csv";
-			var nextFilename = DATA_HOST + "data/" + time.year + "/temperature/data_week" + (time.week+1) + ".csv";
+			var currentFilename = DATA_HOST + time.folder + "/" + time.year + "/temperature/data_week" + time.week + ".csv";
+			var nextFilename = DATA_HOST + time.folder + "/" + time.year + "/temperature/data_week" + (time.week+1) + ".csv";
 
 			if($scope.tData && $scope.tData.HasNextData() && !time.fullReload) {
 				// If we have already loaded the next values file, swap it and load the one after that
@@ -611,7 +596,7 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 				dataReady();
 			} else {
 				// First time initialization
-				$scope.tData = new TemporalData(currentFilename, 1, 7*24*60/INTERVAL, function() {
+				$scope.tData = new TemporalData(currentFilename, function() {
 					dataReady();
 					prepareGraphics();
 
@@ -704,12 +689,11 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 	function animate() {
 		if(!isDataReady) return;
 
-		// Protect against out-of-bounds ex
-		if(Time.tIndex >= $scope.tData.nT) return;
-
 	    // Animate the stuff here (transitions, color updates etc.)
 		var rectSize = x(700) - x(0);
 	    $scope.tData.Data.forEach(function(d, i) {
+	    	if(Time.tIndex >= d.value.length) return;
+	    	
 	        var value = d.value[Time.tIndex];
 	        sprites[i].sprite.visible = !isNaN(d.value[Time.tIndex]);
 	        sprites[i].graphic.position.x = x(d.x)-rectSize/2;
@@ -751,7 +735,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 
     var x,y,c; // d3 axis (x,y, color)
 	var rectSize;
-	var particleSystems = [];
+	var sprites = [];
 
     var colorLegend = prepareLegend();
 
@@ -766,8 +750,8 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 		$rootScope.$on("reloadWeek", function(evt, time) {
 			isDataReady = false;
 
-			var currentFilename = DATA_HOST + "data/" + time.year + "/velocity/data_week" + time.week + ".csv";
-			var nextFilename = DATA_HOST + "data/" + time.year + "/velocity/data_week" + (time.week+1) + ".csv";
+			var currentFilename = DATA_HOST + time.folder + "/" + time.year + "/velocity/data_week" + time.week + ".csv";
+			var nextFilename = DATA_HOST + time.folder + "/" + time.year + "/velocity/data_week" + (time.week+1) + ".csv";
 
 			if($scope.tData && $scope.tData.HasNextData() && !time.fullReload) {
 				// If we have already loaded the next values file, swap it and load the one after that
@@ -776,7 +760,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 				dataReady();
 			} else {
 				// First time initialization
-				$scope.tData = new TemporalData(currentFilename, 2, 7*24*60/INTERVAL, function() {
+				$scope.tData = new TemporalData(currentFilename, function() {
 					dataReady();
 					prepareGraphics();
 
@@ -790,8 +774,6 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	    $rootScope.$on("reloadChart", function(evt, pointIndex) {
 			$scope.Chart.SelectPoint(pointIndex);
 		})
-
-		$rootScope.$on("tick", TimeTick);
 
 		// start the renderer
 		d3.timer(animate);
@@ -817,7 +799,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	    var minVel = d3.min($scope.tData.Data.map(function(d) { return d3.min(d.value.map(function(v) { return norm(v); })) }));
 		var maxVel = d3.max($scope.tData.Data.map(function(d) { return d3.max(d.value.map(function(v) { return norm(v); })) }));
 
-	    c = d3.scale.linear().domain([minVel, maxVel]).range(["gray", "white"]);
+	    c = d3.scale.linear().domain([minVel, (minVel+maxVel)/2, maxVel]).range(["blue", "lime", "red"]);
 
 	    // Prepare all thingies
 	    updateLegend(minVel, maxVel);
@@ -830,21 +812,23 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	 * 
 	 */
 	function prepareGraphics() {
-	    rectSize = (x(350) - x(0));
+	    var rectSize = x(700) - x(0);
 
 	    // Clear the stage
 	    for (var i = stage.children.length - 1; i >= 0; i--) {
 			stage.removeChild(stage.children[i]);
 		};
 
-		// Add one particle emitter per data point
 	    $scope.tData.Data.forEach(function(d, i) {
-	    	particleSystems[i] = new ParticleEmitter(x(d.x), y(d.y), rectSize);
-	    	particleSystems[i].SetRenderer(stage);
-	    	particleSystems[i].EnableParticleInteractivity(
-	    		function(mouseData) { $rootScope.$emit("reloadChart", i); mouseDown = true; },
-	    		function(mouseData) { if(!mouseDown) return; $rootScope.$emit("reloadChart", i); },
-	    		function(mouseData) { mouseDown = false; });
+	        var doc = rectangle(x(d.x)-rectSize/2, y(d.y)-rectSize/2,
+	            rectSize,rectSize,
+	            parseInt(c(norm(d.value[Time.tIndex])).toString().replace("#", "0x")));
+	        stage.addChild(doc.graphic);
+	        sprites[i] = doc;
+	        sprites[i].sprite.interactive = true;
+	        sprites[i].sprite.mousedown = function(mouseData) { $rootScope.$emit("reloadChart", i); mouseDown = true; }
+	        sprites[i].sprite.mouseover = function(mouseData) { if(!mouseDown) return; $rootScope.$emit("reloadChart", i); }
+	        sprites[i].sprite.mouseup = function(mouseData) { mouseDown = false; }
 	    });
 
 	    // Prepare the marker symbol
@@ -874,41 +858,26 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	}
 
 	/*
-	 * This function is called at each time control ticks.
-	 * It is bound to the "tick" event sent by the rootScope.
-	 * Do not call this directly.
-	 */
-	function TimeTick() {
-		// Emit new particles for each grid point.
-	    $scope.tData.Data.forEach(function(d, i) {
-	    	var vec = d.value[Time.tIndex];
-        	var color = parseInt(c(norm(vec)).toString().replace("#", "0x"));
-        	// We need to divide by 1000 because the speed is given in m/s and we
-        	// want it in km/s (because the position axis are in km).
-        	var dx = x(vec[0]/1000) - x(0);
-        	var dy = y(vec[1]/1000) - y(0);
-        	// Also, because of the scale of the visualization, we amplify all 
-        	// movements so we can see them better 
-        	var velocityScale = 30000000;
-        	particleSystems[i].Emit(dx*velocityScale, dy*velocityScale, color);
-	    });
-	}
-
-	/*
-	 * This function runs under a timer. It is in charge of ticking
-	 * the particle emitters and rendering the canvas.
+	 * This function runs under a timer. It is in charge of rendering the canvas.
 	 * Do not call this directly.
 	 */
 	function animate() {
 		if(!isDataReady) return;
 
-		// Protect against out-of-bounds exceptions
-		if(Time.tIndex >= $scope.tData.nT) return;
-
 	    // Animate the stuff here (transitions, color updates etc.)
+		var rectSize = x(700) - x(0);
 	    $scope.tData.Data.forEach(function(d, i) {
-        	particleSystems[i].Tick(1/60);
-	    });
+	    	if(Time.tIndex >= d.value.length) return;
+
+	        var value = d.value[Time.tIndex];
+	        sprites[i].sprite.visible = !isNaN(norm(d.value[Time.tIndex]));
+	        sprites[i].graphic.position.x = x(d.x)-rectSize/2;
+	        sprites[i].graphic.position.y = y(d.y)-rectSize/2;
+	        sprites[i].sprite.width = rectSize;
+	        sprites[i].sprite.height = rectSize;
+     	   	var color = parseInt(c(norm(value)).toString().replace("#", "0x"));
+			sprites[i].sprite.tint = color;
+	    })
 
 	    // Put the marker sprite at the correct position
 	    markerSprite.visible = $scope.pointIndex != undefined;
@@ -938,6 +907,8 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 
     var tickTimerId = null;
     var loopType = "repeat";
+
+    $scope.Interval = 0;
 
     // ------------------------------------------------------------------------
     // BOUND TO THE HTML
@@ -988,7 +959,7 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 
 		// tIndex corresponds to intervals, which are given by the global INTERVAL
 		// in minutes, so we need to convert it into milliseconds
-		var currentDate = new Date(refDate + ti*INTERVAL*60*1000);
+		var currentDate = new Date(refDate + ti*$scope.Interval*60*1000);
 		return currentDate.toLocaleDateString() + ":" + currentDate.getHours() + "h"; 	
 	}
 
@@ -1031,6 +1002,10 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 
 	$scope.selectYear = function(year) {
 		$scope.SelectedYear = year;
+		$scope.Weeks = [];
+		for(var week in $scope.Dates[$scope.SelectedLake]["data"]["Y" + $scope.SelectedYear]) {
+			$scope.Weeks.push(week);
+		}
 	}
 
     function tick() {
@@ -1055,32 +1030,77 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
      * a new week.
      */
 	function emitReload() {
-		$rootScope.$emit("reloadWeek", {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:false});
+		$rootScope.$emit("reloadWeek", {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:false, folder:$scope.Dates[$scope.SelectedLake]["folder"]});
 	}
 	/**
 	 * Emit a "reloadWeek" message, indicating that the user changed a 
 	 * parameter in the time fields and that all data needs to be reloaded.
 	 */
 	function emitFullReload() {
-		$rootScope.$emit("reloadWeek", {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:true});
+		$rootScope.$emit("reloadWeek", {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:true, folder:$scope.Dates[$scope.SelectedLake]["folder"]});
 	}
 
-	// Available weeks to select from
-	var now = new Date();
-	var lastWeekNumber = NumberOfWeeks(now.getFullYear()); // months are 0-indexed
-	$scope.Weeks = d3.range(1, lastWeekNumber);
-	$scope.SelectedWeek = GetWeek(now);
+	function loadAvailableDates(callback) {
+		$scope.Weeks = [];
+		$scope.SelectedWeek = undefined;
+		$scope.Years = [];
+		$scope.SelectedYear = undefined;
 
-	// Available years to select from
-	$scope.Years = [2009, 2014, 2015];
-	$scope.SelectedYear = now.getFullYear();
+		d3.json(DATA_HOST + "available_data.json", function(err, data) {
+			$scope.Dates = data;
+			$scope.SelectedLake = 0; // first one in the array of lakes (i.e. data[0])
+			Time.recomputeTimesteps(data[$scope.SelectedLake].interval);
+			callback();
+		});
+	}
 
-	$scope.Time = Time;
+	function selectWeekClosestToNow() {
+		var now = new Date();
+		var currentWeek = GetWeek(now);
+
+		// Find the week closest to now
+		var diffWeek = Number.MAX_VALUE; // large initial value for week diff
+		$scope.Weeks = [];
+		for(var i = 0 ; i <  $scope.Dates[$scope.SelectedLake]["data"]["Y" + $scope.SelectedYear].length ; ++i) {
+			var week = $scope.Dates[$scope.SelectedLake]["data"]["Y" + $scope.SelectedYear][i];
+			
+			$scope.Weeks.push(week);
+			if(Math.abs(week - currentWeek) < diffWeek) {
+				$scope.SelectedWeek = week;
+			}
+		}
+	}
+
+	function selectDateClosestToNow() {
+		var now = new Date();
+		var currentYear = now.getFullYear();
+		
+		// Find the year closest to now
+		var diffYear = Number.MAX_VALUE; // take a large initial value for year diff
+		$scope.Years = [];
+		for(var syear in $scope.Dates[$scope.SelectedLake]["data"]) {
+			var year = parseInt(syear.substring(1));
+			$scope.Years.push(year);
+			if(Math.abs(year-currentYear) < diffYear) {
+				$scope.SelectedYear = year;
+			}
+		}
+
+		selectWeekClosestToNow();
+
+		emitReload();
+	}
+
+	loadAvailableDates(selectDateClosestToNow);
 
 	// When a controller is ready, tell it the selected year/week to load
 	$rootScope.$on("scopeReady", function() {
-		emitReload();
+		if($scope.Dates)
+			emitReload();
 	})
+
+	$scope.Time = Time;
+
 
 	// UI Logic to hide/show the sidebar time controls when scrolling
 	$(".sidebar").hide()
@@ -1101,4 +1121,5 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 
 	    return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
 	}	
-}]); 
+}]);
+ 
