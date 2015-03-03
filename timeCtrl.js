@@ -143,8 +143,9 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 
 		d3.json(DATA_HOST + "available_data.json", function(err, data) {
 			$scope.Dates = data;
-			$scope.SelectedLake = 0; // first one in the array of lakes (i.e. data[0])
-			Time.recomputeTimesteps(data[$scope.SelectedLake].interval);
+			$scope.SelectedLake = 1; // first one in the array of lakes (i.e. data[0])
+			$scope.Interval = data[$scope.SelectedLake].interval;
+			Time.recomputeTimesteps($scope.Interval);
 			callback();
 		});
 	}
