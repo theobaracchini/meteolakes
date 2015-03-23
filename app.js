@@ -73,34 +73,6 @@ function zip(arrays) {
 }
 
 // taken from http://www.html5gamedevs.com/topic/3114-question-about-rectangle-drawing/
-function rectangle(x, y, width, height, backgroundColor) { 
-    var box = new PIXI.DisplayObjectContainer();
-    var background = new PIXI.Sprite(getRectTexture(0xFFFFFF));
-    background.tint = backgroundColor;
-    background.width = width;
-    background.height = height;
-    background.position.x = 0;
-    background.position.y = 0;
-    box.addChild(background);
-    box.position.x = x;
-    box.position.y = y;
-    return {graphic:box, sprite:background};
-};
-
-function circle(x, y, radius, backgroundColor) { 
-    var box = new PIXI.DisplayObjectContainer();
-    var background = new PIXI.Sprite.fromImage("/files/content/sites/aphys/files/MeteoLac/dot.png");//(getCircleTexture(0xFFFFFF));
-    background.tint = backgroundColor;
-    background.width = radius*2;
-    background.height = radius*2;
-    background.position.x = 0;
-    background.position.y = 0;
-    box.addChild(background);
-    box.position.x = x - radius/2;
-    box.position.y = y - radius/2;
-    return {graphic:box, sprite:background};
-};
-
 var rectColorTextures = {};
 function getRectTexture(color) {
     if(rectColorTextures[color] === undefined) {
@@ -134,3 +106,45 @@ function getCircleTexture(color) {
     }
     return circleColorTextures[color];
 };
+
+function rectangle(x, y, width, height, backgroundColor) { 
+    var box = new PIXI.DisplayObjectContainer();
+    var background = new PIXI.Sprite(getRectTexture(0xFFFFFF));
+    background.tint = backgroundColor;
+    background.width = width;
+    background.height = height;
+    background.position.x = 0;
+    background.position.y = 0;
+    box.addChild(background);
+    box.position.x = x;
+    box.position.y = y;
+    return {graphic:box, sprite:background};
+};
+
+function circle(x, y, radius, backgroundColor) { 
+    var box = new PIXI.DisplayObjectContainer();
+    var background = new PIXI.Sprite(getCircleTexture(0xFFFFFF)); //new PIXI.Sprite.fromImage("/files/content/sites/aphys/files/MeteoLac/dot.png");
+    background.tint = backgroundColor;
+    background.width = radius*2;
+    background.height = radius*2;
+    background.position.x = 0;
+    background.position.y = 0;
+    box.addChild(background);
+    box.position.x = x - radius/2;
+    box.position.y = y - radius/2;
+    return {graphic:box, sprite:background};
+};
+
+function line(x1, y1, x2, y2, height, color) {
+    var length = Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
+
+    var graphics = rectangle(x1, y1-height/2, length, height, color);
+     
+     // the angle in radians of the line
+     var angle = Math.atan2(y2-y1, x2-x1);
+
+     // rotate that angle
+     graphics.graphic.rotation = angle;
+
+    return graphics;
+}

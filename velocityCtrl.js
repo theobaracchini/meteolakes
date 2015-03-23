@@ -16,6 +16,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
     var x,y,c; // d3 axis (x,y, color)
 	var rectSize;
 	var sprites = [];
+	var lines = [];
 
     var colorLegend = prepareLegend();
 
@@ -92,7 +93,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	 * 
 	 */
 	function prepareGraphics() {
-	    var rectSize = x(700) - x(0);
+	    var rectSize = x(100) - x(0);
 
 	    // Clear the stage
 	    for (var i = stage.children.length - 1; i >= 0; i--) {
@@ -100,15 +101,23 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 		};
 
 	    $scope.tData.Data.forEach(function(d, i) {
-	        var doc = rectangle(x(d.x)-rectSize/2, y(d.y)-rectSize/2,
-	            rectSize,rectSize,
+
+	    	// Dots at grid locations
+	        /*var doc = circle(x(d.x), y(d.y), rectSize,
 	            parseInt(c(norm(d.value[Time.tIndex])).toString().replace("#", "0x")));
 	        stage.addChild(doc.graphic);
 	        sprites[i] = doc;
 	        sprites[i].sprite.interactive = true;
 	        sprites[i].sprite.mousedown = function(mouseData) { $rootScope.$emit("reloadChart", i); mouseDown = true; }
 	        sprites[i].sprite.mouseover = function(mouseData) { if(!mouseDown) return; $rootScope.$emit("reloadChart", i); }
-	        sprites[i].sprite.mouseup = function(mouseData) { mouseDown = false; }
+	        sprites[i].sprite.mouseup = function(mouseData) { mouseDown = false; }*/
+
+	        // Animated lines on top, starting at 
+	        var lengthFactor = 2500;
+	        var lineHeight = 1;
+	        var li = line(x(d.x), y(d.y), x(d.x + d.value[Time.tIndex][0]*lengthFactor), y(d.y + d.value[Time.tIndex][1]*lengthFactor), lineHeight, "0x000000");
+	        lines[i] = li;
+	        stage.addChild(li.graphic);
 	    });
 
 	    // Prepare the marker symbol
@@ -146,18 +155,25 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 		if(!isDataReady) return;
 
 	    // Animate the stuff here (transitions, color updates etc.)
-		var rectSize = x(700) - x(0);
+		var rectSize = x(100) - x(0);
 	    $scope.tData.Data.forEach(function(d, i) {
 	    	if(Time.tIndex >= d.value.length) return;
 
 	        var value = d.value[Time.tIndex];
-	        sprites[i].sprite.visible = !isNaN(norm(d.value[Time.tIndex]));
+	        /*sprites[i].sprite.visible = !isNaN(norm(d.value[Time.tIndex]));
 	        sprites[i].graphic.position.x = x(d.x)-rectSize/2;
 	        sprites[i].graphic.position.y = y(d.y)-rectSize/2;
 	        sprites[i].sprite.width = rectSize;
 	        sprites[i].sprite.height = rectSize;
      	   	var color = parseInt(c(norm(value)).toString().replace("#", "0x"));
-			sprites[i].sprite.tint = color;
+			sprites[i].sprite.tint = color;*/
+
+		    var angle = Math.atan2(value[1], value[0]);
+		    lines[i].graphic.rotation = angle;
+
+		    lines[i].graphic.width = norm(value)*x(2500);
+		    var color = parseInt(c(norm(value)).toString().replace("#", "0x"));
+			lines[i].sprite.tint = color;
 	    })
 
 	    // Put the marker sprite at the correct position

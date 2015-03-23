@@ -140,10 +140,6 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 	    	
 	        var value = d.value[Time.tIndex];
 	        sprites[i].sprite.visible = !isNaN(d.value[Time.tIndex]);
-	        sprites[i].graphic.position.x = x(d.x)-rectSize/2;
-	        sprites[i].graphic.position.y = y(d.y)-rectSize/2;
-	        sprites[i].sprite.width = rectSize;
-	        sprites[i].sprite.height = rectSize;
      	   	var color = parseInt(c(value).toString().replace("#", "0x"));
 			sprites[i].sprite.tint = color;
 	    })
