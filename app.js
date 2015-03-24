@@ -135,6 +135,10 @@ function circle(x, y, radius, backgroundColor) {
     return {graphic:box, sprite:background};
 };
 
+/* Constructs a line from the given starting point to the given ending point.
+ * Actually constructs a rectangle sprite and rotates it accordingly.
+ * To Change the length of the line, change its o.graphic.width attribute.
+ */
 function line(x1, y1, x2, y2, height, color) {
     var length = Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
 
