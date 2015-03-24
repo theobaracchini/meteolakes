@@ -39,7 +39,7 @@ function PrepareWebGLContext(containerId, interactive, aspectRatio) {
     // create a renderer instance.
     var container = d3.select(containerId);
 
-    var dim = findDimensions(container, 2);
+    var dim = findDimensions(container, aspectRatio);
     var width = dim.width;
     var height = dim.height;
     var renderer = PIXI.autoDetectRenderer(width, height);

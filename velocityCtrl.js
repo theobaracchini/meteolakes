@@ -94,7 +94,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	 * 
 	 */
 	function prepareGraphics() {
-	    var rectSize = x(700) - x(0);
+	    var rectSize = x(50) - x(0);
 
 	    // Clear the stage
 	    for (var i = stage.children.length - 1; i >= 0; i--) {
@@ -104,7 +104,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	    $scope.tData.Data.forEach(function(d, i) {
 
 	    	// Clickable dots at grid locations
-	        /*var doc = circle(x(d.x), y(d.y), rectSize, "0xFFFFFF");
+	        /*var doc = circle(x(d.x), y(d.y), rectSize, "0x000000");
 	        stage.addChild(doc.graphic);
 	        sprites[i] = doc;
 	        sprites[i].sprite.interactive = true;
@@ -155,7 +155,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 		if(!isDataReady) return;
 
 	    // Animate the stuff here (transitions, color updates etc.)
-		var rectSize = x(100) - x(0);
+		var rectSize = x(10) - x(0);
 	    $scope.tData.Data.forEach(function(d, i) {
 	    	if(Time.tIndex >= d.value.length) return;
 
@@ -164,7 +164,8 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 		    var angle = Math.atan2(value[1], value[0]);
 		    lines[i].graphic.rotation = angle;
 
-		    lines[i].graphic.width = norm(value)*x(lengthFactor);
+		    lines[i].graphic.width = (x(norm(value)) - x(0))*lengthFactor;
+
 		    var color = parseInt(c(norm(value)).toString().replace("#", "0x"));
 			lines[i].sprite.tint = color;
 	    })
