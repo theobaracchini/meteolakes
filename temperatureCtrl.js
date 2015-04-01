@@ -30,23 +30,29 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 		$rootScope.$on("reloadWeek", function(evt, time) {
 			isDataReady = false;
 
-			var currentFilename = DATA_HOST + time.folder + "/" + time.year + "/temperature/data_week" + time.week + ".csv";
-			var nextFilename = DATA_HOST + time.folder + "/" + time.year + "/temperature/data_week" + (time.week+1) + ".csv";
-
-			if($scope.tData && $scope.tData.HasNextData() && !time.fullReload) {
-				// If we have already loaded the next values file, swap it and load the one after that
-				$scope.tData.SwitchToNextData().PrepareNextFiles(nextFilename);
-
-				dataReady();
+			if($scope.tData && !time.fullReload) {
+				// Regular switching of weeks, because the time slider was moving forward.
+				$scope.tData.SwitchToData(time.week, time.year).PrepareData(time.week+1, time.year, function() { 
+					dataReady();
+				});
+			} else if($scope.tData && time.fullReload) {
+				// User changed the date in the lists.
+				// Typically means that the required data and the next data are not ready yet.
+				$scope.tData.PrepareData(time.week, time.year, function() {
+					$scope.tData.SwitchToData(time.week, time.year);
+					dataReady();
+					prepareGraphics();
+				});
+				$scope.tData.PrepareData(time.week+1, time.year, function() {});
 			} else {
-				// First time initialization
-				$scope.tData = new TemporalData(currentFilename, function() {
+				// First time initialization. Load the required data and the next.
+				$scope.tData = new TemporalData(time.folder, 'temperature', time.week, time.year, function() {
 					dataReady();
 					prepareGraphics();
 
 					// Load the next file
-			    	$scope.tData.PrepareNextFiles(nextFilename);
-				})
+			    	$scope.tData.PrepareData(time.week+1, time.year, function() {});
+				});
 			}
 		})
 

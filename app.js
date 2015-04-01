@@ -140,15 +140,68 @@ function circle(x, y, radius, backgroundColor) {
  * To Change the length of the line, change its o.graphic.width attribute.
  */
 function line(x1, y1, x2, y2, height, color) {
-    var length = Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
+    //var length = Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
 
-    var graphics = rectangle(x1, y1-height/2, length, height, color);
-     
+    //var graphics = rectangle(x1, y1-height/2, length, height, color);
+    var graphics = new PIXI.Graphics();
+    graphics.beginFill(0xFF0000);
+    graphics.lineStyle(height, color);
+
+    graphics.moveTo(x1, y1);
+    graphics.lineTo(x2, y2);
+
      // the angle in radians of the line
      var angle = Math.atan2(y2-y1, x2-x1);
 
      // rotate that angle
-     graphics.graphic.rotation = angle;
+     //graphics.graphic.rotation = angle;
 
-    return graphics;
+    return {graphic: graphics};
+}
+
+function arrow(x1, y1, dx, dy, width, color) {
+    var alpha = 30*Math.PI/180.0;
+    var headSize = 5;
+
+    var norm = Math.sqrt(dx*dx + dy*dy);
+
+    var x3 = x1 + dx - (dx*Math.cos(alpha) - dy*Math.sin(alpha))/norm*headSize;
+    var y3 = y1 + dy - (dx*Math.sin(alpha) + dy*Math.cos(alpha))/norm*headSize;
+
+    var x4 = x1 + dx - (dx*Math.cos(-alpha) - dy*Math.sin(-alpha))/norm*headSize;
+    var y4 = y1 + dy - (dx*Math.sin(-alpha) + dy*Math.cos(-alpha))/norm*headSize;
+
+    var graphicArrow = new PIXI.DisplayObjectContainer();
+
+    graphicArrow.position.x = x1 + dx/2;
+    graphicArrow.position.y = y1 + dy/2;
+
+    // arrow head
+    var head = new PIXI.Graphics();
+    head.beginFill(0xFF0000);
+    head.lineStyle(width, color);
+
+    head.moveTo(graphicArrow.position.x - (x1 + dx), graphicArrow.position.y - (y1 + dy));
+    head.lineTo(graphicArrow.position.x - x3, graphicArrow.position.y - y3);
+    head.lineTo(graphicArrow.position.x - x4, graphicArrow.position.y - y4);
+    head.endFill();
+    graphicArrow.addChild(head);
+
+    // arrow body
+    var body = new PIXI.Graphics();
+    body.beginFill(0xFF0000);
+    body.lineStyle(width, color);
+
+    body.moveTo(graphicArrow.position.x - x1, graphicArrow.position.y - y1);
+    body.lineTo(graphicArrow.position.x - (x1 + dx), graphicArrow.position.y - (y1 + dy));
+    body.endFill();
+    graphicArrow.addChild(body);
+
+     // the angle in radians of the line
+     var angle = Math.atan2(dy, dx);
+
+     // rotate that angle
+     //graphicArrow.rotation = angle;
+
+    return {graphic: graphicArrow};
 }

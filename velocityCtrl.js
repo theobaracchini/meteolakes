@@ -4,7 +4,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	// PROPERTIES
 	// ========================================================================
 
-	var lengthFactor = 1250;
+	var lengthFactor = 1;
 	var webgl = PrepareWebGLContext("#velContainer", true, 2);
 	var width = webgl.width;
 	var height = webgl.height;
@@ -32,23 +32,29 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 		$rootScope.$on("reloadWeek", function(evt, time) {
 			isDataReady = false;
 
-			var currentFilename = DATA_HOST + time.folder + "/" + time.year + "/velocity/data_week" + time.week + ".csv";
-			var nextFilename = DATA_HOST + time.folder + "/" + time.year + "/velocity/data_week" + (time.week+1) + ".csv";
-
-			if($scope.tData && $scope.tData.HasNextData() && !time.fullReload) {
-				// If we have already loaded the next values file, swap it and load the one after that
-				$scope.tData.SwitchToNextData().PrepareNextFiles(nextFilename);
-
-				dataReady();
+			if($scope.tData && !time.fullReload) {
+				// Regular switching of weeks, because the time slider was moving forward.
+				$scope.tData.SwitchToData(time.week, time.year).PrepareData(time.week+1, time.year, function() { 
+					dataReady();
+				});
+			} else if($scope.tData && time.fullReload) {
+				// User changed the date in the lists.
+				// Typically means that the required data and the next data are not ready yet.
+				$scope.tData.PrepareData(time.week, time.year, function() {
+					$scope.tData.SwitchToData(time.week, time.year);
+					dataReady();
+					prepareGraphics();
+				});
+				$scope.tData.PrepareData(time.week+1, time.year, function() {});
 			} else {
-				// First time initialization
-				$scope.tData = new TemporalData(currentFilename, function() {
+				// First time initialization. Load the required data and the next.
+				$scope.tData = new TemporalData(time.folder, 'velocity', time.week, time.year, function() {
 					dataReady();
 					prepareGraphics();
 
 					// Load the next file
-			    	$scope.tData.PrepareNextFiles(nextFilename);
-				})
+			    	$scope.tData.PrepareData(time.week+1, time.year, function() {});
+				});
 			}
 		})
 
@@ -114,8 +120,8 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 
 	        // Animated lines on top
 	        
-	        var lineHeight = 1;
-	        var li = line(x(d.x), y(d.y), x(d.x + d.value[Time.tIndex][0]*lengthFactor), y(d.y + d.value[Time.tIndex][1]*lengthFactor), lineHeight, "0x000000");
+	        var lineWidth = 1;
+	        var li = arrow(x(d.x), y(d.y), -10, 0, lineWidth, "0x000000");
 	        lines[i] = li;
 	        stage.addChild(li.graphic);
 	    });
@@ -164,14 +170,14 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 		    var angle = Math.atan2(value[1], value[0]);
 		    lines[i].graphic.rotation = angle;
 
-		    lines[i].graphic.width = (x(norm(value)) - x(0))*lengthFactor;
+		  	//lines[i].graphic.scale.x = 100*norm(value);
 
 		    var color = parseInt(c(norm(value)).toString().replace("#", "0x"));
-			lines[i].sprite.tint = color;
+			lines[i].graphic.tint = color;
 	    })
 
 	    // Put the marker sprite at the correct position
-	    markerSprite.visible = $scope.pointIndex != undefined;
+	    //markerSprite.visible = $scope.pointIndex != undefined;
 	    if($scope.pointIndex != undefined) {
 	    	markerSprite.position.x = x($scope.tData.Data[$scope.pointIndex].x) - markerSprite.width / 2;
 	    	markerSprite.position.y = y($scope.tData.Data[$scope.pointIndex].y) - markerSprite.height / 2;

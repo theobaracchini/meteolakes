@@ -1,36 +1,22 @@
-var TemporalData = function(valuesFile, callback) {
+var TemporalData = function(dataFolder, fieldName, week, year, callback) {
 	var me = this;
 
-	// Read the initial data config
-	d3.json(valuesFile + ".json", function(err, config) {
-		if(err) {
-			console.log("File not found (" + valuesFile + ") falling back to default array");
-			callback();
-			return;	
-		}
+	me.dataFolder = dataFolder;
+	me.fieldName = fieldName;
+	me.buffered = [];
 
-		// Read the initial data
-		me.readArray(valuesFile, config, function(arr) { 
-			me.Data = arr;
-			callback();
-		});
+	// Read the initial data
+	me.readData(week, year, function(arr) { 
+		me.Data = arr;
+		callback();
 	});
 }
 
-TemporalData.prototype.PrepareNextFiles = function(valuesFile) {
+TemporalData.prototype.PrepareData = function(week, year, callback) {
 	var me = this;
 
 	// Read the next data config
-	d3.json(valuesFile + ".json", function(err, config) {
-		if(err) {
-			console.log("File not found (" + valuesFile + ") falling back to default array");
-			return;	
-		}
-
-		me.readArray(valuesFile, config, function(arr) { 
-			me.NextData = arr;
-		});
-	});
+	this.readData(week, year, function(arr) { callback(); });
 
 	return this;
 }
@@ -64,14 +50,35 @@ TemporalData.prototype.V = function(arr, index, config) {
 	return vals;
 }
 
-TemporalData.prototype.SwitchToNextData = function() {
-	if(this.HasNextData()) {
-		// free memory
-		this.Data = null;
-		this.Data = this.NextData;
-		this.NextData = null;
-	}
+TemporalData.prototype.SwitchToData = function(week, year) {
+	this.Data = this.buffered[year + "_" + week];
 
+	return this;
+}
+
+TemporalData.prototype.readData = function(week, year, callback) {
+	var me = this;
+
+	// If already buffered, do not read again
+	if(me.buffered[year + "_" + week] != undefined)
+		callback(me.buffered[year + "_" + week]);
+	else {
+		var valuesFile = DATA_HOST + me.dataFolder + "/" + year + "/" + me.fieldName + "/data_week" + week + ".csv"; 
+
+		// Read the data config
+		d3.json(valuesFile + ".json", function(err, config) {
+			if(err) {
+				console.log("File not found (" + valuesFile + ") falling back to default array");
+				callback([]);
+				return;	
+			}
+		
+			me.readArray(valuesFile, config, function(arr) {
+				me.buffered[year + "_" + week] = arr;
+				callback(arr);
+			});
+		});
+	}
 	return this;
 }
 
@@ -114,5 +121,3 @@ TemporalData.prototype.recomputeBounds = function(res) {
 
 	return this;
 }
-
-TemporalData.prototype.HasNextData = function() { return this.NextData != null; }
