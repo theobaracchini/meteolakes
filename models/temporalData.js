@@ -1,15 +1,11 @@
-var TemporalData = function(dataFolder, fieldName, week, year, callback) {
-	var me = this;
-
-	me.dataFolder = dataFolder;
-	me.fieldName = fieldName;
-	me.buffered = [];
-
-	// Read the initial data
-	me.readData(week, year, function(arr) { 
-		me.Data = arr;
-		callback();
-	});
+var TemporalData = function(dataFolder, fieldName) {
+	this.dataFolder = dataFolder;
+	this.fieldName = fieldName;
+	this.buffered = [];
+	this.Data = undefined;
+	this.DataTime = [];
+	this.DataTime.Year = undefined;
+	this.DataTime.Week = undefined;
 }
 
 TemporalData.prototype.PrepareData = function(week, year, callback) {
@@ -51,6 +47,8 @@ TemporalData.prototype.V = function(arr, index, config) {
 }
 
 TemporalData.prototype.SwitchToData = function(week, year) {
+	this.DataTime.Year = year;
+	this.DataTime.Week = week;
 	this.Data = this.buffered[year + "_" + week];
 
 	return this;

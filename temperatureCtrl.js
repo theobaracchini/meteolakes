@@ -45,8 +45,10 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 				});
 				$scope.tData.PrepareData(time.week+1, time.year, function() {});
 			} else {
-				// First time initialization. Load the required data and the next.
-				$scope.tData = new TemporalData(time.folder, 'temperature', time.week, time.year, function() {
+				$scope.tData = new TemporalData(time.folder, 'temperature');
+				$scope.tData.PrepareData(time.week, time.year, function() {
+					$scope.tData.SwitchToData(time.week, time.year);
+
 					dataReady();
 					prepareGraphics();
 
@@ -84,7 +86,7 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 
 	    // Prepare all thingies
 	    updateLegend(tMin, tMax);
-	    $scope.Chart.UpdateChart().Max(tMax).Min(tMin);
+	    $scope.Chart.UpdateChart($scope.tData.DataTime).Max(tMax).Min(tMin);
 
 	    isDataReady = true;
 	}

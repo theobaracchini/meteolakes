@@ -10,7 +10,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	var height = webgl.height;
 	var stage = webgl.stage;
 	var renderer = webgl.renderer;
-	var markerSprite;
+	var markerSprite = null;
 
 	var isDataReady = false;
 
@@ -48,7 +48,10 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 				$scope.tData.PrepareData(time.week+1, time.year, function() {});
 			} else {
 				// First time initialization. Load the required data and the next.
-				$scope.tData = new TemporalData(time.folder, 'velocity', time.week, time.year, function() {
+				$scope.tData = new TemporalData(time.folder, 'velocity');
+				$scope.tData.PrepareData(time.week, time.year, function() {
+					$scope.tData.SwitchToData(time.week, time.year);
+
 					dataReady();
 					prepareGraphics();
 
@@ -91,7 +94,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 
 	    // Prepare all thingies
 	    updateLegend(minVel, maxVel);
-	    $scope.Chart.UpdateChart().Max(maxVel).Min(minVel);
+	    $scope.Chart.UpdateChart($scope.tData.DataTime).Max(maxVel).Min(minVel);
 
 	    isDataReady = true;
 	}
@@ -167,21 +170,29 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 
 	        var value = d.value[Time.tIndex];
 
+	        if(!value) return;
+	        
 		    var angle = Math.atan2(value[1], value[0]);
 		    lines[i].graphic.rotation = angle;
 
-		  	//lines[i].graphic.scale.x = 100*norm(value);
+		    var s = 100*norm(value);
+		  	lines[i].graphic.scale.x = s < 0.1 ? 0 : s;// 1000*norm(value);
 
 		    var color = parseInt(c(norm(value)).toString().replace("#", "0x"));
 			lines[i].graphic.tint = color;
 	    })
 
+	    // DEPRECATED: The velocity now uses a reduced spatial resolution.
+	    // This means that the pointIndex does not represent a correct index
+	    // anymore. Either recalculate the correct index or leave this portion
+	    // commented...
+
 	    // Put the marker sprite at the correct position
-	    //markerSprite.visible = $scope.pointIndex != undefined;
+	    /*markerSprite.visible = $scope.pointIndex != undefined;
 	    if($scope.pointIndex != undefined) {
 	    	markerSprite.position.x = x($scope.tData.Data[$scope.pointIndex].x) - markerSprite.width / 2;
 	    	markerSprite.position.y = y($scope.tData.Data[$scope.pointIndex].y) - markerSprite.height / 2;
-	    }
+	    }*/
 
 	    $scope.$apply();
 

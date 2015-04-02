@@ -25,14 +25,14 @@ Chart.prototype.SelectPoint = function(i) {
     return this;
 }
 
-Chart.prototype.UpdateChart = function() {
+Chart.prototype.UpdateChart = function(dataTime) {
 	if(!this.$scope.pointIndex)
 		return this
 
 	var p = this.$scope.tData.Data[this.$scope.pointIndex]
 
 	if(!p)
-		return this
+		return this;
 
 	$(this.containerId).fadeIn()
 
@@ -67,13 +67,22 @@ Chart.prototype.UpdateChart = function() {
 		.attr("d", function(d) { return line(d.value) })
 
 	// svg axis
-	var xAxis = d3.svg.axis().scale(tx).ticks(4).orient("top")
+    var me = this;
+	var xAxis = d3.svg.axis().scale(tx).ticks(4).tickFormat(function(d) { return me.formatTime(d)}).orient("top")
     var yAxis = d3.svg.axis().scale(y).ticks(4).orient("right");
 
     svg.select(".x.axis").call(xAxis)
     svg.select(".y.axis").call(yAxis)
 
     return this;
+}
+
+Chart.prototype.formatTime = function(d) {
+    var monday = new Date(FirstDayOfWeek(this.$scope.tData.DataTime.Week, this.$scope.tData.DataTime.Year));
+    var hoursInAWeek = 7*24;
+    var addedHours = d/this.Time.nT*hoursInAWeek;
+    monday.setHours(monday.getHours() + addedHours);
+    return monday.toDateString();
 }
 
 Chart.prototype.UpdateTimeLine = function() {
