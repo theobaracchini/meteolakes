@@ -81,39 +81,21 @@ function NumberOfWeeks(year) {
     var dec31 = new Date(year,11, 31);
     return GetWeek(dec31);
 } 
-var TemporalData = function(valuesFile, callback) {
-	var me = this;
-
-	// Read the initial data config
-	d3.json(valuesFile + ".json", function(err, config) {
-		if(err) {
-			console.log("File not found (" + valuesFile + ") falling back to default array");
-			callback();
-			return;	
-		}
-
-		// Read the initial data
-		me.readArray(valuesFile, config, function(arr) { 
-			me.Data = arr;
-			callback();
-		});
-	});
+var TemporalData = function(dataFolder, fieldName) {
+	this.dataFolder = dataFolder;
+	this.fieldName = fieldName;
+	this.buffered = [];
+	this.Data = undefined;
+	this.DataTime = [];
+	this.DataTime.Year = undefined;
+	this.DataTime.Week = undefined;
 }
 
-TemporalData.prototype.PrepareNextFiles = function(valuesFile) {
+TemporalData.prototype.PrepareData = function(week, year, callback) {
 	var me = this;
 
 	// Read the next data config
-	d3.json(valuesFile + ".json", function(err, config) {
-		if(err) {
-			console.log("File not found (" + valuesFile + ") falling back to default array");
-			return;	
-		}
-
-		me.readArray(valuesFile, config, function(arr) { 
-			me.NextData = arr;
-		});
-	});
+	this.readData(week, year, function(arr) { callback(); });
 
 	return this;
 }
@@ -147,14 +129,37 @@ TemporalData.prototype.V = function(arr, index, config) {
 	return vals;
 }
 
-TemporalData.prototype.SwitchToNextData = function() {
-	if(this.HasNextData()) {
-		// free memory
-		this.Data = null;
-		this.Data = this.NextData;
-		this.NextData = null;
-	}
+TemporalData.prototype.SwitchToData = function(week, year) {
+	this.DataTime.Year = year;
+	this.DataTime.Week = week;
+	this.Data = this.buffered[year + "_" + week];
 
+	return this;
+}
+
+TemporalData.prototype.readData = function(week, year, callback) {
+	var me = this;
+
+	// If already buffered, do not read again
+	if(me.buffered[year + "_" + week] != undefined)
+		callback(me.buffered[year + "_" + week]);
+	else {
+		var valuesFile = DATA_HOST + me.dataFolder + "/" + year + "/" + me.fieldName + "/data_week" + week + ".csv"; 
+
+		// Read the data config
+		d3.json(valuesFile + ".json", function(err, config) {
+			if(err) {
+				console.log("File not found (" + valuesFile + ") falling back to default array");
+				callback([]);
+				return;	
+			}
+		
+			me.readArray(valuesFile, config, function(arr) {
+				me.buffered[year + "_" + week] = arr;
+				callback(arr);
+			});
+		});
+	}
 	return this;
 }
 
@@ -197,8 +202,6 @@ TemporalData.prototype.recomputeBounds = function(res) {
 
 	return this;
 }
-
-TemporalData.prototype.HasNextData = function() { return this.NextData != null; }
  
 var Chart = function($scope, Time, containerId, conversionFct) {
     this.$scope = $scope
@@ -227,14 +230,14 @@ Chart.prototype.SelectPoint = function(i) {
     return this;
 }
 
-Chart.prototype.UpdateChart = function() {
+Chart.prototype.UpdateChart = function(dataTime) {
 	if(!this.$scope.pointIndex)
 		return this
 
 	var p = this.$scope.tData.Data[this.$scope.pointIndex]
 
 	if(!p)
-		return this
+		return this;
 
 	$(this.containerId).fadeIn()
 
@@ -269,13 +272,22 @@ Chart.prototype.UpdateChart = function() {
 		.attr("d", function(d) { return line(d.value) })
 
 	// svg axis
-	var xAxis = d3.svg.axis().scale(tx).ticks(4).orient("top")
+    var me = this;
+	var xAxis = d3.svg.axis().scale(tx).ticks(4).tickFormat(function(d) { return me.formatTime(d)}).orient("top")
     var yAxis = d3.svg.axis().scale(y).ticks(4).orient("right");
 
     svg.select(".x.axis").call(xAxis)
     svg.select(".y.axis").call(yAxis)
 
     return this;
+}
+
+Chart.prototype.formatTime = function(d) {
+    var monday = new Date(FirstDayOfWeek(this.$scope.tData.DataTime.Week, this.$scope.tData.DataTime.Year));
+    var hoursInAWeek = 7*24;
+    var addedHours = d/this.Time.nT*hoursInAWeek;
+    monday.setHours(monday.getHours() + addedHours);
+    return monday.toDateString();
 }
 
 Chart.prototype.UpdateTimeLine = function() {
@@ -459,7 +471,7 @@ function PrepareWebGLContext(containerId, interactive, aspectRatio) {
     // create a renderer instance.
     var container = d3.select(containerId);
 
-    var dim = findDimensions(container, 2);
+    var dim = findDimensions(container, aspectRatio);
     var width = dim.width;
     var height = dim.height;
     var renderer = PIXI.autoDetectRenderer(width, height);
@@ -493,34 +505,6 @@ function zip(arrays) {
 }
 
 // taken from http://www.html5gamedevs.com/topic/3114-question-about-rectangle-drawing/
-function rectangle(x, y, width, height, backgroundColor) { 
-    var box = new PIXI.DisplayObjectContainer();
-    var background = new PIXI.Sprite(getRectTexture(0xFFFFFF));
-    background.tint = backgroundColor;
-    background.width = width;
-    background.height = height;
-    background.position.x = 0;
-    background.position.y = 0;
-    box.addChild(background);
-    box.position.x = x;
-    box.position.y = y;
-    return {graphic:box, sprite:background};
-};
-
-function circle(x, y, radius, backgroundColor) { 
-    var box = new PIXI.DisplayObjectContainer();
-    var background = new PIXI.Sprite.fromImage("/files/content/sites/aphys/files/MeteoLac/dot.png");//(getCircleTexture(0xFFFFFF));
-    background.tint = backgroundColor;
-    background.width = radius*2;
-    background.height = radius*2;
-    background.position.x = 0;
-    background.position.y = 0;
-    box.addChild(background);
-    box.position.x = x - radius/2;
-    box.position.y = y - radius/2;
-    return {graphic:box, sprite:background};
-};
-
 var rectColorTextures = {};
 function getRectTexture(color) {
     if(rectColorTextures[color] === undefined) {
@@ -553,7 +537,106 @@ function getCircleTexture(color) {
         circleColorTextures[color] = PIXI.Texture.fromCanvas(canvas);
     }
     return circleColorTextures[color];
-}; 
+};
+
+function rectangle(x, y, width, height, backgroundColor) { 
+    var box = new PIXI.DisplayObjectContainer();
+    var background = new PIXI.Sprite(getRectTexture(0xFFFFFF));
+    background.tint = backgroundColor;
+    background.width = width;
+    background.height = height;
+    background.position.x = 0;
+    background.position.y = 0;
+    box.addChild(background);
+    box.position.x = x;
+    box.position.y = y;
+    return {graphic:box, sprite:background};
+};
+
+function circle(x, y, radius, backgroundColor) { 
+    var box = new PIXI.DisplayObjectContainer();
+    var background = new PIXI.Sprite(getCircleTexture(0xFFFFFF)); //new PIXI.Sprite.fromImage("/files/content/sites/aphys/files/MeteoLac/dot.png");
+    background.tint = backgroundColor;
+    background.width = radius*2;
+    background.height = radius*2;
+    background.position.x = 0;
+    background.position.y = 0;
+    box.addChild(background);
+    box.position.x = x - radius/2;
+    box.position.y = y - radius/2;
+    return {graphic:box, sprite:background};
+};
+
+/* Constructs a line from the given starting point to the given ending point.
+ * Actually constructs a rectangle sprite and rotates it accordingly.
+ * To Change the length of the line, change its o.graphic.width attribute.
+ */
+function line(x1, y1, x2, y2, height, color) {
+    //var length = Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
+
+    //var graphics = rectangle(x1, y1-height/2, length, height, color);
+    var graphics = new PIXI.Graphics();
+    graphics.beginFill(0xFF0000);
+    graphics.lineStyle(height, color);
+
+    graphics.moveTo(x1, y1);
+    graphics.lineTo(x2, y2);
+
+     // the angle in radians of the line
+     var angle = Math.atan2(y2-y1, x2-x1);
+
+     // rotate that angle
+     //graphics.graphic.rotation = angle;
+
+    return {graphic: graphics};
+}
+
+function arrow(x1, y1, dx, dy, width, color) {
+    var alpha = 30*Math.PI/180.0;
+    var headSize = 5;
+
+    var norm = Math.sqrt(dx*dx + dy*dy);
+
+    var x3 = x1 + dx - (dx*Math.cos(alpha) - dy*Math.sin(alpha))/norm*headSize;
+    var y3 = y1 + dy - (dx*Math.sin(alpha) + dy*Math.cos(alpha))/norm*headSize;
+
+    var x4 = x1 + dx - (dx*Math.cos(-alpha) - dy*Math.sin(-alpha))/norm*headSize;
+    var y4 = y1 + dy - (dx*Math.sin(-alpha) + dy*Math.cos(-alpha))/norm*headSize;
+
+    var graphicArrow = new PIXI.DisplayObjectContainer();
+
+    graphicArrow.position.x = x1 + dx/2;
+    graphicArrow.position.y = y1 + dy/2;
+
+    // arrow head
+    var head = new PIXI.Graphics();
+    head.beginFill(0xFF0000);
+    head.lineStyle(width, color);
+
+    head.moveTo(graphicArrow.position.x - (x1 + dx), graphicArrow.position.y - (y1 + dy));
+    head.lineTo(graphicArrow.position.x - x3, graphicArrow.position.y - y3);
+    head.lineTo(graphicArrow.position.x - x4, graphicArrow.position.y - y4);
+    head.endFill();
+    graphicArrow.addChild(head);
+
+    // arrow body
+    var body = new PIXI.Graphics();
+    body.beginFill(0xFF0000);
+    body.lineStyle(width, color);
+
+    body.moveTo(graphicArrow.position.x - x1, graphicArrow.position.y - y1);
+    body.lineTo(graphicArrow.position.x - (x1 + dx), graphicArrow.position.y - (y1 + dy));
+    body.endFill();
+    graphicArrow.addChild(body);
+
+     // the angle in radians of the line
+     var angle = Math.atan2(dy, dx);
+
+     // rotate that angle
+     //graphicArrow.rotation = angle;
+
+    return {graphic: graphicArrow};
+} 
 app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($rootScope, $scope, Time) {
 
 	// ========================================================================
@@ -586,23 +669,31 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 		$rootScope.$on("reloadWeek", function(evt, time) {
 			isDataReady = false;
 
-			var currentFilename = DATA_HOST + time.folder + "/" + time.year + "/temperature/data_week" + time.week + ".csv";
-			var nextFilename = DATA_HOST + time.folder + "/" + time.year + "/temperature/data_week" + (time.week+1) + ".csv";
-
-			if($scope.tData && $scope.tData.HasNextData() && !time.fullReload) {
-				// If we have already loaded the next values file, swap it and load the one after that
-				$scope.tData.SwitchToNextData().PrepareNextFiles(nextFilename);
-
-				dataReady();
+			if($scope.tData && !time.fullReload) {
+				// Regular switching of weeks, because the time slider was moving forward.
+				$scope.tData.SwitchToData(time.week, time.year).PrepareData(time.week+1, time.year, function() { 
+					dataReady();
+				});
+			} else if($scope.tData && time.fullReload) {
+				// User changed the date in the lists.
+				// Typically means that the required data and the next data are not ready yet.
+				$scope.tData.PrepareData(time.week, time.year, function() {
+					$scope.tData.SwitchToData(time.week, time.year);
+					dataReady();
+					prepareGraphics();
+				});
+				$scope.tData.PrepareData(time.week+1, time.year, function() {});
 			} else {
-				// First time initialization
-				$scope.tData = new TemporalData(currentFilename, function() {
+				$scope.tData = new TemporalData(time.folder, 'temperature');
+				$scope.tData.PrepareData(time.week, time.year, function() {
+					$scope.tData.SwitchToData(time.week, time.year);
+
 					dataReady();
 					prepareGraphics();
 
 					// Load the next file
-			    	$scope.tData.PrepareNextFiles(nextFilename);
-				})
+			    	$scope.tData.PrepareData(time.week+1, time.year, function() {});
+				});
 			}
 		})
 
@@ -634,7 +725,7 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 
 	    // Prepare all thingies
 	    updateLegend(tMin, tMax);
-	    $scope.Chart.UpdateChart().Max(tMax).Min(tMin);
+	    $scope.Chart.UpdateChart($scope.tData.DataTime).Max(tMax).Min(tMin);
 
 	    isDataReady = true;
 	}
@@ -696,10 +787,6 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 	    	
 	        var value = d.value[Time.tIndex];
 	        sprites[i].sprite.visible = !isNaN(d.value[Time.tIndex]);
-	        sprites[i].graphic.position.x = x(d.x)-rectSize/2;
-	        sprites[i].graphic.position.y = y(d.y)-rectSize/2;
-	        sprites[i].sprite.width = rectSize;
-	        sprites[i].sprite.height = rectSize;
      	   	var color = parseInt(c(value).toString().replace("#", "0x"));
 			sprites[i].sprite.tint = color;
 	    })
@@ -724,18 +811,20 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	// PROPERTIES
 	// ========================================================================
 
+	var lengthFactor = 1;
 	var webgl = PrepareWebGLContext("#velContainer", true, 2);
 	var width = webgl.width;
 	var height = webgl.height;
 	var stage = webgl.stage;
 	var renderer = webgl.renderer;
-	var markerSprite;
+	var markerSprite = null;
 
 	var isDataReady = false;
 
     var x,y,c; // d3 axis (x,y, color)
 	var rectSize;
 	var sprites = [];
+	var lines = [];
 
     var colorLegend = prepareLegend();
 
@@ -750,23 +839,32 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 		$rootScope.$on("reloadWeek", function(evt, time) {
 			isDataReady = false;
 
-			var currentFilename = DATA_HOST + time.folder + "/" + time.year + "/velocity/data_week" + time.week + ".csv";
-			var nextFilename = DATA_HOST + time.folder + "/" + time.year + "/velocity/data_week" + (time.week+1) + ".csv";
-
-			if($scope.tData && $scope.tData.HasNextData() && !time.fullReload) {
-				// If we have already loaded the next values file, swap it and load the one after that
-				$scope.tData.SwitchToNextData().PrepareNextFiles(nextFilename);
-
-				dataReady();
+			if($scope.tData && !time.fullReload) {
+				// Regular switching of weeks, because the time slider was moving forward.
+				$scope.tData.SwitchToData(time.week, time.year).PrepareData(time.week+1, time.year, function() { 
+					dataReady();
+				});
+			} else if($scope.tData && time.fullReload) {
+				// User changed the date in the lists.
+				// Typically means that the required data and the next data are not ready yet.
+				$scope.tData.PrepareData(time.week, time.year, function() {
+					$scope.tData.SwitchToData(time.week, time.year);
+					dataReady();
+					prepareGraphics();
+				});
+				$scope.tData.PrepareData(time.week+1, time.year, function() {});
 			} else {
-				// First time initialization
-				$scope.tData = new TemporalData(currentFilename, function() {
+				// First time initialization. Load the required data and the next.
+				$scope.tData = new TemporalData(time.folder, 'velocity');
+				$scope.tData.PrepareData(time.week, time.year, function() {
+					$scope.tData.SwitchToData(time.week, time.year);
+
 					dataReady();
 					prepareGraphics();
 
 					// Load the next file
-			    	$scope.tData.PrepareNextFiles(nextFilename);
-				})
+			    	$scope.tData.PrepareData(time.week+1, time.year, function() {});
+				});
 			}
 		})
 
@@ -803,7 +901,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 
 	    // Prepare all thingies
 	    updateLegend(minVel, maxVel);
-	    $scope.Chart.UpdateChart().Max(maxVel).Min(minVel);
+	    $scope.Chart.UpdateChart($scope.tData.DataTime).Max(maxVel).Min(minVel);
 
 	    isDataReady = true;
 	}
@@ -812,7 +910,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	 * 
 	 */
 	function prepareGraphics() {
-	    var rectSize = x(700) - x(0);
+	    var rectSize = x(50) - x(0);
 
 	    // Clear the stage
 	    for (var i = stage.children.length - 1; i >= 0; i--) {
@@ -820,15 +918,22 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 		};
 
 	    $scope.tData.Data.forEach(function(d, i) {
-	        var doc = rectangle(x(d.x)-rectSize/2, y(d.y)-rectSize/2,
-	            rectSize,rectSize,
-	            parseInt(c(norm(d.value[Time.tIndex])).toString().replace("#", "0x")));
+
+	    	// Clickable dots at grid locations
+	        /*var doc = circle(x(d.x), y(d.y), rectSize, "0x000000");
 	        stage.addChild(doc.graphic);
 	        sprites[i] = doc;
 	        sprites[i].sprite.interactive = true;
 	        sprites[i].sprite.mousedown = function(mouseData) { $rootScope.$emit("reloadChart", i); mouseDown = true; }
 	        sprites[i].sprite.mouseover = function(mouseData) { if(!mouseDown) return; $rootScope.$emit("reloadChart", i); }
-	        sprites[i].sprite.mouseup = function(mouseData) { mouseDown = false; }
+	        sprites[i].sprite.mouseup = function(mouseData) { mouseDown = false; }*/
+
+	        // Animated lines on top
+	        
+	        var lineWidth = 1;
+	        var li = arrow(x(d.x), y(d.y), -10, 0, lineWidth, "0x000000");
+	        lines[i] = li;
+	        stage.addChild(li.graphic);
 	    });
 
 	    // Prepare the marker symbol
@@ -866,26 +971,35 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 		if(!isDataReady) return;
 
 	    // Animate the stuff here (transitions, color updates etc.)
-		var rectSize = x(700) - x(0);
+		var rectSize = x(10) - x(0);
 	    $scope.tData.Data.forEach(function(d, i) {
 	    	if(Time.tIndex >= d.value.length) return;
 
 	        var value = d.value[Time.tIndex];
-	        sprites[i].sprite.visible = !isNaN(norm(d.value[Time.tIndex]));
-	        sprites[i].graphic.position.x = x(d.x)-rectSize/2;
-	        sprites[i].graphic.position.y = y(d.y)-rectSize/2;
-	        sprites[i].sprite.width = rectSize;
-	        sprites[i].sprite.height = rectSize;
-     	   	var color = parseInt(c(norm(value)).toString().replace("#", "0x"));
-			sprites[i].sprite.tint = color;
+
+	        if(!value) return;
+	        
+		    var angle = Math.atan2(value[1], value[0]);
+		    lines[i].graphic.rotation = angle;
+
+		    //var s = 100*norm(value);
+		  	//lines[i].graphic.scale.x = s < 0.1 ? 0 : s;// 1000*norm(value);
+
+		    var color = parseInt(c(norm(value)).toString().replace("#", "0x"));
+			lines[i].graphic.tint = color;
 	    })
 
+	    // DEPRECATED: The velocity now uses a reduced spatial resolution.
+	    // This means that the pointIndex does not represent a correct index
+	    // anymore. Either recalculate the correct index or leave this portion
+	    // commented...
+
 	    // Put the marker sprite at the correct position
-	    markerSprite.visible = $scope.pointIndex != undefined;
+	    /*markerSprite.visible = $scope.pointIndex != undefined;
 	    if($scope.pointIndex != undefined) {
 	    	markerSprite.position.x = x($scope.tData.Data[$scope.pointIndex].x) - markerSprite.width / 2;
 	    	markerSprite.position.y = y($scope.tData.Data[$scope.pointIndex].y) - markerSprite.height / 2;
-	    }
+	    }*/
 
 	    $scope.$apply();
 

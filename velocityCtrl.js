@@ -175,8 +175,8 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 		    var angle = Math.atan2(value[1], value[0]);
 		    lines[i].graphic.rotation = angle;
 
-		    var s = 100*norm(value);
-		  	lines[i].graphic.scale.x = s < 0.1 ? 0 : s;// 1000*norm(value);
+		    //var s = 100*norm(value);
+		  	//lines[i].graphic.scale.x = s < 0.1 ? 0 : s;// 1000*norm(value);
 
 		    var color = parseInt(c(norm(value)).toString().replace("#", "0x"));
 			lines[i].graphic.tint = color;
