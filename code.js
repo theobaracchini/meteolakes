@@ -1,6 +1,5 @@
 
-var DATA_HOST = "http://aphyspc1.epfl.ch/meteolac/";
- 
+var DATA_HOST = "http://aphyspc1.epfl.ch/meteolac/"; 
 // Get the week number for the created date
 function GetWeek(date) {
     var onejan = new Date(date.getFullYear(),0,1);
