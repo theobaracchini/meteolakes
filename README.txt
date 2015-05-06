@@ -13,6 +13,9 @@ There are two different ways to update the page, depending on what changed.
 If the javascript code has changed (e.g. a controller changed), proceed with
 "Deployment steps (js)".
 If the page markup has changed (html), proceed with "Deployment steps (html)".
+After anything has changed, you can also update the page on the aphyspc1.epfl.ch
+by following the "Deployment steps (IIS)" instructions.
+
 
 Deployment steps (js):
 
@@ -38,6 +41,14 @@ Deployment steps (html):
 6. Replace the source with the content of the index_container.html file
 7. Validate, then close
 8. Refresh the page
+
+Deployment steps (IIS):
+
+1. Run less_minify_and_pack.bat
+2. Remotely connect to aphyspc1.epfl.ch (using e.g. intranet\username creds)
+3. Paste the content of the "package.zip" file in "C:\inetpub\wwwroot"
+4. Paste "index.html"
+5. Paste "index_container.html"
 
 DIRECTORY STRUCTURE
 *******************************************************************************

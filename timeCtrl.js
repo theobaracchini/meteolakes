@@ -125,14 +125,14 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
      * a new week.
      */
 	function emitReload() {
-		$rootScope.$emit("reloadWeek", {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:false, folder:$scope.Dates[$scope.SelectedLake]["folder"]});
+		$rootScope.$emit("reloadWeek", {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:false, folder:$scope.Dates[$scope.SelectedLake]["folder"], weeks:$scope.Dates[$scope.SelectedLake]["data"]["Y" + $scope.SelectedYear]});
 	}
 	/**
 	 * Emit a "reloadWeek" message, indicating that the user changed a 
 	 * parameter in the time fields and that all data needs to be reloaded.
 	 */
 	function emitFullReload() {
-		$rootScope.$emit("reloadWeek", {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:true, folder:$scope.Dates[$scope.SelectedLake]["folder"]});
+		$rootScope.$emit("reloadWeek", {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:true, folder:$scope.Dates[$scope.SelectedLake]["folder"], weeks:$scope.Dates[$scope.SelectedLake]["data"]["Y" + $scope.SelectedYear]});
 	}
 
 	function loadAvailableDates(callback) {

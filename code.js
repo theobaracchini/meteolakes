@@ -670,9 +670,12 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 
 			if($scope.tData && !time.fullReload) {
 				// Regular switching of weeks, because the time slider was moving forward.
-				$scope.tData.SwitchToData(time.week, time.year).PrepareData(time.week+1, time.year, function() { 
-					dataReady();
-				});
+				$scope.tData.SwitchToData(time.week, time.year);
+				// Load the next file if available
+				if(time.weeks.indexOf(time.week+1) != -1)
+					$scope.tData.PrepareData(time.week+1, time.year, function() { 
+						dataReady();
+					});
 			} else if($scope.tData && time.fullReload) {
 				// User changed the date in the lists.
 				// Typically means that the required data and the next data are not ready yet.
@@ -681,7 +684,9 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 					dataReady();
 					prepareGraphics();
 				});
-				$scope.tData.PrepareData(time.week+1, time.year, function() {});
+				// Load the next file if available
+				if(time.weeks.indexOf(time.week+1) != -1)
+					$scope.tData.PrepareData(time.week+1, time.year, function() {});
 			} else {
 				$scope.tData = new TemporalData(time.folder, 'temperature');
 				$scope.tData.PrepareData(time.week, time.year, function() {
@@ -690,8 +695,9 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 					dataReady();
 					prepareGraphics();
 
-					// Load the next file
-			    	$scope.tData.PrepareData(time.week+1, time.year, function() {});
+					// Load the next file if available
+					if(time.weeks.indexOf(time.week+1) != -1)
+			    		$scope.tData.PrepareData(time.week+1, time.year, function() {});
 				});
 			}
 		})
@@ -843,9 +849,12 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 
 			if($scope.tData && !time.fullReload) {
 				// Regular switching of weeks, because the time slider was moving forward.
-				$scope.tData.SwitchToData(time.week, time.year).PrepareData(time.week+1, time.year, function() { 
-					dataReady();
-				});
+				$scope.tData.SwitchToData(time.week, time.year);
+				// Load the next file if available
+				if(time.weeks.indexOf(time.week+1) != -1)
+					$scope.tData.PrepareData(time.week+1, time.year, function() { 
+						dataReady();
+					});
 			} else if($scope.tData && time.fullReload) {
 				// User changed the date in the lists.
 				// Typically means that the required data and the next data are not ready yet.
@@ -854,7 +863,9 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 					dataReady();
 					prepareGraphics();
 				});
-				$scope.tData.PrepareData(time.week+1, time.year, function() {});
+				// Load the next file if available
+				if(time.weeks.indexOf(time.week+1) != -1)
+					$scope.tData.PrepareData(time.week+1, time.year, function() {});
 			} else {
 				// First time initialization. Load the required data and the next.
 				$scope.tData = new TemporalData(time.folder, 'velocity');
@@ -864,8 +875,9 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 					dataReady();
 					prepareGraphics();
 
-					// Load the next file
-			    	$scope.tData.PrepareData(time.week+1, time.year, function() {});
+					// Load the next file, if available
+					if(time.weeks.indexOf(time.week+1) != -1)
+			    		$scope.tData.PrepareData(time.week+1, time.year, function() {});
 				});
 			}
 		})
@@ -1150,14 +1162,14 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
      * a new week.
      */
 	function emitReload() {
-		$rootScope.$emit("reloadWeek", {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:false, folder:$scope.Dates[$scope.SelectedLake]["folder"]});
+		$rootScope.$emit("reloadWeek", {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:false, folder:$scope.Dates[$scope.SelectedLake]["folder"], weeks:$scope.Dates[$scope.SelectedLake]["data"]["Y" + $scope.SelectedYear]});
 	}
 	/**
 	 * Emit a "reloadWeek" message, indicating that the user changed a 
 	 * parameter in the time fields and that all data needs to be reloaded.
 	 */
 	function emitFullReload() {
-		$rootScope.$emit("reloadWeek", {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:true, folder:$scope.Dates[$scope.SelectedLake]["folder"]});
+		$rootScope.$emit("reloadWeek", {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:true, folder:$scope.Dates[$scope.SelectedLake]["folder"], weeks:$scope.Dates[$scope.SelectedLake]["data"]["Y" + $scope.SelectedYear]});
 	}
 
 	function loadAvailableDates(callback) {
