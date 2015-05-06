@@ -40,4 +40,4 @@ echo. >> code.js
 del package.zip
 
 :: Package the new page
-"C:\Program Files (x86)\7-Zip\7z.exe" u -tZip package.zip code.min.js css\style.min.css css\bootstrap.css.map dot.png marker.png fonts
+"C:\Program Files (x86)\7-Zip\7z.exe" u -tZip package.zip code.js code.min.js css\style.min.css css\bootstrap.css.map dot.png marker.png fonts

@@ -750,7 +750,10 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 	    })
 
 	    // Prepare the marker symbol
-	    markerSprite = new PIXI.Sprite.fromImage("/files/content/sites/aphys/files/MeteoLac/marker.png");
+	    if(typeof(DEV_ENV) == "undefined")
+	    	markerSprite = new PIXI.Sprite.fromImage("/files/content/sites/aphys/files/MeteoLac/marker.png");
+		else
+			markerSprite = new PIXI.Sprite.fromImage("marker.png");
 	    markerSprite.width = 50;
 	    markerSprite.height = 50;
 	    stage.addChild(markerSprite);
@@ -936,7 +939,10 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 	    });
 
 	    // Prepare the marker symbol
-	    markerSprite = new PIXI.Sprite.fromImage("/files/content/sites/aphys/files/MeteoLac/marker.png");
+	    if(typeof(DEV_ENV) == "undefined")
+	    	markerSprite = new PIXI.Sprite.fromImage("/files/content/sites/aphys/files/MeteoLac/marker.png");
+		else
+			markerSprite = new PIXI.Sprite.fromImage("marker.png");
 	    markerSprite.width = 50;
 	    markerSprite.height = 50;
 	    stage.addChild(markerSprite);
