@@ -8,6 +8,11 @@
     fill: none;
 }
 
+.axis text {
+    stroke: none;
+    fill: #333;
+}
+
 .plot {
     stroke: blue;
     fill: none;
