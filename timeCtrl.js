@@ -103,9 +103,10 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
     $scope.selectYear = function(year) {
         $scope.SelectedYear = year;
         $scope.Weeks = [];
-        for(var week in $scope.Dates[$scope.SelectedLake]["data"]["Y" + $scope.SelectedYear]) {
+        weeksForYear = $scope.Dates[$scope.SelectedLake]["data"]["Y" + $scope.SelectedYear];
+        weeksForYear.forEach(function(week) {
             $scope.Weeks.push(week);
-        }
+        });
     }
 
     function tick() {
