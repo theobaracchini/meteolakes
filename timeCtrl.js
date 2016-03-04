@@ -161,13 +161,14 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
         var currentWeek = dpp.GetWeek(now);
 
         // Find the week closest to now
-        var diffWeek = Number.MAX_VALUE; // large initial value for week diff
+        var minDiffWeek = Number.MAX_VALUE; // large initial value for week diff
         $scope.Weeks = [];
         for(var i = 0 ; i <  $scope.Dates[$scope.SelectedLake]["data"]["Y" + $scope.SelectedYear].length ; ++i) {
             var week = $scope.Dates[$scope.SelectedLake]["data"]["Y" + $scope.SelectedYear][i];
-            
             $scope.Weeks.push(week);
-            if(Math.abs(week - currentWeek) < diffWeek) {
+            var diffWeek = Math.abs(week - currentWeek);
+            if(diffWeek < minDiffWeek) {
+                minDiffWeek = diffWeek;
                 $scope.SelectedWeek = week;
             }
         }
@@ -178,12 +179,14 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
         var currentYear = now.getFullYear();
         
         // Find the year closest to now
-        var diffYear = Number.MAX_VALUE; // take a large initial value for year diff
+        var minDiffYear = Number.MAX_VALUE; // take a large initial value for year diff
         $scope.Years = [];
         for(var syear in $scope.Dates[$scope.SelectedLake]["data"]) {
             var year = parseInt(syear.substring(1));
             $scope.Years.push(year);
-            if(Math.abs(year-currentYear) < diffYear) {
+            var diffYear = Math.abs(year - currentYear);
+            if(diffYear < minDiffYear) {
+                minDiffYear = diffYear;
                 $scope.SelectedYear = year;
             }
         }
