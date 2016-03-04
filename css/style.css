@@ -1,21 +1,21 @@
 .x.axis {
-	stroke:black;
-	fill: none;
+    stroke:black;
+    fill: none;
 }
 
 .y.axis {
-	stroke:black;
-	fill: none;
+    stroke:black;
+    fill: none;
 }
 
 .plot {
-	stroke: blue;
-	fill: none;
+    stroke: blue;
+    fill: none;
 }
 
 .timeLine {
-	stroke:blue;
-	stroke-width:2px;
+    stroke:blue;
+    stroke-width:2px;
 }
 
 .scrollable-menu {
@@ -25,7 +25,7 @@
 }
 
 .sidebar {
-	position:fixed;
-	top: 10px;
-	left: 10px;
+    position:fixed;
+    top: 10px;
+    left: 10px;
 }
