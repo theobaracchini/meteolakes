@@ -1,1 +1,4 @@
-/package.zip
+bundle.js
+bundle.js.map
+node_modules
+package.zip

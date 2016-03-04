@@ -1,3 +1,7 @@
+// TODO: get rid of non-Angular dependencies
+var DATA_HOST = require('../globals').DATA_HOST;
+
+// TODO: refactor to AngularJS provider
 var TemporalData = function(dataFolder, fieldName) {
     this.dataFolder = dataFolder;
     this.fieldName = fieldName;
@@ -119,3 +123,5 @@ TemporalData.prototype.recomputeBounds = function(res) {
 
     return this;
 }
+
+module.exports = TemporalData;

@@ -1,11 +1,17 @@
+var app = require("angular").module("lakeViewApp");
+
 app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootScope, $scope, Time) {
+    // TODO: get rid of non-Angular dependencies
+    var Chart = require('./models/chart');
+    var misc = require('./misc');
+    var TemporalData = require('./models/temporalData');
 
     // ========================================================================
     // PROPERTIES
     // ========================================================================
 
     var lengthFactor = 1;
-    var webgl = PrepareWebGLContext("#velContainer", true, 2);
+    var webgl = misc.PrepareWebGLContext("#velContainer", true, 2);
     var width = webgl.width;
     var height = webgl.height;
     var stage = webgl.stage;
@@ -130,7 +136,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
             // Animated lines on top
             
             var lineWidth = 1;
-            var li = arrow(x(d.x), y(d.y), -10, 0, lineWidth, "0x000000");
+            var li = misc.arrow(x(d.x), y(d.y), -10, 0, lineWidth, "0x000000");
             lines[i] = li;
             stage.addChild(li.graphic);
         });

@@ -1,0 +1,24 @@
+{
+  "name": "lake-view",
+  "version": "1.0.0",
+  "description": "Forecasting hydrodynamic model of Lake Geneva",
+  "main": "app.js",
+  "scripts": {
+    "build-js": "browserify app.js -d | exorcist bundle.js.map > bundle.js",
+    "start": "npm run build-js"
+  },
+  "dependencies": {
+    "angular": "^1.5.0"
+  },
+  "devDependencies": {
+    "browserify": "^9.0.3",
+    "exorcist": "^0.4.0",
+    "source-map-support": "^0.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://zoller@git.epfl.ch/repo/lake-view"
+  },
+  "author": "APHYS",
+  "license": "MIT"
+}

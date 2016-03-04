@@ -1,3 +1,8 @@
+// TODO: get rid of non-Angular dependencies
+var dpp = require('./dateplusplus');
+var misc = require('../misc');
+
+// TODO: refactor to AngularJS provider
 var Chart = function($scope, Time, containerId, conversionFct) {
     this.$scope = $scope
     this.Time = Time
@@ -78,7 +83,7 @@ Chart.prototype.UpdateChart = function(dataTime) {
 }
 
 Chart.prototype.formatTime = function(d) {
-    var monday = new Date(FirstDayOfWeek(this.$scope.tData.DataTime.Week, this.$scope.tData.DataTime.Year));
+    var monday = new Date(dpp.FirstDayOfWeek(this.$scope.tData.DataTime.Week, this.$scope.tData.DataTime.Year));
     var hoursInAWeek = 7*24;
     var addedHours = d/this.Time.nT*hoursInAWeek;
     monday.setHours(monday.getHours() + addedHours);
@@ -96,7 +101,7 @@ Chart.prototype.prepareChart = function() {
     var me = this
     var drag = d3.behavior.drag().on("drag", function() { me.dragTime() })
 
-    var chartCanvas = PrepareSvgCanvas(this.containerId + " div", 2)
+    var chartCanvas = misc.PrepareSvgCanvas(this.containerId + " div", 2)
     chartCanvas.svg.append("g")
         .attr("transform", "translate(0," + chartCanvas.height + ")")
         .attr("class", "x axis")
@@ -121,3 +126,5 @@ Chart.prototype.prepareChart = function() {
 Chart.prototype.dragTime = function() {
     this.Time.tIndex = parseInt(this.tx.invert(d3.event.x))
 }
+
+module.exports = Chart;

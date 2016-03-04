@@ -1,10 +1,16 @@
+var app = require("angular").module("lakeViewApp");
+
 app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($rootScope, $scope, Time) {
+    // TODO: get rid of non-Angular dependencies
+    var Chart = require('./models/chart');
+    var misc = require('./misc');
+    var TemporalData = require('./models/temporalData');
 
     // ========================================================================
     // PROPERTIES
     // ========================================================================
 
-    var webgl = PrepareWebGLContext("#tempContainer", true, 2);
+    var webgl = misc.PrepareWebGLContext("#tempContainer", true, 2);
     var width = webgl.width;
     var height = webgl.height;
     var stage = webgl.stage;
@@ -106,7 +112,7 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
         };
 
         $scope.tData.Data.forEach(function(d, i) {
-            var doc = rectangle(x(d.x)-rectSize/2, y(d.y)-rectSize/2,
+            var doc = misc.rectangle(x(d.x)-rectSize/2, y(d.y)-rectSize/2,
                 rectSize,rectSize,
                 parseInt(c(d.value[Time.tIndex]).toString().replace("#", "0x")));
             stage.addChild(doc.graphic);

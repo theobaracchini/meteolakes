@@ -1,4 +1,9 @@
+var app = require("angular").module("lakeViewApp");
+
 app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope, $scope, Time) {
+    // TODO: get rid of non-Angular dependencies
+    var DATA_HOST = require('./globals').DATA_HOST;
+    var dpp = require('./models/dateplusplus');
 
     var tickTimerId = null;
     var loopType = "repeat";
@@ -50,7 +55,7 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
     }
 
     $scope.PrettyPrintTime = function(ti, weekNo, year) {
-        var refDate = FirstDayOfWeek(weekNo, year);
+        var refDate = dpp.FirstDayOfWeek(weekNo, year);
 
         // tIndex corresponds to intervals, which are given by the global INTERVAL
         // in minutes, so we need to convert it into milliseconds
@@ -59,8 +64,8 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
     }
 
     $scope.PrettyPrintWeek = function(week) {
-        var firstDay = FirstDayOfWeek(week, $scope.SelectedYear);
-        var lastDay = LastDayOfWeek(week, $scope.SelectedYear);
+        var firstDay = dpp.FirstDayOfWeek(week, $scope.SelectedYear);
+        var lastDay = dpp.LastDayOfWeek(week, $scope.SelectedYear);
         return new Date(firstDay).toLocaleDateString() + " - " + new Date(lastDay).toLocaleDateString();
     }
 
@@ -81,7 +86,7 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
     $scope.selectWeek = function(week) {
         // Make sure the given week number is not out of bounds with the 
         // current year, and change year if necessary.
-        var numberOfWeeks = NumberOfWeeks($scope.SelectedYear);
+        var numberOfWeeks = dpp.NumberOfWeeks($scope.SelectedYear);
         if(week >= numberOfWeeks) {
             $scope.selectYear($scope.SelectedYear+1);
             $scope.selectWeek(week - numberOfWeeks + 1);
@@ -152,7 +157,7 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 
     function selectWeekClosestToNow() {
         var now = new Date();
-        var currentWeek = GetWeek(now);
+        var currentWeek = dpp.GetWeek(now);
 
         // Find the week closest to now
         var diffWeek = Number.MAX_VALUE; // large initial value for week diff

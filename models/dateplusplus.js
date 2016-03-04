@@ -1,3 +1,5 @@
+// TODO: refactor to AngularJS provider
+
 // Get the week number for the created date
 function GetWeek(date) {
     var onejan = new Date(date.getFullYear(),0,1);
@@ -78,3 +80,10 @@ function NumberOfWeeks(year) {
     var dec31 = new Date(year,11, 31);
     return GetWeek(dec31);
 }
+
+module.exports = {
+    GetWeek,
+    FirstDayOfWeek,
+    LastDayOfWeek,
+    NumberOfWeeks
+};
