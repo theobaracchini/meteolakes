@@ -4,8 +4,9 @@
   "description": "Forecasting hydrodynamic model of Lake Geneva",
   "main": "app.js",
   "scripts": {
-    "build-js": "browserify app.js -d | exorcist bundle.js.map > bundle.js",
-    "start": "npm run build-js"
+    "build": "browserify app.js -d | exorcist bundle.js.map > bundle.js",
+    "uglify": "uglifyjs bundle.js --in-source-map bundle.js.map -o bundle.min.js --source-map bundle.min.js.map",
+    "start": "npm run build && npm run uglify"
   },
   "dependencies": {
     "angular": "^1.5.0"
@@ -13,7 +14,8 @@
   "devDependencies": {
     "browserify": "^9.0.3",
     "exorcist": "^0.4.0",
-    "source-map-support": "^0.4.0"
+    "source-map-support": "^0.4.0",
+    "uglify-js": "^2.6.2"
   },
   "repository": {
     "type": "git",

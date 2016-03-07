@@ -1,4 +1,3 @@
-bundle.js
-bundle.js.map
+bundle.*
 node_modules
 package.zip
