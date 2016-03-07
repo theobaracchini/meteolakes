@@ -135,8 +135,11 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 
             // Animated lines on top
             
+            // TODO: more elegant sampling
+            if (isNaN(d.x)) return;
+            if (i % 10 != 0) return;
             var lineWidth = 1;
-            var li = misc.arrow(x(d.x), y(d.y), -10, 0, lineWidth, "0x000000");
+            var li = misc.arrow(x(d.x), y(d.y), -10, 0, lineWidth);
             lines[i] = li;
             stage.addChild(li.graphic);
         });
@@ -171,6 +174,16 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
         colorLegend.call(xAxis);
     }
 
+    function updateLineColor(line, color){
+        var len = line.graphicsData.length;
+        for (var i = 0; i < len; i++) {
+            var data = line.graphicsData[i];
+            data.lineColor = color;
+        }
+        line.dirty = true;
+        line.clearDirty = true;
+    }
+
     /*
      * This function runs under a timer. It is in charge of rendering the canvas.
      * Do not call this directly.
@@ -181,20 +194,25 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
         // Animate the stuff here (transitions, color updates etc.)
         var rectSize = x(10) - x(0);
         $scope.tData.Data.forEach(function(d, i) {
+            // TODO: more elegant sampling
+            if (isNaN(d.x)) return;
+            if (i % 10 != 0) return;
             if(Time.tIndex >= d.value.length) return;
 
             var value = d.value[Time.tIndex];
 
             if(!value) return;
             
-            var angle = Math.atan2(value[1], value[0]);
+            var angle = Math.atan2(-value[1], value[0]);
             lines[i].graphic.rotation = angle;
 
             //var s = 100*norm(value);
               //lines[i].graphic.scale.x = s < 0.1 ? 0 : s;// 1000*norm(value);
 
             var color = parseInt(c(norm(value)).toString().replace("#", "0x"));
-            lines[i].graphic.tint = color;
+            lines[i].graphic.children.forEach(function(line){
+                updateLineColor(line, color);
+            });
         })
 
         // DEPRECATED: The velocity now uses a reduced spatial resolution.
@@ -223,6 +241,6 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
      * The vector is expected to be an array [x,y].
      */
     function norm(vec) {
-        return vec[0]*vec[0] + vec[1]*vec[1];
+        return Math.sqrt(vec[0]*vec[0] + vec[1]*vec[1]);
     }
 }])

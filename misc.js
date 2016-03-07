@@ -160,7 +160,7 @@ function line(x1, y1, x2, y2, height, color) {
     return {graphic: graphics};
 }
 
-function arrow(x1, y1, dx, dy, width, color) {
+function arrow(x1, y1, dx, dy, width) {
     var alpha = 30*Math.PI/180.0;
     var headSize = 5;
 
@@ -179,30 +179,21 @@ function arrow(x1, y1, dx, dy, width, color) {
 
     // arrow head
     var head = new PIXI.Graphics();
-    head.beginFill(0xFF0000);
-    head.lineStyle(width, color);
+    head.lineStyle(width, 0);
 
     head.moveTo(graphicArrow.position.x - (x1 + dx), graphicArrow.position.y - (y1 + dy));
     head.lineTo(graphicArrow.position.x - x3, graphicArrow.position.y - y3);
+    head.moveTo(graphicArrow.position.x - (x1 + dx), graphicArrow.position.y - (y1 + dy));
     head.lineTo(graphicArrow.position.x - x4, graphicArrow.position.y - y4);
-    head.endFill();
     graphicArrow.addChild(head);
 
     // arrow body
     var body = new PIXI.Graphics();
-    body.beginFill(0xFF0000);
-    body.lineStyle(width, color);
+    body.lineStyle(width, 0);
 
     body.moveTo(graphicArrow.position.x - x1, graphicArrow.position.y - y1);
     body.lineTo(graphicArrow.position.x - (x1 + dx), graphicArrow.position.y - (y1 + dy));
-    body.endFill();
     graphicArrow.addChild(body);
-
-     // the angle in radians of the line
-     var angle = Math.atan2(dy, dx);
-
-     // rotate that angle
-     //graphicArrow.rotation = angle;
 
     return {graphic: graphicArrow};
 }
