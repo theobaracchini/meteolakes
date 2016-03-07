@@ -82,8 +82,8 @@ function NumberOfWeeks(year) {
 }
 
 module.exports = {
-    GetWeek,
-    FirstDayOfWeek,
-    LastDayOfWeek,
-    NumberOfWeeks
+    GetWeek: GetWeek,
+    FirstDayOfWeek: FirstDayOfWeek,
+    LastDayOfWeek: LastDayOfWeek,
+    NumberOfWeeks: NumberOfWeeks
 };

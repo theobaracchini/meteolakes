@@ -199,8 +199,8 @@ function arrow(x1, y1, dx, dy, width) {
 }
 
 module.exports = {
-    PrepareWebGLContext,
-    PrepareSvgCanvas,
-    rectangle,
-    arrow
+    PrepareWebGLContext: PrepareWebGLContext,
+    PrepareSvgCanvas: PrepareSvgCanvas,
+    rectangle: rectangle,
+    arrow: arrow
 };
