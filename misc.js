@@ -1,4 +1,4 @@
-var app = require("angular").module("lakeViewApp");
+var app = angular.module("lakeViewApp");
 
 // Factory for a shared time index variable, so that all 
 // graphs can access it

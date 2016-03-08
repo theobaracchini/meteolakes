@@ -8,9 +8,6 @@
     "uglify": "uglifyjs bundle.js --in-source-map bundle.js.map -o bundle.min.js --source-map bundle.min.js.map",
     "start": "npm run build && npm run uglify"
   },
-  "dependencies": {
-    "angular": "^1.5.0"
-  },
   "devDependencies": {
     "browserify": "^9.0.3",
     "exorcist": "^0.4.0",

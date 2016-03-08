@@ -1,4 +1,4 @@
-var app = require("angular").module("lakeViewApp");
+var app = angular.module("lakeViewApp");
 
 app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($rootScope, $scope, Time) {
     // TODO: get rid of non-Angular dependencies
