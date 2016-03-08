@@ -2,17 +2,17 @@
   "name": "lake-view",
   "version": "1.0.0",
   "description": "Forecasting hydrodynamic model of Lake Geneva",
-  "main": "app.js",
   "scripts": {
-    "build": "browserify app.js -d | exorcist bundle.js.map > bundle.js",
-    "uglify": "uglifyjs bundle.js --in-source-map bundle.js.map -o bundle.min.js --source-map bundle.min.js.map",
-    "start": "npm run build && npm run uglify"
+    "start": "gulp"
   },
   "devDependencies": {
     "browserify": "^9.0.3",
-    "exorcist": "^0.4.0",
-    "source-map-support": "^0.4.0",
-    "uglify-js": "^2.6.2"
+    "gulp": "^3.9.1",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^1.5.3",
+    "gulp-util": "^3.0.7",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
   },
   "repository": {
     "type": "git",
