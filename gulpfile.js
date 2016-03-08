@@ -11,7 +11,7 @@ var gutil = require('gulp-util');
 gulp.task('default', function () {
     // set up the browserify instance on a task basis
     var b = browserify({
-        entries: './app.js',
+        entries: './app/app.js',
         debug: true
     });
 
@@ -23,5 +23,5 @@ gulp.task('default', function () {
         .pipe(uglify())
         .on('error', gutil.log)
         .pipe(sourcemaps.write('./'))
-        .pipe(gulp.dest('./'));
+        .pipe(gulp.dest('./dist/js'));
 });
