@@ -9,6 +9,11 @@ The page is located at http://aphys.epfl.ch/page-118054.html
 DEPlOYMENT STEPS
 *******************************************************************************
 
+1. Install Node.js from https://nodejs.org/
+2. Run npm install
+3. Run npm pack
+4. Deploy lake-view-{version}.tgz to server (TODO: update steps below)
+
 There are two different ways to update the page, depending on what changed.
 If the javascript code has changed (e.g. a controller changed), proceed with
 "Deployment steps (js)".

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Forecasting hydrodynamic model of Lake Geneva",
   "scripts": {
+    "prepublish": "gulp build",
     "start": "gulp"
   },
   "devDependencies": {
