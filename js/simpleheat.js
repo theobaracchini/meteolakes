@@ -17,8 +17,6 @@ function simpleheat(canvas) {
 
 simpleheat.prototype = {
 
-    defaultRadius: 25,
-
     defaultGradient: {
         0.4: 'blue',
         0.6: 'cyan',
@@ -44,28 +42,6 @@ simpleheat.prototype = {
 
     clear: function () {
         this._data = [];
-        return this;
-    },
-
-    radius: function (r, blur) {
-        blur = blur === undefined ? 15 : blur;
-
-        // create a grayscale blurred circle image that we'll use for drawing points
-        var circle = this._circle = document.createElement('canvas'),
-            ctx = circle.getContext('2d'),
-            r2 = this._r = r + blur;
-
-        circle.width = circle.height = r2 * 2;
-
-        ctx.shadowOffsetX = ctx.shadowOffsetY = r2 * 2;
-        ctx.shadowBlur = blur;
-        ctx.shadowColor = 'black';
-
-        ctx.beginPath();
-        ctx.arc(-r2, -r2, r, 0, Math.PI * 2, true);
-        ctx.closePath();
-        ctx.fill();
-
         return this;
     },
 
@@ -96,7 +72,6 @@ simpleheat.prototype = {
     },
 
     draw: function (minOpacity) {
-        if (!this._circle) this.radius(this.defaultRadius);
         if (!this._grad) this.gradient(this.defaultGradient);
 
         var ctx = this._ctx;
@@ -106,16 +81,22 @@ simpleheat.prototype = {
         // draw a grayscale heatmap by putting a blurred circle at each data point
         for (var i = 0, len = this._data.length, p; i < len; i++) {
             p = this._data[i];
-            ctx.globalAlpha = Math.max(p[2] / this._max, minOpacity === undefined ? 0.05 : minOpacity);
-            ctx.drawImage(this._circle, p[0] - this._r, p[1] - this._r);
+            this._drawCircle(p[0], p[1], 5)
         }
 
-        // colorize the heatmap, using opacity value of each pixel to get the right color from our gradient
-        var colored = ctx.getImageData(0, 0, this._width, this._height);
-        this._colorize(colored.data, this._grad);
-        ctx.putImageData(colored, 0, 0);
-
         return this;
+    },
+
+    _drawCircle: function (x, y, r) {
+        var ctx = this._ctx;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, 2 * Math.PI, false);
+        ctx.closePath();
+        ctx.fillStyle = 'green';
+        ctx.fill();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#003300';
+        ctx.stroke();
     },
 
     _colorize: function (pixels, gradient) {

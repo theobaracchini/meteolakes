@@ -2,14 +2,6 @@
 
 L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
 
-    // options: {
-    //     minOpacity: 0.05,
-    //     maxZoom: 18,
-    //     radius: 25,
-    //     blur: 15,
-    //     max: 1.0
-    // },
-
     initialize: function (latlngs, options) {
         this._latlngs = latlngs;
         L.setOptions(this, options);
@@ -91,8 +83,6 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
     },
 
     _updateOptions: function () {
-        this._heat.radius(this.options.radius || this._heat.defaultRadius, this.options.blur);
-
         if (this.options.gradient) {
             this._heat.gradient(this.options.gradient);
         }
@@ -119,7 +109,7 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
 
     _redraw: function () {
         var data = [],
-            r = this._heat._r,
+            r = this.options.radius,
             size = this._map.getSize(),
             bounds = new L.Bounds(
                 L.point([-r, -r]),
@@ -135,7 +125,6 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
             offsetY = panePos.y % cellSize,
             i, len, p, cell, x, y, j, len2, k;
 
-        // console.time('process');
         for (i = 0, len = this._latlngs.length; i < len; i++) {
             p = this._map.latLngToContainerPoint(this._latlngs[i]);
             if (bounds.contains(p)) {
@@ -175,11 +164,8 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
                 }
             }
         }
-        // console.timeEnd('process');
 
-        // console.time('draw ' + data.length);
         this._heat.data(data).draw(this.options.minOpacity);
-        // console.timeEnd('draw ' + data.length);
 
         this._frame = null;
     },

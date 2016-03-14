@@ -190,7 +190,7 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
             }
         })
 
-        var heat = L.heatLayer(heatData, {radius: 100}).addTo(map);
+        var heat = L.heatLayer(heatData, {radius: 20}).addTo(map);
 
         // Prepare the marker symbol
         markerSprite = new PIXI.Sprite.fromImage("img/marker.png");
