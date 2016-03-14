@@ -79,7 +79,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
         })
 
         // start the renderer
-        d3.timer(animate);
+        // d3.timer(animate);
     
         $rootScope.$emit("scopeReady");
     }

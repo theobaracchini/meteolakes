@@ -29,6 +29,11 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 
     Initialize();
 
+    var crs;
+    var map;
+    var circles;
+    initMap();
+
     // ========================================================================
     // INIT (I know, code above is also some initialization. Deal with it.)
     // ========================================================================
@@ -75,10 +80,55 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
             $scope.Chart.SelectPoint(pointIndex);
         })
 
+        $rootScope.$on("tick", function() {
+            animate();
+        })
         // start the renderer
-        d3.timer(animate);
+        // d3.timer(animate);
 
         $rootScope.$emit("scopeReady");        
+    }
+
+    function initMap() {
+        // Definition for projected coordinate system CH1903 / LV03
+        // Source: https://epsg.io/21781.js
+        proj4.defs("EPSG:21781","+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=600000 +y_0=200000 +ellps=bessel +towgs84=674.4,15.1,405.3,0,0,0,0 +units=m +no_defs");
+
+        var res = [4000, 3750, 3500, 3250, 3000, 2750, 2500, 2250, 2000, 1750, 1500, 1250, 1000, 750, 650, 500, 250, 100, 50, 20, 10, 5, 2.5, 2, 1.5, 1, 0.5];
+
+        var scale = function(zoom) {
+            return 1 / res[zoom];
+        };
+
+        crs = new L.Proj.CRS('EPSG:21781', '+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=600000 +y_0=200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs', {
+            resolutions: res,
+            origin: [420000, 350000]
+        });
+
+        console.log(crs);
+
+        map = new L.Map('map', {
+            crs: crs,
+            continuousWorld: true,
+            worldCopyJump: false,
+            scale: scale
+        });
+
+        var mapUrl = 'https://wmts6.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/21781/{z}/{y}/{x}.jpeg',
+        attrib = 'Map data &copy; 2015 swisstopo',
+        tilelayer = new L.TileLayer(mapUrl, {
+            scheme: 'xyz',
+            maxZoom: res.length - 1,
+            minZoom: 0,
+            opacity: 0.75,
+            continuousWorld: true,
+            attribution: attrib
+        });
+
+        map.addLayer(tilelayer);
+
+        var lemanCenter = L.point(530000, 140000);
+        map.setView(crs.projection.unproject(lemanCenter), 17);
     }
 
     // ========================================================================
@@ -111,6 +161,8 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
             stage.removeChild(stage.children[i]);
         };
 
+        circles = [];
+
         $scope.tData.Data.forEach(function(d, i) {
             var doc = misc.rectangle(x(d.x)-rectSize/2, y(d.y)-rectSize/2,
                 rectSize,rectSize,
@@ -121,6 +173,17 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
             sprites[i].sprite.mousedown = function(mouseData) { $rootScope.$emit("reloadChart", i); mouseDown = true; }
             sprites[i].sprite.mouseover = function(mouseData) { if(!mouseDown) return; $rootScope.$emit("reloadChart", i); }
             sprites[i].sprite.mouseup = function(mouseData) { mouseDown = false; }
+
+            if (!isNaN(d.x)) {
+                var circle = L.circle(crs.projection.unproject(L.point(d.x, d.y)), 300, {
+                    stroke: false,
+                    fillColor: '#f03',
+                    fillOpacity: 1,
+                    clickable: false
+                });
+                circle.addTo(map);
+                circles.push(circle);
+            }
         })
 
         // Prepare the marker symbol
@@ -128,7 +191,9 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
         markerSprite.width = 50;
         markerSprite.height = 50;
         stage.addChild(markerSprite);
-        markerSprite.visible = false;    
+        markerSprite.visible = false;
+
+        animate();
     }
 
     function prepareLegend() {
@@ -155,14 +220,24 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 
         // Animate the stuff here (transitions, color updates etc.)
         var rectSize = x(700) - x(0);
+
+        var circleId = 0;
+
         $scope.tData.Data.forEach(function(d, i) {
             if(Time.tIndex >= d.value.length) return;
             
             var value = d.value[Time.tIndex];
             sprites[i].sprite.visible = !isNaN(d.value[Time.tIndex]);
-                var color = parseInt(c(value).toString().replace("#", "0x"));
+            var color = parseInt(c(value).toString().replace("#", "0x"));
             sprites[i].sprite.tint = color;
-        })
+
+            if (!isNaN(d.x)) {
+                circles[circleId].setStyle({
+                    fillColor: c(value).toString()
+                });
+                circleId++;
+            }
+        });
 
         // Put the marker sprite at the correct position
         markerSprite.visible = $scope.pointIndex != undefined;

@@ -7,6 +7,10 @@
               href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css"
               integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
               crossorigin="anonymous">
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css"
+              integrity="sha384-99ZJFcuBCh9c/V/+8YwDX/TUGG8JWMG+gKFJWzk0BZP3IoDMN+pLGd3/H0yjg4oa"
+              crossorigin="anonymous">
         <link rel="stylesheet" href="css/style.css">
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"
@@ -24,6 +28,13 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"
                 integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
                 crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"
+                integrity="sha384-Lh7SNUss9JoImCvc96eCUnLX3HvY4kb0UZCWZbYWvceJ+o5CJeOJqqNoheaGkNHT"
+                crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.12/proj4.js"
+                integrity="sha384-g71Vd1BhAzR1AWGvw5hCQvG8P8DqJCCPUvoTqnSxsXOecKi7SayxNDUqZ06bHeEb"
+                crossorigin="anonymous"></script>
+        <script src="js/proj4leaflet.js"></script>
 
         <script src="dist/js/bundle.min.js"></script>
     </head>
@@ -32,6 +43,9 @@
         <div class="container" style="margin-bottom:20px">
             <div class="row" style="margin-left:50px;margin-right:50px">
                 <div class="row">
+                    <div class="col-lg-12">
+                        <div class="map" id="map"></div>
+                    </div>
                     <div class="col-lg-12" ng-controller="timeCtrl">
                         <!-- Side toolbar to display when the normal time tools are hidden -->
                         <div class="sidebar">
