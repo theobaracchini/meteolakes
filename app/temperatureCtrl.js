@@ -162,6 +162,7 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
         };
 
         circles = [];
+        heatData = [];
 
         $scope.tData.Data.forEach(function(d, i) {
             var doc = misc.rectangle(x(d.x)-rectSize/2, y(d.y)-rectSize/2,
@@ -175,16 +176,21 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
             sprites[i].sprite.mouseup = function(mouseData) { mouseDown = false; }
 
             if (!isNaN(d.x)) {
-                var circle = L.circle(crs.projection.unproject(L.point(d.x, d.y)), 300, {
+                var point = crs.projection.unproject(L.point(d.x, d.y));
+                var circle = L.circle(point, 300, {
                     stroke: false,
                     fillColor: '#f03',
                     fillOpacity: 1,
                     clickable: false
                 });
-                circle.addTo(map);
-                circles.push(circle);
+                // circle.addTo(map);
+                // circles.push(circle);
+
+                heatData.push([point.lat, point.lng, 1]);
             }
         })
+
+        var heat = L.heatLayer(heatData, {radius: 100}).addTo(map);
 
         // Prepare the marker symbol
         markerSprite = new PIXI.Sprite.fromImage("img/marker.png");
@@ -232,9 +238,9 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
             sprites[i].sprite.tint = color;
 
             if (!isNaN(d.x)) {
-                circles[circleId].setStyle({
-                    fillColor: c(value).toString()
-                });
+                // circles[circleId].setStyle({
+                //     fillColor: c(value).toString()
+                // });
                 circleId++;
             }
         });

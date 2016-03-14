@@ -27,8 +27,8 @@ gulp.task('build', function () {
         .pipe(source('bundle.min.js'))
         .pipe(buffer())
         .pipe(sourcemaps.init({loadMaps: true}))
-        .pipe(uglify())
-        .on('error', gutil.log)
+        // .pipe(uglify())
+        // .on('error', gutil.log)
         .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest(paths.dist));
 });
