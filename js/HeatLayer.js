@@ -4,6 +4,8 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
 
     initialize: function (latlngs, options) {
         this._latlngs = latlngs;
+        this._values = [];
+        this._dragging = false;
         L.setOptions(this, options);
     },
 
@@ -17,6 +19,12 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
         return this.redraw();
     },
 
+    setValues: function (values) {
+        this._values = values;
+        if (!this._)
+        return this.redraw();
+    },
+
     setOptions: function (options) {
         L.setOptions(this, options);
         if (this._heat) {
@@ -26,7 +34,7 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
     },
 
     redraw: function () {
-        if (this._heat && !this._frame && !this._map._animating) {
+        if (this._heat && !this._frame && !this._dragging) {
             this._frame = L.Util.requestAnimFrame(this._redraw, this);
         }
         return this;
@@ -42,6 +50,14 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
         map._panes.overlayPane.appendChild(this._canvas);
 
         map.on('moveend', this._reset, this);
+
+        var self = this;
+        map.on('dragstart', function() {
+            self._dragging = true;
+        });
+        map.on('dragend', function() {
+            self._dragging = false;
+        });
 
         if (map.options.zoomAnimation && L.Browser.any3d) {
             map.on('zoomanim', this._animateZoom, this);
@@ -83,12 +99,6 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
     },
 
     _updateOptions: function () {
-        if (this.options.gradient) {
-            this._heat.gradient(this.options.gradient);
-        }
-        if (this.options.max) {
-            this._heat.max(this.options.max);
-        }
     },
 
     _reset: function () {
@@ -115,15 +125,12 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
                 L.point([-r, -r]),
                 size.add([r, r])),
 
-            max = this.options.max === undefined ? 1 : this.options.max,
-            maxZoom = this.options.maxZoom === undefined ? this._map.getMaxZoom() : this.options.maxZoom,
-            v = 1 / Math.pow(2, Math.max(0, Math.min(maxZoom - this._map.getZoom(), 12))),
             cellSize = r / 2,
             grid = [],
             panePos = this._map._getMapPanePos(),
             offsetX = panePos.x % cellSize,
             offsetY = panePos.y % cellSize,
-            i, len, p, cell, x, y, j, len2, k;
+            i, len, p, cell, x, y, j, len2;
 
         for (i = 0, len = this._latlngs.length; i < len; i++) {
             p = this._map.latLngToContainerPoint(this._latlngs[i]);
@@ -131,21 +138,19 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
                 x = Math.floor((p.x - offsetX) / cellSize) + 2;
                 y = Math.floor((p.y - offsetY) / cellSize) + 2;
 
-                var alt =
-                    this._latlngs[i].alt !== undefined ? this._latlngs[i].alt :
-                    this._latlngs[i][2] !== undefined ? +this._latlngs[i][2] : 1;
-                k = alt * v;
+                var value = this._values[i] !== undefined ? +this._values[i] : 1;
 
                 grid[y] = grid[y] || [];
                 cell = grid[y][x];
 
                 if (!cell) {
-                    grid[y][x] = [p.x, p.y, k];
+                    grid[y][x] = [p.x, p.y, value, 1];
 
                 } else {
-                    cell[0] = (cell[0] * cell[2] + p.x * k) / (cell[2] + k); // x
-                    cell[1] = (cell[1] * cell[2] + p.y * k) / (cell[2] + k); // y
-                    cell[2] += k; // cumulated intensity value
+                    cell[0] += p.x; // x
+                    cell[1] += p.y; // y
+                    cell[2] += value;
+                    cell[3]++;
                 }
             }
         }
@@ -156,16 +161,16 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
                     cell = grid[i][j];
                     if (cell) {
                         data.push([
-                            Math.round(cell[0]),
-                            Math.round(cell[1]),
-                            Math.min(cell[2], max)
+                            cell[0] / cell[3],
+                            cell[1] / cell[3],
+                            cell[2] / cell[3]
                         ]);
                     }
                 }
             }
         }
 
-        this._heat.data(data).draw(this.options.minOpacity);
+        this._heat.data(data).draw(this.options.colorFunction);
 
         this._frame = null;
     },

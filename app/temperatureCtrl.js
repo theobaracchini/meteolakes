@@ -27,11 +27,12 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 
     var mouseDown = false;
 
-    Initialize();
-
     var crs;
     var map;
     var circles;
+    var heatLayer;
+
+    Initialize();
     initMap();
 
     // ========================================================================
@@ -162,7 +163,7 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
         };
 
         circles = [];
-        heatData = [];
+        var heatData = [];
 
         $scope.tData.Data.forEach(function(d, i) {
             var doc = misc.rectangle(x(d.x)-rectSize/2, y(d.y)-rectSize/2,
@@ -186,11 +187,12 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
                 // circle.addTo(map);
                 // circles.push(circle);
 
-                heatData.push([point.lat, point.lng, 1]);
+                heatData.push([point.lat, point.lng]);
             }
         })
 
-        var heat = L.heatLayer(heatData, {radius: 20}).addTo(map);
+        heatLayer = L.heatLayer(heatData, {radius: 20, colorFunction: c});
+        heatLayer.addTo(map);
 
         // Prepare the marker symbol
         markerSprite = new PIXI.Sprite.fromImage("img/marker.png");
@@ -229,6 +231,8 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 
         var circleId = 0;
 
+        var values = [];
+
         $scope.tData.Data.forEach(function(d, i) {
             if(Time.tIndex >= d.value.length) return;
             
@@ -241,9 +245,12 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
                 // circles[circleId].setStyle({
                 //     fillColor: c(value).toString()
                 // });
+                values.push(value);
                 circleId++;
             }
         });
+
+        heatLayer.setValues(values);
 
         // Put the marker sprite at the correct position
         markerSprite.visible = $scope.pointIndex != undefined;
