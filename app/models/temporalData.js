@@ -88,6 +88,37 @@ TemporalData.prototype.readArray = function(file, config, callback) {
     var me = this;
 
     d3.text(file, function(err, data) {
+        this.xy = d3.csv.parseRows(data, function(row) {
+            var result = [];
+            for (var i = 0; i < config.GridHeight; i++) {
+                var x = +row[i];
+                var y = +row[config.GridHeight + i];
+                if (isNaN(x) || isNaN(y)) {
+                    // No data for this cell
+                    result.push(null);
+                } else {
+                    var values = [];
+                    // Get values for all time steps
+                    for (var j = 0; j < config.Timesteps; j++) {
+                        var value = [];
+                        for (var k = 0; k < config.NumberOfValues; k++) {
+                            value.push(+row[(2 + k * config.Timesteps + j) * config.GridHeight + i]);
+                        }
+                        if (config.NumberOfValues == 1) {
+                            value = value[0];
+                        }
+                        values.push(value);
+                    }
+                    result.push({
+                        x: x,
+                        y: y,
+                        values: values
+                    });
+                }
+            }
+            return result;
+        });
+
         if(err) {
             console.log("File not found (" + file + ") falling back to default array");
             callback([]);

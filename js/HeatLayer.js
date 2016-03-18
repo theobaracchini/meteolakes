@@ -118,6 +118,7 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
     },
 
     _redraw: function () {
+        /*
         var data = [],
             r = this.options.radius,
             size = this._map.getSize(),
@@ -167,6 +168,19 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
                         ]);
                     }
                 }
+            }
+        }
+        */
+
+        var data = [];
+        var r = this.options.radius;
+        var size = this._map.getSize();
+        var bounds = new L.Bounds(L.point([-r, -r]), size.add([r, r]));
+
+        for (var i = 0; i < this._latlngs.length; i++) {
+            var p = this._map.latLngToContainerPoint(this._latlngs[i]);
+            if (bounds.contains(p)) {
+                data.push([p.x, p.y, this._values[i]])
             }
         }
 

@@ -47,11 +47,30 @@ simpleheat.prototype = {
             this._drawCircle(p[0], p[1], 5, color);
         }
 
+        var colored = ctx.getImageData(0, 0, this._width, this._height);
+        var pixels = colored.data;
+        for (var i = 0, len = pixels.length, j; i < len; i += 4) {
+        	if (pixels[i + 3]) {
+        		pixels[i + 3] = 255;
+        	}
+        }
+        ctx.putImageData(colored, 0, 0);
+
         return this;
     },
 
     _drawCircle: function (x, y, r, color) {
         var ctx = this._ctx;
+
+        var cr = parseInt('0x' + color.substring(1, 3));
+        var cg = parseInt('0x' + color.substring(3, 5));
+        var cb = parseInt('0x' + color.substring(5, 7));
+        ctx.beginPath();
+        ctx.arc(x, y, 2 * r, 0, 2 * Math.PI, false);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(' + cr + ', ' + cg + ', ' + cb + ', 0.2)';
+        ctx.fill();
+
         ctx.beginPath();
         ctx.arc(x, y, r, 0, 2 * Math.PI, false);
         ctx.closePath();
