@@ -1,21 +1,16 @@
 'use strict';
 
-L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
+L.CanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
 
-    initialize: function (latlngs, options) {
-        this._latlngs = latlngs;
+    initialize: function (data, options) {
+        this._data = data;
         this._step = 0;
         this._dragging = false;
         L.setOptions(this, options);
     },
 
-    setLatLngs: function (latlngs) {
-        this._latlngs = latlngs;
-        return this.redraw();
-    },
-
-    addLatLng: function (latlng) {
-        this._latlngs.push(latlng);
+    setData: function (data) {
+        this._data = data;
         return this.redraw();
     },
 
@@ -26,14 +21,12 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
 
     setOptions: function (options) {
         L.setOptions(this, options);
-        if (this._heat) {
-            this._updateOptions();
-        }
+        this._updateOptions();
         return this.redraw();
     },
 
     redraw: function () {
-        if (this._heat && !this._frame && !this._dragging) {
+        if (!this._frame && !this._dragging) {
             this._frame = L.Util.requestAnimFrame(this._redraw, this);
         }
         return this;
@@ -81,10 +74,7 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
     },
 
     _initCanvas: function () {
-        var canvas = this._canvas = L.DomUtil.create('canvas', 'leaflet-heatmap-layer leaflet-layer');
-
-        var originProp = L.DomUtil.testProp(['transformOrigin', 'WebkitTransformOrigin', 'msTransformOrigin']);
-        canvas.style[originProp] = '50% 50%';
+        var canvas = this._canvas = L.DomUtil.create('canvas', 'leaflet-canvas-layer leaflet-layer');
 
         var size = this._map.getSize();
         canvas.width  = size.x;
@@ -93,7 +83,6 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
         var animated = this._map.options.zoomAnimation && L.Browser.any3d;
         L.DomUtil.addClass(canvas, 'leaflet-zoom-' + (animated ? 'animated' : 'hide'));
 
-        this._heat = simpleheat(canvas);
         this._updateOptions();
     },
 
@@ -106,11 +95,11 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
 
         var size = this._map.getSize();
 
-        if (this._heat._width !== size.x) {
-            this._canvas.width = this._heat._width  = size.x;
+        if (this._width() !== size.x) {
+            this._canvas.width = size.x;
         }
-        if (this._heat._height !== size.y) {
-            this._canvas.height = this._heat._height = size.y;
+        if (this._height() !== size.y) {
+            this._canvas.height = size.y;
         }
 
         this._redraw();
@@ -132,8 +121,8 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
             offsetY = panePos.y % cellSize,
             i, len, p, cell, x, y, j, len2;
 
-        for (i = 0, len = this._latlngs.length; i < len; i++) {
-            p = this._map.latLngToContainerPoint(this._latlngs[i]);
+        for (i = 0, len = this._data.length; i < len; i++) {
+            p = this._map.latLngToContainerPoint(this._data[i]);
             if (bounds.contains(p)) {
                 x = Math.floor((p.x - offsetX) / cellSize) + 2;
                 y = Math.floor((p.y - offsetY) / cellSize) + 2;
@@ -176,8 +165,8 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
         var size = this._map.getSize();
         var bounds = new L.Bounds(L.point([-r, -r]), size.add([r, r]));
 
-        for (var i = 0; i < this._latlngs.length; i++) {
-            var p = this._map.latLngToContainerPoint(this._latlngs[i]);
+        for (var i = 0; i < this._data.length; i++) {
+            var p = this._map.latLngToContainerPoint(this._data[i]);
             if (bounds.contains(p)) {
                 data.push([p.x, p.y, this._values[i]])
             }
@@ -185,11 +174,81 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
         */
 
         var self = this;
-        this._heat.data(this._latlngs).draw(this.options.colorFunction, function(p) {
+        this._draw(function(p) {
             return self._map.latLngToContainerPoint([p.lat, p.lng]);
-        }, this._step);
+        });
 
         this._frame = null;
+    },
+
+    _width: function() {
+        return this._canvas.width;
+    },
+
+    _height: function() {
+        return this._canvas.height;
+    },
+
+    _draw: function (p) {
+        var ctx = this._canvas.getContext('2d');
+
+        ctx.clearRect(0, 0, this._width(), this._height());
+
+        for (var i = 0; i < this._data.length - 1; i++) {
+            var row = this._data[i];
+            var nextRow = this._data[i + 1];
+            for (var j = 0; j < row.length - 1; j++) {
+                if (row[j] && row[j + 1] && nextRow[j] && nextRow[j + 1]) {
+                    // TODO correct 1/2 cell shift
+                    var topLeftValue = row[j].values[this._step];
+                    var color = this.options.colorFunction(topLeftValue);
+
+                    var p00 = p(row[j]);
+                    var p01 = p(row[j + 1]);
+                    var p10 = p(nextRow[j]);
+                    var p11 = p(nextRow[j + 1]);
+                    ctx.beginPath();
+                    ctx.moveTo(p00.x, p00.y);
+                    ctx.lineTo(p01.x, p01.y);
+                    ctx.lineTo(p11.x, p11.y);
+                    ctx.lineTo(p10.x, p10.y);
+                    ctx.closePath();
+                    ctx.fillStyle = color;
+                    ctx.fill();
+                    ctx.strokeStyle = color;
+                    ctx.stroke();
+
+                    // this._drawCircle(p00.x, p00.y, 5, 'green');
+                }
+            }
+        }
+/*
+        for (var i = 0, len = this._data.length, p; i < len; i++) {
+            p = this._data[i];
+            var color = (colorFunction !== undefined) ? colorFunction(p[2]) : 'green';
+            this._drawCircle(p[0], p[1], 5, color);
+        }
+
+        var colored = ctx.getImageData(0, 0, this._width, this._height);
+        var pixels = colored.data;
+        for (var i = 0, len = pixels.length, j; i < len; i += 4) {
+            if (pixels[i + 3]) {
+                pixels[i + 3] = 255;
+            }
+        }
+        ctx.putImageData(colored, 0, 0);
+        */
+
+        return this;
+    },
+
+    _drawCircle: function (x, y, r, color) {
+        var ctx = this._canvas.getContext('2d');
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, 2 * Math.PI, false);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
     },
 
     _animateZoom: function (e) {
@@ -205,6 +264,6 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
     }
 });
 
-L.heatLayer = function (latlngs, options) {
-    return new L.HeatLayer(latlngs, options);
+L.canvasLayer = function (data, options) {
+    return new L.CanvasLayer(data, options);
 };

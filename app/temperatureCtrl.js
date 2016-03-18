@@ -30,7 +30,7 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
     var crs;
     var map;
     var circles;
-    var heatLayer;
+    var canvasLayer;
 
     Initialize();
     initMap();
@@ -210,8 +210,12 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
             heatData.push(row);
         });
 
-        heatLayer = L.heatLayer(heatData, {radius: 20, colorFunction: c});
-        heatLayer.addTo(map);
+        if (canvasLayer) {
+            map.removeLayer(canvasLayer);
+        }
+
+        canvasLayer = L.canvasLayer(heatData, {radius: 20, colorFunction: c});
+        canvasLayer.addTo(map);
 
         // Prepare the marker symbol
         markerSprite = new PIXI.Sprite.fromImage("img/marker.png");
@@ -269,7 +273,7 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
             }
         });
 
-        heatLayer.setStep(Time.tIndex);
+        canvasLayer.setStep(Time.tIndex);
 
         // Put the marker sprite at the correct position
         markerSprite.visible = $scope.pointIndex != undefined;
