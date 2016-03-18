@@ -4,7 +4,7 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
 
     initialize: function (latlngs, options) {
         this._latlngs = latlngs;
-        this._values = [];
+        this._step = 0;
         this._dragging = false;
         L.setOptions(this, options);
     },
@@ -19,9 +19,8 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
         return this.redraw();
     },
 
-    setValues: function (values) {
-        this._values = values;
-        if (!this._)
+    setStep: function (step) {
+        this._step = step;
         return this.redraw();
     },
 
@@ -170,7 +169,7 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
                 }
             }
         }
-        */
+
 
         var data = [];
         var r = this.options.radius;
@@ -183,8 +182,12 @@ L.HeatLayer = (L.Layer ? L.Layer : L.Class).extend({
                 data.push([p.x, p.y, this._values[i]])
             }
         }
+        */
 
-        this._heat.data(data).draw(this.options.colorFunction);
+        var self = this;
+        this._heat.data(this._latlngs).draw(this.options.colorFunction, function(p) {
+            return self._map.latLngToContainerPoint([p.lat, p.lng]);
+        }, this._step);
 
         this._frame = null;
     },

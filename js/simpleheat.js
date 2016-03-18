@@ -36,11 +36,35 @@ simpleheat.prototype = {
         this._height = this._canvas.height;
     },
 
-    draw: function (colorFunction) {
+    draw: function (colorFunction, p, step) {
         var ctx = this._ctx;
 
         ctx.clearRect(0, 0, this._width, this._height);
 
+        for (var i = 0; i < this._data.length - 1; i++) {
+            var row = this._data[i];
+            var nextRow = this._data[i + 1];
+            for (var j = 0; j < row.length - 1; j++) {
+                if (row[j] && row[j + 1] && nextRow[j] && nextRow[j + 1]) {
+                    // TODO correct 1/2 cell shift
+                    var topLeftValue = row[j].values[step];
+
+                    var p00 = p(row[j]);
+                    var p01 = p(row[j + 1]);
+                    var p10 = p(nextRow[j]);
+                    var p11 = p(nextRow[j + 1]);
+                    ctx.fillStyle = this._withAlpha(colorFunction(topLeftValue), 0.8);
+                    ctx.beginPath();
+                    ctx.moveTo(p00.x, p00.y);
+                    ctx.lineTo(p01.x, p01.y);
+                    ctx.lineTo(p11.x, p11.y);
+                    ctx.lineTo(p10.x, p10.y);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            }
+        }
+/*
         for (var i = 0, len = this._data.length, p; i < len; i++) {
             p = this._data[i];
             var color = (colorFunction !== undefined) ? colorFunction(p[2]) : 'green';
@@ -50,13 +74,21 @@ simpleheat.prototype = {
         var colored = ctx.getImageData(0, 0, this._width, this._height);
         var pixels = colored.data;
         for (var i = 0, len = pixels.length, j; i < len; i += 4) {
-        	if (pixels[i + 3]) {
-        		pixels[i + 3] = 255;
-        	}
+            if (pixels[i + 3]) {
+                pixels[i + 3] = 255;
+            }
         }
         ctx.putImageData(colored, 0, 0);
+        */
 
         return this;
+    },
+
+    _withAlpha: function(color, alpha) {
+        var r = parseInt('0x' + color.substring(1, 3));
+        var g = parseInt('0x' + color.substring(3, 5));
+        var b = parseInt('0x' + color.substring(5, 7));
+        return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
     },
 
     _drawCircle: function (x, y, r, color) {

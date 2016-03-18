@@ -176,6 +176,7 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
             sprites[i].sprite.mouseover = function(mouseData) { if(!mouseDown) return; $rootScope.$emit("reloadChart", i); }
             sprites[i].sprite.mouseup = function(mouseData) { mouseDown = false; }
 
+/*
             if (!isNaN(d.x)) {
                 var point = crs.projection.unproject(L.point(d.x, d.y));
                 var circle = L.circle(point, 300, {
@@ -189,7 +190,25 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 
                 heatData.push([point.lat, point.lng]);
             }
+            */
         })
+
+        $scope.tData.xy.forEach(function(d) {
+            var row = [];
+            d.forEach(function(d0) {
+                var value = null;
+                if (d0) {
+                    var latlng = crs.projection.unproject(L.point(d0.x, d0.y));
+                    value = {
+                        lat: latlng.lat,
+                        lng: latlng.lng,
+                        values: d0.values
+                    }
+                }
+                row.push(value);
+            })
+            heatData.push(row);
+        });
 
         heatLayer = L.heatLayer(heatData, {radius: 20, colorFunction: c});
         heatLayer.addTo(map);
@@ -250,7 +269,7 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
             }
         });
 
-        heatLayer.setValues(values);
+        heatLayer.setStep(Time.tIndex);
 
         // Put the marker sprite at the correct position
         markerSprite.visible = $scope.pointIndex != undefined;

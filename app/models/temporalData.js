@@ -88,7 +88,7 @@ TemporalData.prototype.readArray = function(file, config, callback) {
     var me = this;
 
     d3.text(file, function(err, data) {
-        this.xy = d3.csv.parseRows(data, function(row) {
+        me.xy = d3.csv.parseRows(data, function(row) {
             var result = [];
             for (var i = 0; i < config.GridHeight; i++) {
                 var x = +row[i];
