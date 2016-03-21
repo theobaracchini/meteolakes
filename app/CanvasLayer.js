@@ -173,6 +173,13 @@ L.CanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
         }
         */
 
+        /*
+        TODO
+        - cache results of latLngToContainerPoint
+        - only draw data within bounds
+        - optionally simplify data
+        */
+
         var self = this;
         this._draw(function(p) {
             return self._map.latLngToContainerPoint([p.lat, p.lng]);

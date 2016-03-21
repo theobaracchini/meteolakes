@@ -43,9 +43,6 @@
         <div class="container" style="margin-bottom:20px">
             <div class="row" style="margin-left:50px;margin-right:50px">
                 <div class="row">
-                    <div class="col-lg-12">
-                        <div class="map" id="map"></div>
-                    </div>
                     <div class="col-lg-12" ng-controller="timeCtrl">
                         <!-- Side toolbar to display when the normal time tools are hidden -->
                         <div class="sidebar">
@@ -93,6 +90,9 @@
                     <div class="col-lg-12" ng-controller="temperatureCtrl">
                         <h2>TEMPERATURE</h2>
 
+                        <div class="col-lg-12">
+                            <div class="map" id="tempMap"></div>
+                        </div>
                         <div id="tempContainer" class="col-lg-12">
                             <!-- WebGL container will be created here -->
                         </div>
@@ -117,6 +117,10 @@
                 <div class="row">
                     <div class="col-lg-12" ng-controller="velocityCtrl">
                         <h2>VELOCITY</h2>
+
+                        <div class="col-lg-12">
+                            <div class="map" id="velMap"></div>
+                        </div>
                         <div id="velContainer" class="col-lg-12">
                             <!-- WebGL container will be created here -->
                         </div>

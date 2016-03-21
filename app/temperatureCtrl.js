@@ -108,7 +108,7 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 
         console.log(crs);
 
-        map = new L.Map('map', {
+        map = new L.Map('tempMap', {
             crs: crs,
             continuousWorld: true,
             worldCopyJump: false,
