@@ -33,7 +33,7 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
     var canvasLayer;
 
     Initialize();
-    initMap();
+    initMapbox();
 
     // ========================================================================
     // INIT (I know, code above is also some initialization. Deal with it.)
@@ -90,45 +90,77 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
         $rootScope.$emit("scopeReady");        
     }
 
-    function initMap() {
+    function initMapbox() {
+        // TODO: remove duplication
+        var topLeft = L.point(420000, 350000);
+        var bottomRight = L.point(900000, 30000);
+        var center = topLeft.add(bottomRight).divideBy(2);
+        var resolutions = [4000, 3750, 3500, 3250, 3000, 2750, 2500, 2250, 2000, 1750, 1500, 1250, 1000, 750, 650, 500, 250, 100, 50, 20, 10, 5, 2.5];
+
         // Definition for projected coordinate system CH1903 / LV03
         // Source: https://epsg.io/21781.js
-        proj4.defs("EPSG:21781","+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=600000 +y_0=200000 +ellps=bessel +towgs84=674.4,15.1,405.3,0,0,0,0 +units=m +no_defs");
-
-        var res = [4000, 3750, 3500, 3250, 3000, 2750, 2500, 2250, 2000, 1750, 1500, 1250, 1000, 750, 650, 500, 250, 100, 50, 20, 10, 5, 2.5, 2, 1.5, 1, 0.5];
-
-        var scale = function(zoom) {
-            return 1 / res[zoom];
-        };
-
-        crs = new L.Proj.CRS('EPSG:21781', '+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=600000 +y_0=200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs', {
-            resolutions: res,
-            origin: [420000, 350000]
+        crs = new L.Proj.CRS("EPSG:21781", "+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=600000 +y_0=200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs", {
+            resolutions: resolutions,
+            origin: [topLeft.x, topLeft.y]
         });
 
-        console.log(crs);
+        var mbAttr = "Map data &copy; <a href=\"https://openstreetmap.org\">OpenStreetMap</a> contributors, " +
+                     "<a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, " +
+                     "Imagery © <a href=\"https://mapbox.com\">Mapbox</a>";
+        var mbUrl = "https://{s}.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={access_token}";
 
-        map = new L.Map('tempMap', {
+        map = L.map("tempMap");
+
+        L.tileLayer(mbUrl, {
+            subdomains: "abcd",
+            maxZoom: 18,
+            attribution: mbAttr,
+            id: "mapbox.streets",
+            access_token: "pk.eyJ1IjoiYXBoeXMiLCJhIjoiY2ltM2g1MzUwMDBwOXZtbTVzdnQ1ZHZpYiJ9.Cm1TVUsbCQLOhUbblOrHfw"
+            // lake-view token for user aphys obtained from mapbox.com
+        }).addTo(map);
+
+        var lemanCenter = L.point(530000, 135000);
+        map.setView(crs.projection.unproject(lemanCenter), 10);
+    }
+
+    function initSwisstopo() {
+        // Definition of available tiles (bounding box) and resolutions
+        // Source: https://api3.geo.admin.ch/services/sdiservices.html#parameters
+        var topLeft = L.point(420000, 350000);
+        var bottomRight = L.point(900000, 30000);
+        var center = topLeft.add(bottomRight).divideBy(2);
+        var resolutions = [4000, 3750, 3500, 3250, 3000, 2750, 2500, 2250, 2000, 1750, 1500, 1250, 1000, 750, 650, 500, 250, 100, 50, 20, 10, 5, 2.5];
+
+        // Definition for projected coordinate system CH1903 / LV03
+        // Source: https://epsg.io/21781.js
+        crs = new L.Proj.CRS("EPSG:21781", "+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=600000 +y_0=200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs", {
+            resolutions: resolutions,
+            origin: [topLeft.x, topLeft.y]
+        });
+
+        var unproject = function(p) {
+            return crs.projection.unproject(p);
+        };
+
+        var scale = function(zoom) {
+            return 1 / resolutions[zoom];
+        };
+
+        map = L.map("tempMap", {
             crs: crs,
-            continuousWorld: true,
-            worldCopyJump: false,
+            maxBounds: L.latLngBounds(unproject(topLeft), unproject(bottomRight)),
             scale: scale
         });
 
-        var mapUrl = 'https://wmts6.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/21781/{z}/{y}/{x}.jpeg',
-        attrib = 'Map data &copy; 2015 swisstopo',
-        tilelayer = new L.TileLayer(mapUrl, {
-            scheme: 'xyz',
-            maxZoom: res.length - 1,
-            minZoom: 0,
-            opacity: 0.75,
-            continuousWorld: true,
-            attribution: attrib
-        });
+        L.tileLayer("https://wmts{s}.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/21781/{z}/{y}/{x}.jpeg", {
+            subdomains: ["", "5", "6", "7", "8", "9"],
+            maxZoom: resolutions.length - 1,
+            minZoom: 15,
+            attribution: "Map data &copy; swisstopo"
+        }).addTo(map);
 
-        map.addLayer(tilelayer);
-
-        var lemanCenter = L.point(530000, 140000);
+        var lemanCenter = L.point(530000, 135000);
         map.setView(crs.projection.unproject(lemanCenter), 17);
     }
 
