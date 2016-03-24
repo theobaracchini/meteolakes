@@ -1,16 +1,11 @@
-var app = angular.module("lakeViewApp");
+var app = angular.module('lakeViewApp');
 
-app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($rootScope, $scope, Time) {
-    // TODO: get rid of non-Angular dependencies
-    var Chart = require('./models/chart');
-    var misc = require('./misc');
-    var TemporalData = require('./models/temporalData');
-
+app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc, TemporalData, Map) {
     // ========================================================================
     // PROPERTIES
     // ========================================================================
 
-    var webgl = misc.PrepareWebGLContext("#tempContainer", true, 2);
+    var webgl = misc.PrepareWebGLContext('#tempContainer', true, 2);
     var width = webgl.width;
     var height = webgl.height;
     var stage = webgl.stage;
@@ -27,19 +22,16 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 
     var mouseDown = false;
 
-    var crs;
-    var map;
-    var circles;
     var canvasLayer;
+    var map = Map.initMap('tempMap');
 
     Initialize();
-    initMapbox();
 
     // ========================================================================
     // INIT (I know, code above is also some initialization. Deal with it.)
     // ========================================================================
     function Initialize() {
-        $rootScope.$on("reloadWeek", function(evt, time) {
+        $rootScope.$on('reloadWeek', function(evt, time) {
             isDataReady = false;
 
             if($scope.tData && !time.fullReload) {
@@ -76,92 +68,18 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
             }
         })
 
-        $scope.Chart = new Chart($scope, Time, "#tempPlot", function(d) { return d })
-        $rootScope.$on("reloadChart", function(evt, pointIndex) {
+        $scope.Chart = new Chart($scope, Time, '#tempPlot', function(d) { return d })
+        $rootScope.$on('reloadChart', function(evt, pointIndex) {
             $scope.Chart.SelectPoint(pointIndex);
         })
 
-        $rootScope.$on("tick", function() {
+        $rootScope.$on('tick', function() {
             animate();
         })
         // start the renderer
         // d3.timer(animate);
 
-        $rootScope.$emit("scopeReady");        
-    }
-
-    function initMapbox() {
-        // TODO: remove duplication
-        var topLeft = L.point(420000, 350000);
-        var bottomRight = L.point(900000, 30000);
-        var center = topLeft.add(bottomRight).divideBy(2);
-        var resolutions = [4000, 3750, 3500, 3250, 3000, 2750, 2500, 2250, 2000, 1750, 1500, 1250, 1000, 750, 650, 500, 250, 100, 50, 20, 10, 5, 2.5];
-
-        // Definition for projected coordinate system CH1903 / LV03
-        // Source: https://epsg.io/21781.js
-        crs = new L.Proj.CRS("EPSG:21781", "+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=600000 +y_0=200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs", {
-            resolutions: resolutions,
-            origin: [topLeft.x, topLeft.y]
-        });
-
-        var mbAttr = "Map data &copy; <a href=\"https://openstreetmap.org\">OpenStreetMap</a> contributors, " +
-                     "<a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, " +
-                     "Imagery © <a href=\"https://mapbox.com\">Mapbox</a>";
-        var mbUrl = "https://{s}.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={access_token}";
-
-        map = L.map("tempMap");
-
-        L.tileLayer(mbUrl, {
-            subdomains: "abcd",
-            maxZoom: 18,
-            attribution: mbAttr,
-            id: "mapbox.streets",
-            access_token: "pk.eyJ1IjoiYXBoeXMiLCJhIjoiY2ltM2g1MzUwMDBwOXZtbTVzdnQ1ZHZpYiJ9.Cm1TVUsbCQLOhUbblOrHfw"
-            // lake-view token for user aphys obtained from mapbox.com
-        }).addTo(map);
-
-        var lemanCenter = L.point(530000, 135000);
-        map.setView(crs.projection.unproject(lemanCenter), 10);
-    }
-
-    function initSwisstopo() {
-        // Definition of available tiles (bounding box) and resolutions
-        // Source: https://api3.geo.admin.ch/services/sdiservices.html#parameters
-        var topLeft = L.point(420000, 350000);
-        var bottomRight = L.point(900000, 30000);
-        var center = topLeft.add(bottomRight).divideBy(2);
-        var resolutions = [4000, 3750, 3500, 3250, 3000, 2750, 2500, 2250, 2000, 1750, 1500, 1250, 1000, 750, 650, 500, 250, 100, 50, 20, 10, 5, 2.5];
-
-        // Definition for projected coordinate system CH1903 / LV03
-        // Source: https://epsg.io/21781.js
-        crs = new L.Proj.CRS("EPSG:21781", "+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=600000 +y_0=200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs", {
-            resolutions: resolutions,
-            origin: [topLeft.x, topLeft.y]
-        });
-
-        var unproject = function(p) {
-            return crs.projection.unproject(p);
-        };
-
-        var scale = function(zoom) {
-            return 1 / resolutions[zoom];
-        };
-
-        map = L.map("tempMap", {
-            crs: crs,
-            maxBounds: L.latLngBounds(unproject(topLeft), unproject(bottomRight)),
-            scale: scale
-        });
-
-        L.tileLayer("https://wmts{s}.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/21781/{z}/{y}/{x}.jpeg", {
-            subdomains: ["", "5", "6", "7", "8", "9"],
-            maxZoom: resolutions.length - 1,
-            minZoom: 15,
-            attribution: "Map data &copy; swisstopo"
-        }).addTo(map);
-
-        var lemanCenter = L.point(530000, 135000);
-        map.setView(crs.projection.unproject(lemanCenter), 17);
+        $rootScope.$emit('scopeReady');        
     }
 
     // ========================================================================
@@ -177,7 +95,7 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
         var tMin = d3.min($scope.tData.Data.map(function(d) { return d3.min(d.value) }));
         var tMax = d3.max($scope.tData.Data.map(function(d) { return d3.max(d.value) }));
 
-        c = d3.scale.linear().domain([tMin, (tMin+tMax)/2, tMax]).range(["blue", "lime", "red"]);
+        c = d3.scale.linear().domain([tMin, (tMin+tMax)/2, tMax]).range(['blue', 'lime', 'red']);
 
         // Prepare all thingies
         updateLegend(tMin, tMax);
@@ -194,35 +112,18 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
             stage.removeChild(stage.children[i]);
         };
 
-        circles = [];
         var heatData = [];
 
         $scope.tData.Data.forEach(function(d, i) {
             var doc = misc.rectangle(x(d.x)-rectSize/2, y(d.y)-rectSize/2,
                 rectSize,rectSize,
-                parseInt(c(d.value[Time.tIndex]).toString().replace("#", "0x")));
+                parseInt(c(d.value[Time.tIndex]).toString().replace('#', '0x')));
             stage.addChild(doc.graphic);
             sprites[i] = doc;
             sprites[i].sprite.interactive = true;
-            sprites[i].sprite.mousedown = function(mouseData) { $rootScope.$emit("reloadChart", i); mouseDown = true; }
-            sprites[i].sprite.mouseover = function(mouseData) { if(!mouseDown) return; $rootScope.$emit("reloadChart", i); }
+            sprites[i].sprite.mousedown = function(mouseData) { $rootScope.$emit('reloadChart', i); mouseDown = true; }
+            sprites[i].sprite.mouseover = function(mouseData) { if(!mouseDown) return; $rootScope.$emit('reloadChart', i); }
             sprites[i].sprite.mouseup = function(mouseData) { mouseDown = false; }
-
-/*
-            if (!isNaN(d.x)) {
-                var point = crs.projection.unproject(L.point(d.x, d.y));
-                var circle = L.circle(point, 300, {
-                    stroke: false,
-                    fillColor: '#f03',
-                    fillOpacity: 1,
-                    clickable: false
-                });
-                // circle.addTo(map);
-                // circles.push(circle);
-
-                heatData.push([point.lat, point.lng]);
-            }
-            */
         })
 
         $scope.tData.xy.forEach(function(d) {
@@ -230,7 +131,7 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
             d.forEach(function(d0) {
                 var value = null;
                 if (d0) {
-                    var latlng = crs.projection.unproject(L.point(d0.x, d0.y));
+                    var latlng = Map.unproject(L.point(d0.x, d0.y));
                     value = {
                         lat: latlng.lat,
                         lng: latlng.lng,
@@ -243,14 +144,14 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
         });
 
         if (canvasLayer) {
-            map.removeLayer(canvasLayer);
+            map._map.removeLayer(canvasLayer);
         }
 
         canvasLayer = L.canvasLayer(heatData, {radius: 20, colorFunction: c});
-        canvasLayer.addTo(map);
+        canvasLayer.addTo(map._map);
 
         // Prepare the marker symbol
-        markerSprite = new PIXI.Sprite.fromImage("img/marker.png");
+        markerSprite = new PIXI.Sprite.fromImage('img/marker.png');
         markerSprite.width = 50;
         markerSprite.height = 50;
         stage.addChild(markerSprite);
@@ -261,20 +162,20 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
 
     function prepareLegend() {
         var w = 300, h = 120;
-        key = d3.select("#tempLegend").append("svg").attr("id", "key").attr("width", w).attr("height", h);
-        legend = key.append("defs").append("svg:linearGradient").attr("id", "gradient").attr("x1", "0%").attr("y1", "100%").attr("x2", "100%").attr("y2", "100%").attr("spreadMethod", "pad");
-        legend.append("stop").attr("offset", "0%").attr("stop-color", "blue").attr("stop-opacity", 1);
-        legend.append("stop").attr("offset", "50%").attr("stop-color", "lime").attr("stop-opacity", 1);
-        legend.append("stop").attr("offset", "100%").attr("stop-color", "red").attr("stop-opacity", 1);
-        key.append("rect").attr("width", w - 100).attr("height", h - 100).style("fill", "url(#gradient)")
-        var color = key.append("g").attr("class", "x axis").attr("transform", "translate(0,22)");
-        color.append("text").attr("y", 42).attr("dx", ".71em").style("text-anchor", "start").text("Temperature (°C)");
+        var key = d3.select('#tempLegend').append('svg').attr('id', 'key').attr('width', w).attr('height', h);
+        var legend = key.append('defs').append('svg:linearGradient').attr('id', 'gradient').attr('x1', '0%').attr('y1', '100%').attr('x2', '100%').attr('y2', '100%').attr('spreadMethod', 'pad');
+        legend.append('stop').attr('offset', '0%').attr('stop-color', 'blue').attr('stop-opacity', 1);
+        legend.append('stop').attr('offset', '50%').attr('stop-color', 'lime').attr('stop-opacity', 1);
+        legend.append('stop').attr('offset', '100%').attr('stop-color', 'red').attr('stop-opacity', 1);
+        key.append('rect').attr('width', w - 100).attr('height', h - 100).style('fill', 'url(#gradient)')
+        var color = key.append('g').attr('class', 'x axis').attr('transform', 'translate(0,22)');
+        color.append('text').attr('y', 42).attr('dx', '.71em').style('text-anchor', 'start').text('Temperature (°C)');
         return color;
     }
 
     function updateLegend(tMin, tMax) {
         var x = d3.scale.linear().range([0, 200]).domain([tMin, tMax]);
-        var xAxis = d3.svg.axis().scale(x).ticks(4).orient("bottom");
+        var xAxis = d3.svg.axis().scale(x).ticks(4).orient('bottom');
         colorLegend.call(xAxis);
     }
 
@@ -293,7 +194,7 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
             
             var value = d.value[Time.tIndex];
             sprites[i].sprite.visible = !isNaN(d.value[Time.tIndex]);
-            var color = parseInt(c(value).toString().replace("#", "0x"));
+            var color = parseInt(c(value).toString().replace('#', '0x'));
             sprites[i].sprite.tint = color;
 
             if (!isNaN(d.x)) {
@@ -320,4 +221,4 @@ app.controller("temperatureCtrl", ["$rootScope", "$scope", "Time", function($roo
         // render the timeline on the chart
         $scope.Chart.UpdateTimeLine();
     }
-}]);
+});

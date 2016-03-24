@@ -1,17 +1,12 @@
-var app = angular.module("lakeViewApp");
+var app = angular.module('lakeViewApp');
 
-app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootScope, $scope, Time) {
-    // TODO: get rid of non-Angular dependencies
-    var Chart = require('./models/chart');
-    var misc = require('./misc');
-    var TemporalData = require('./models/temporalData');
-
+app.controller('VelocityCtrl', function($rootScope, $scope, Time, Chart, misc, TemporalData, Map) {
     // ========================================================================
     // PROPERTIES
     // ========================================================================
 
     var lengthFactor = 1;
-    var webgl = misc.PrepareWebGLContext("#velContainer", true, 2);
+    var webgl = misc.PrepareWebGLContext('#velContainer', true, 2);
     var width = webgl.width;
     var height = webgl.height;
     var stage = webgl.stage;
@@ -30,12 +25,13 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
     var mouseDown = false;
     
     Initialize();
+    var map = Map.initMap('velMap');
 
     // ========================================================================
     // INIT (I know, code above is also initialization. Deal with it.)
     // ========================================================================
     function Initialize() {
-        $rootScope.$on("reloadWeek", function(evt, time) {
+        $rootScope.$on('reloadWeek', function(evt, time) {
             isDataReady = false;
 
             if($scope.tData && !time.fullReload) {
@@ -73,15 +69,15 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
             }
         })
 
-        $scope.Chart = new Chart($scope, Time, "#velPlot", function(d) { return norm(d); })
-        $rootScope.$on("reloadChart", function(evt, pointIndex) {
+        $scope.Chart = new Chart($scope, Time, '#velPlot', function(d) { return norm(d); })
+        $rootScope.$on('reloadChart', function(evt, pointIndex) {
             $scope.Chart.SelectPoint(pointIndex);
         })
 
         // start the renderer
         // d3.timer(animate);
     
-        $rootScope.$emit("scopeReady");
+        $rootScope.$emit('scopeReady');
     }
 
     // ========================================================================
@@ -102,7 +98,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
         var minVel = d3.min($scope.tData.Data.map(function(d) { return d3.min(d.value.map(function(v) { return norm(v); })) }));
         var maxVel = d3.max($scope.tData.Data.map(function(d) { return d3.max(d.value.map(function(v) { return norm(v); })) }));
 
-        c = d3.scale.linear().domain([minVel, (minVel+maxVel)/2, maxVel]).range(["blue", "lime", "red"]);
+        c = d3.scale.linear().domain([minVel, (minVel+maxVel)/2, maxVel]).range(['blue', 'lime', 'red']);
 
         // Prepare all thingies
         updateLegend(minVel, maxVel);
@@ -125,12 +121,12 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
         $scope.tData.Data.forEach(function(d, i) {
 
             // Clickable dots at grid locations
-            /*var doc = circle(x(d.x), y(d.y), rectSize, "0x000000");
+            /*var doc = circle(x(d.x), y(d.y), rectSize, '0x000000');
             stage.addChild(doc.graphic);
             sprites[i] = doc;
             sprites[i].sprite.interactive = true;
-            sprites[i].sprite.mousedown = function(mouseData) { $rootScope.$emit("reloadChart", i); mouseDown = true; }
-            sprites[i].sprite.mouseover = function(mouseData) { if(!mouseDown) return; $rootScope.$emit("reloadChart", i); }
+            sprites[i].sprite.mousedown = function(mouseData) { $rootScope.$emit('reloadChart', i); mouseDown = true; }
+            sprites[i].sprite.mouseover = function(mouseData) { if(!mouseDown) return; $rootScope.$emit('reloadChart', i); }
             sprites[i].sprite.mouseup = function(mouseData) { mouseDown = false; }*/
 
             // Animated lines on top
@@ -145,7 +141,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
         });
 
         // Prepare the marker symbol
-        markerSprite = new PIXI.Sprite.fromImage("img/marker.png");
+        markerSprite = new PIXI.Sprite.fromImage('img/marker.png');
         markerSprite.width = 50;
         markerSprite.height = 50;
         stage.addChild(markerSprite);
@@ -154,20 +150,20 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
 
     function prepareLegend() {
         var w = 300, h = 120;
-        key = d3.select("#velLegend").append("svg").attr("id", "key").attr("width", w).attr("height", h);
-        legend = key.append("defs").append("svg:linearGradient").attr("id", "gradient").attr("x1", "0%").attr("y1", "100%").attr("x2", "100%").attr("y2", "100%").attr("spreadMethod", "pad");
-        legend.append("stop").attr("offset", "0%").attr("stop-color", "blue").attr("stop-opacity", 1);
-        legend.append("stop").attr("offset", "50%").attr("stop-color", "lime").attr("stop-opacity", 1);
-        legend.append("stop").attr("offset", "100%").attr("stop-color", "red").attr("stop-opacity", 1);
-        key.append("rect").attr("width", w - 100).attr("height", h - 100).style("fill", "url(#gradient)");
-        var color = key.append("g").attr("class", "x axis").attr("transform", "translate(0,22)");
-        color.append("text").attr("y", 42).attr("dx", ".71em").style("text-anchor", "start").text("Velocity (m/s)");        
+        var key = d3.select('#velLegend').append('svg').attr('id', 'key').attr('width', w).attr('height', h);
+        var legend = key.append('defs').append('svg:linearGradient').attr('id', 'gradient').attr('x1', '0%').attr('y1', '100%').attr('x2', '100%').attr('y2', '100%').attr('spreadMethod', 'pad');
+        legend.append('stop').attr('offset', '0%').attr('stop-color', 'blue').attr('stop-opacity', 1);
+        legend.append('stop').attr('offset', '50%').attr('stop-color', 'lime').attr('stop-opacity', 1);
+        legend.append('stop').attr('offset', '100%').attr('stop-color', 'red').attr('stop-opacity', 1);
+        key.append('rect').attr('width', w - 100).attr('height', h - 100).style('fill', 'url(#gradient)');
+        var color = key.append('g').attr('class', 'x axis').attr('transform', 'translate(0,22)');
+        color.append('text').attr('y', 42).attr('dx', '.71em').style('text-anchor', 'start').text('Velocity (m/s)');        
         return color;
     }
 
     function updateLegend(minVel, maxVel) {
         var x = d3.scale.linear().range([0, 200]).domain([minVel, maxVel]);
-        var xAxis = d3.svg.axis().scale(x).ticks(4).orient("bottom");
+        var xAxis = d3.svg.axis().scale(x).ticks(4).orient('bottom');
         colorLegend.call(xAxis);
     }
 
@@ -206,7 +202,7 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
             //var s = 100*norm(value);
               //lines[i].graphic.scale.x = s < 0.1 ? 0 : s;// 1000*norm(value);
 
-            var color = parseInt(c(norm(value)).toString().replace("#", "0x"));
+            var color = parseInt(c(norm(value)).toString().replace('#', '0x'));
             lines[i].graphic.children.forEach(function(line){
                 updateLineColor(line, color);
             });
@@ -240,4 +236,4 @@ app.controller("velocityCtrl", ["$rootScope", "$scope", "Time", function($rootSc
     function norm(vec) {
         return Math.sqrt(vec[0]*vec[0] + vec[1]*vec[1]);
     }
-}])
+});
