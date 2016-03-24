@@ -76,42 +76,4 @@ app.factory('Map', function(CanvasLayer) {
         initMap: Map,
         unproject: unproject
     };
-
-    // var map;
-    // var canvasLayer;
-
-/*
-    function prepareGraphics() {
-        var heatData = [];
-
-        $scope.tData.xy.forEach(function(d) {
-            var row = [];
-            d.forEach(function(d0) {
-                var value = null;
-                if (d0) {
-                    var latlng = crs.projection.unproject(L.point(d0.x, d0.y));
-                    value = {
-                        lat: latlng.lat,
-                        lng: latlng.lng,
-                        values: d0.values
-                    }
-                }
-                row.push(value);
-            })
-            heatData.push(row);
-        });
-
-        if (canvasLayer) {
-            map.removeLayer(canvasLayer);
-        }
-
-        canvasLayer = L.canvasLayer(heatData, {radius: 20, colorFunction: c});
-        canvasLayer.addTo(map);
-
-    }
-
-    function animate() {
-        canvasLayer.setStep(Time.tIndex);
-    }
-    */
 });

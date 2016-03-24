@@ -39,23 +39,23 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
                 $scope.tData.SwitchToData(time.week, time.year);
                 // Load the next file if available
                 if(time.weeks.indexOf(time.week+1) != -1)
-                    $scope.tData.PrepareData(time.week+1, time.year, function() { 
+                    $scope.tData.readData(time.week+1, time.year, function() { 
                         dataReady();
                     });
             } else if($scope.tData && time.fullReload) {
                 // User changed the date in the lists.
                 // Typically means that the required data and the next data are not ready yet.
-                $scope.tData.PrepareData(time.week, time.year, function() {
+                $scope.tData.readData(time.week, time.year, function() {
                     $scope.tData.SwitchToData(time.week, time.year);
                     dataReady();
                     prepareGraphics();
                 });
                 // Load the next file if available
                 if(time.weeks.indexOf(time.week+1) != -1)
-                    $scope.tData.PrepareData(time.week+1, time.year, function() {});
+                    $scope.tData.readData(time.week+1, time.year, function() {});
             } else {
                 $scope.tData = new TemporalData(time.folder, 'temperature');
-                $scope.tData.PrepareData(time.week, time.year, function() {
+                $scope.tData.readData(time.week, time.year, function() {
                     $scope.tData.SwitchToData(time.week, time.year);
 
                     dataReady();
@@ -63,7 +63,7 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
 
                     // Load the next file if available
                     if(time.weeks.indexOf(time.week+1) != -1)
-                        $scope.tData.PrepareData(time.week+1, time.year, function() {});
+                        $scope.tData.readData(time.week+1, time.year, function() {});
                 });
             }
         })
@@ -92,8 +92,8 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
         x = d3.scale.linear().domain([$scope.tData.xMin, $scope.tData.xMax]).range([0+xmargin, width-xmargin]);
         y = d3.scale.linear().domain([$scope.tData.yMin, $scope.tData.yMax]).range([height-ymargin, 0+ymargin]);
 
-        var tMin = d3.min($scope.tData.Data.map(function(d) { return d3.min(d.value) }));
-        var tMax = d3.max($scope.tData.Data.map(function(d) { return d3.max(d.value) }));
+        var tMin = d3.min($scope.tData.Data.map(function(d) { return d3.min(d.values) }));
+        var tMax = d3.max($scope.tData.Data.map(function(d) { return d3.max(d.values) }));
 
         c = d3.scale.linear().domain([tMin, (tMin+tMax)/2, tMax]).range(['blue', 'lime', 'red']);
 
@@ -112,12 +112,10 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
             stage.removeChild(stage.children[i]);
         };
 
-        var heatData = [];
-
         $scope.tData.Data.forEach(function(d, i) {
             var doc = misc.rectangle(x(d.x)-rectSize/2, y(d.y)-rectSize/2,
                 rectSize,rectSize,
-                parseInt(c(d.value[Time.tIndex]).toString().replace('#', '0x')));
+                parseInt(c(d.values[Time.tIndex]).toString().replace('#', '0x')));
             stage.addChild(doc.graphic);
             sprites[i] = doc;
             sprites[i].sprite.interactive = true;
@@ -126,28 +124,20 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
             sprites[i].sprite.mouseup = function(mouseData) { mouseDown = false; }
         })
 
-        $scope.tData.xy.forEach(function(d) {
-            var row = [];
-            d.forEach(function(d0) {
-                var value = null;
-                if (d0) {
-                    var latlng = Map.unproject(L.point(d0.x, d0.y));
-                    value = {
-                        lat: latlng.lat,
-                        lng: latlng.lng,
-                        values: d0.values
-                    }
-                }
-                row.push(value);
-            })
-            heatData.push(row);
+        var temperatureData = $scope.tData.map(function(d) {
+            var latlng = Map.unproject(L.point(d.x, d.y));
+            return {
+                lat: latlng.lat,
+                lng: latlng.lng,
+                values: d.values
+            }
         });
 
         if (canvasLayer) {
             map._map.removeLayer(canvasLayer);
         }
 
-        canvasLayer = L.canvasLayer(heatData, {radius: 20, colorFunction: c});
+        canvasLayer = L.canvasLayer(temperatureData, {colorFunction: c});
         canvasLayer.addTo(map._map);
 
         // Prepare the marker symbol
@@ -185,25 +175,13 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
         // Animate the stuff here (transitions, color updates etc.)
         var rectSize = x(700) - x(0);
 
-        var circleId = 0;
-
-        var values = [];
-
         $scope.tData.Data.forEach(function(d, i) {
-            if(Time.tIndex >= d.value.length) return;
+            if(Time.tIndex >= d.values.length) return;
             
-            var value = d.value[Time.tIndex];
-            sprites[i].sprite.visible = !isNaN(d.value[Time.tIndex]);
+            var value = d.values[Time.tIndex];
+            sprites[i].sprite.visible = !isNaN(d.values[Time.tIndex]);
             var color = parseInt(c(value).toString().replace('#', '0x'));
             sprites[i].sprite.tint = color;
-
-            if (!isNaN(d.x)) {
-                // circles[circleId].setStyle({
-                //     fillColor: c(value).toString()
-                // });
-                values.push(value);
-                circleId++;
-            }
         });
 
         canvasLayer.setStep(Time.tIndex);

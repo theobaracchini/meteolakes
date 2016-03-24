@@ -142,13 +142,13 @@ app.factory('misc', function() {
         var alpha = 30*Math.PI/180.0;
         var headSize = 5;
 
-        var norm = Math.sqrt(dx*dx + dy*dy);
+        var length = norm([dx, dy]);
 
-        var x3 = x1 + dx - (dx*Math.cos(alpha) - dy*Math.sin(alpha))/norm*headSize;
-        var y3 = y1 + dy - (dx*Math.sin(alpha) + dy*Math.cos(alpha))/norm*headSize;
+        var x3 = x1 + dx - (dx*Math.cos(alpha) - dy*Math.sin(alpha))/length*headSize;
+        var y3 = y1 + dy - (dx*Math.sin(alpha) + dy*Math.cos(alpha))/length*headSize;
 
-        var x4 = x1 + dx - (dx*Math.cos(-alpha) - dy*Math.sin(-alpha))/norm*headSize;
-        var y4 = y1 + dy - (dx*Math.sin(-alpha) + dy*Math.cos(-alpha))/norm*headSize;
+        var x4 = x1 + dx - (dx*Math.cos(-alpha) - dy*Math.sin(-alpha))/length*headSize;
+        var y4 = y1 + dy - (dx*Math.sin(-alpha) + dy*Math.cos(-alpha))/length*headSize;
 
         var graphicArrow = new PIXI.DisplayObjectContainer();
 
@@ -176,10 +176,19 @@ app.factory('misc', function() {
         return {graphic: graphicArrow};
     }
 
+    /*
+     * Returns the norm of a vector.
+     * The vector is expected to be an array [x,y].
+     */
+    function norm(vec) {
+        return Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
+    }
+
     return {
         PrepareWebGLContext: PrepareWebGLContext,
         PrepareSvgCanvas: PrepareSvgCanvas,
         rectangle: rectangle,
-        arrow: arrow
+        arrow: arrow,
+        norm: norm
     };
 });

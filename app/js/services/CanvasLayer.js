@@ -1,6 +1,6 @@
 var app = angular.module('lakeViewApp');
 
-app.factory('CanvasLayer', function() {
+app.factory('CanvasLayer', function(misc) {
     L.CanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
 
         initialize: function (data, options) {
@@ -103,88 +103,92 @@ app.factory('CanvasLayer', function() {
                 this._canvas.height = size.y;
             }
 
+            this._updateLatLngToPixel();
+
             this._redraw();
         },
 
-        _redraw: function () {
-            /*
-            var data = [],
-                r = this.options.radius,
-                size = this._map.getSize(),
-                bounds = new L.Bounds(
-                    L.point([-r, -r]),
-                    size.add([r, r])),
-
-                cellSize = r / 2,
-                grid = [],
-                panePos = this._map._getMapPanePos(),
-                offsetX = panePos.x % cellSize,
-                offsetY = panePos.y % cellSize,
-                i, len, p, cell, x, y, j, len2;
-
-            for (i = 0, len = this._data.length; i < len; i++) {
-                p = this._map.latLngToContainerPoint(this._data[i]);
-                if (bounds.contains(p)) {
-                    x = Math.floor((p.x - offsetX) / cellSize) + 2;
-                    y = Math.floor((p.y - offsetY) / cellSize) + 2;
-
-                    var value = this._values[i] !== undefined ? +this._values[i] : 1;
-
-                    grid[y] = grid[y] || [];
-                    cell = grid[y][x];
-
-                    if (!cell) {
-                        grid[y][x] = [p.x, p.y, value, 1];
-
-                    } else {
-                        cell[0] += p.x; // x
-                        cell[1] += p.y; // y
-                        cell[2] += value;
-                        cell[3]++;
+        _updateLatLngToPixel: function () {
+            for (var i = 0; i < this._data.length; i++) {
+                var row = this._data[i];
+                for (var j = 0; j < row.length; j++) {
+                    var d = row[j];
+                    if (d) {
+                        d.p = this._map.latLngToContainerPoint([d.lat, d.lng]);
                     }
                 }
             }
+        },
 
-            for (i = 0, len = grid.length; i < len; i++) {
-                if (grid[i]) {
-                    for (j = 0, len2 = grid[i].length; j < len2; j++) {
-                        cell = grid[i][j];
-                        if (cell) {
-                            data.push([
-                                cell[0] / cell[3],
-                                cell[1] / cell[3],
-                                cell[2] / cell[3]
-                            ]);
+        _redraw: function () {
+            if (this.options.simplify) {
+                var ctx = this._canvas.getContext('2d');
+                ctx.clearRect(0, 0, this._width(), this._height());
+
+                var r = this.options.radius,
+                    size = this._map.getSize(),
+                    bounds = new L.Bounds(
+                        L.point([-r, -r]),
+                        size.add([r, r])),
+
+                    cellSize = r / 2,
+                    grid = [],
+                    panePos = this._map._getMapPanePos(),
+                    offsetX = panePos.x % cellSize,
+                    offsetY = panePos.y % cellSize,
+                    i, len, d, p, cell, x, y, j, len2;
+
+                for (i = 0, len = this._data.length; i < len; i++) {
+                    var row = this._data[i];
+                    for (var j = 0; j < row.length; j++) {
+                        d = row[j];
+                        if (d) {
+                            if (bounds.contains(d.p)) {
+                                x = Math.floor((d.p.x - offsetX) / cellSize) + 2;
+                                y = Math.floor((d.p.y - offsetY) / cellSize) + 2;
+
+                                var value = d.values[this._step];
+
+                                if (value) {
+                                    grid[y] = grid[y] || [];
+                                    cell = grid[y][x];
+
+                                    // TODO move velocity-specific simplification code elsewhere
+                                    if (!cell) {
+                                        grid[y][x] = [d.p.x, d.p.y, value[0], value[1], 1];
+                                    } else {
+                                        cell[0] += d.p.x;
+                                        cell[1] += d.p.y;
+                                        cell[2] += value[0];
+                                        cell[3] += value[1];
+                                        cell[4]++;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
-            }
 
+                for (i = 0, len = grid.length; i < len; i++) {
+                    if (grid[i]) {
+                        for (j = 0, len2 = grid[i].length; j < len2; j++) {
+                            cell = grid[i][j];
+                            if (cell) {
+                                var x = cell[0] / cell[4];
+                                var y = cell[1] / cell[4];
+                                var dx = cell[2] / cell[4]
+                                var dy = cell[3] / cell[4]
+                                var color = this.options.colorFunction(misc.norm([dx, dy]));
 
-            var data = [];
-            var r = this.options.radius;
-            var size = this._map.getSize();
-            var bounds = new L.Bounds(L.point([-r, -r]), size.add([r, r]));
-
-            for (var i = 0; i < this._data.length; i++) {
-                var p = this._map.latLngToContainerPoint(this._data[i]);
-                if (bounds.contains(p)) {
-                    data.push([p.x, p.y, this._values[i]])
+                                // TODO use max velocity to determine scale factor
+                                this._drawArrow(x, y, dx * 500, -dy * 500, color);
+                            }
+                        }
+                    }
                 }
+            } else {
+                this._draw();
             }
-            */
-
-            /*
-            TODO
-            - cache results of latLngToContainerPoint
-            - only draw data within bounds
-            - optionally simplify data
-            */
-
-            var self = this;
-            this._draw(function(p) {
-                return self._map.latLngToContainerPoint([p.lat, p.lng]);
-            });
 
             this._frame = null;
         },
@@ -197,57 +201,66 @@ app.factory('CanvasLayer', function() {
             return this._canvas.height;
         },
 
-        _draw: function (p) {
+        _draw: function () {
             var ctx = this._canvas.getContext('2d');
 
             ctx.clearRect(0, 0, this._width(), this._height());
+
+            var bounds = new L.Bounds(
+                        L.point([0, 0]),
+                        this._map.getSize());
 
             for (var i = 0; i < this._data.length - 1; i++) {
                 var row = this._data[i];
                 var nextRow = this._data[i + 1];
                 for (var j = 0; j < row.length - 1; j++) {
                     if (row[j] && row[j + 1] && nextRow[j] && nextRow[j + 1]) {
-                        // TODO correct 1/2 cell shift
-                        var topLeftValue = row[j].values[this._step];
-                        var color = this.options.colorFunction(topLeftValue);
+                        if (bounds.contains(row[j].p)) {
+                            // TODO correct 1/2 cell shift
+                            var topLeftValue = row[j].values[this._step];
+                            var color = this.options.colorFunction(topLeftValue);
 
-                        var p00 = p(row[j]);
-                        var p01 = p(row[j + 1]);
-                        var p10 = p(nextRow[j]);
-                        var p11 = p(nextRow[j + 1]);
-                        ctx.beginPath();
-                        ctx.moveTo(p00.x, p00.y);
-                        ctx.lineTo(p01.x, p01.y);
-                        ctx.lineTo(p11.x, p11.y);
-                        ctx.lineTo(p10.x, p10.y);
-                        ctx.closePath();
-                        ctx.fillStyle = color;
-                        ctx.fill();
-                        ctx.strokeStyle = color;
-                        ctx.stroke();
-
-                        // this._drawCircle(p00.x, p00.y, 5, 'green');
+                            var p00 = row[j].p;
+                            var p01 = row[j + 1].p;
+                            var p10 = nextRow[j].p;
+                            var p11 = nextRow[j + 1].p;
+                            ctx.beginPath();
+                            ctx.moveTo(p00.x, p00.y);
+                            ctx.lineTo(p01.x, p01.y);
+                            ctx.lineTo(p11.x, p11.y);
+                            ctx.lineTo(p10.x, p10.y);
+                            ctx.closePath();
+                            ctx.fillStyle = color;
+                            ctx.fill();
+                            ctx.strokeStyle = color;
+                            ctx.stroke();
+                        }
                     }
                 }
             }
-    /*
-            for (var i = 0, len = this._data.length, p; i < len; i++) {
-                p = this._data[i];
-                var color = (colorFunction !== undefined) ? colorFunction(p[2]) : 'green';
-                this._drawCircle(p[0], p[1], 5, color);
-            }
-
-            var colored = ctx.getImageData(0, 0, this._width, this._height);
-            var pixels = colored.data;
-            for (var i = 0, len = pixels.length, j; i < len; i += 4) {
-                if (pixels[i + 3]) {
-                    pixels[i + 3] = 255;
-                }
-            }
-            ctx.putImageData(colored, 0, 0);
-            */
 
             return this;
+        },
+
+        _drawArrow: function (x, y, dx, dy, color) {
+            var fromx = x;
+            var fromy = y;
+            var tox = x + dx;
+            var toy = y + dy;
+
+            var ctx = this._canvas.getContext('2d');
+
+            var headlen = 10;   // length of head in pixels
+            var angle = Math.atan2(toy - fromy, tox - fromx);
+            ctx.beginPath();
+            ctx.moveTo(fromx, fromy);
+            ctx.lineTo(tox, toy);
+            ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.moveTo(tox, toy);
+            ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.closePath();
+            ctx.strokeStyle = color;
+            ctx.stroke();
         },
 
         _drawCircle: function (x, y, r, color) {
