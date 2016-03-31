@@ -5,22 +5,9 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
     // PROPERTIES
     // ========================================================================
 
-    var webgl = misc.PrepareWebGLContext('#tempContainer', true, 2);
-    var width = webgl.width;
-    var height = webgl.height;
-    var stage = webgl.stage;
-    var renderer = webgl.renderer;
-    var markerSprite;
-    var sprites = [];
-
     var isDataReady = false;
-
-    var x,y,c; // d3 axis
-    var rectSize;
-
+    var c; // coloring function
     var colorLegend = prepareLegend();
-
-    var mouseDown = false;
 
     var canvasLayer;
     var map = Map.initMap('tempMap');
@@ -87,11 +74,6 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
     // ========================================================================
 
     function dataReady() {
-        var xmargin = width*0.1;
-        var ymargin = height*0.1;
-        x = d3.scale.linear().domain([$scope.tData.xMin, $scope.tData.xMax]).range([0+xmargin, width-xmargin]);
-        y = d3.scale.linear().domain([$scope.tData.yMin, $scope.tData.yMax]).range([height-ymargin, 0+ymargin]);
-
         var tMin = d3.min($scope.tData.Data.map(function(d) { return d3.min(d.values) }));
         var tMax = d3.max($scope.tData.Data.map(function(d) { return d3.max(d.values) }));
 
@@ -105,25 +87,6 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
     }
 
     function prepareGraphics() {
-        var rectSize = x(700) - x(0);
-
-        // Clear the stage
-        for (var i = stage.children.length - 1; i >= 0; i--) {
-            stage.removeChild(stage.children[i]);
-        };
-
-        $scope.tData.Data.forEach(function(d, i) {
-            var doc = misc.rectangle(x(d.x)-rectSize/2, y(d.y)-rectSize/2,
-                rectSize,rectSize,
-                parseInt(c(d.values[Time.tIndex]).toString().replace('#', '0x')));
-            stage.addChild(doc.graphic);
-            sprites[i] = doc;
-            sprites[i].sprite.interactive = true;
-            sprites[i].sprite.mousedown = function(mouseData) { $rootScope.$emit('reloadChart', i); mouseDown = true; }
-            sprites[i].sprite.mouseover = function(mouseData) { if(!mouseDown) return; $rootScope.$emit('reloadChart', i); }
-            sprites[i].sprite.mouseup = function(mouseData) { mouseDown = false; }
-        })
-
         var temperatureData = $scope.tData.map(function(d) {
             var latlng = Map.unproject(L.point(d.x, d.y));
             return {
@@ -139,13 +102,6 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
 
         canvasLayer = L.canvasLayer(temperatureData, {colorFunction: c});
         canvasLayer.addTo(map._map);
-
-        // Prepare the marker symbol
-        markerSprite = new PIXI.Sprite.fromImage('img/marker.png');
-        markerSprite.width = 50;
-        markerSprite.height = 50;
-        stage.addChild(markerSprite);
-        markerSprite.visible = false;
 
         animate();
     }
@@ -172,29 +128,7 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
     function animate() {
         if(!isDataReady) return;
 
-        // Animate the stuff here (transitions, color updates etc.)
-        var rectSize = x(700) - x(0);
-
-        $scope.tData.Data.forEach(function(d, i) {
-            if(Time.tIndex >= d.values.length) return;
-            
-            var value = d.values[Time.tIndex];
-            sprites[i].sprite.visible = !isNaN(d.values[Time.tIndex]);
-            var color = parseInt(c(value).toString().replace('#', '0x'));
-            sprites[i].sprite.tint = color;
-        });
-
         canvasLayer.setStep(Time.tIndex);
-
-        // Put the marker sprite at the correct position
-        markerSprite.visible = $scope.pointIndex != undefined;
-        if($scope.pointIndex != undefined) {
-            markerSprite.position.x = x($scope.tData.Data[$scope.pointIndex].x) - markerSprite.width / 2;
-            markerSprite.position.y = y($scope.tData.Data[$scope.pointIndex].y) - markerSprite.height / 2;
-        }
-
-        // render the stage
-        renderer.render(stage);
 
         // render the timeline on the chart
         $scope.Chart.UpdateTimeLine();

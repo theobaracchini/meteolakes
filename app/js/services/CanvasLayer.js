@@ -41,6 +41,7 @@ app.factory('CanvasLayer', function(misc) {
             }
 
             map._panes.overlayPane.appendChild(this._canvas);
+            // map._panes.overlayPane.appendChild(this._renderer.view);
 
             map.on('moveend', this._reset, this);
 
@@ -75,14 +76,19 @@ app.factory('CanvasLayer', function(misc) {
         },
 
         _initCanvas: function () {
-            var canvas = this._canvas = L.DomUtil.create('canvas', 'leaflet-canvas-layer leaflet-layer');
+            // var canvas = this._canvas = L.DomUtil.create('canvas', 'leaflet-canvas-layer leaflet-layer');
 
             var size = this._map.getSize();
-            canvas.width  = size.x;
-            canvas.height = size.y;
+            // canvas.width  = size.x;
+            // canvas.height = size.y;
+
+            this._stage = new PIXI.Stage();
+            this._renderer = PIXI.autoDetectRenderer(size.x, size.y, {transparent: true, antialias: true});
+            this._canvas = this._renderer.view;
 
             var animated = this._map.options.zoomAnimation && L.Browser.any3d;
-            L.DomUtil.addClass(canvas, 'leaflet-zoom-' + (animated ? 'animated' : 'hide'));
+            L.DomUtil.addClass(this._canvas, 'leaflet-canvas-layer');
+            L.DomUtil.addClass(this._canvas, 'leaflet-zoom-' + (animated ? 'animated' : 'hide'));
 
             this._updateOptions();
         },
@@ -93,15 +99,17 @@ app.factory('CanvasLayer', function(misc) {
         _reset: function () {
             var topLeft = this._map.containerPointToLayerPoint([0, 0]);
             L.DomUtil.setPosition(this._canvas, topLeft);
+            // L.DomUtil.setPosition(this._renderer.view, topLeft);
 
             var size = this._map.getSize();
+            this._renderer.resize(size.x, size.y);
 
-            if (this._width() !== size.x) {
-                this._canvas.width = size.x;
-            }
-            if (this._height() !== size.y) {
-                this._canvas.height = size.y;
-            }
+            // if (this._width() !== size.x) {
+            //     this._canvas.width = size.x;
+            // }
+            // if (this._height() !== size.y) {
+            //     this._canvas.height = size.y;
+            // }
 
             this._updateLatLngToPixel();
 
@@ -121,10 +129,11 @@ app.factory('CanvasLayer', function(misc) {
         },
 
         _redraw: function () {
-            if (this.options.simplify) {
-                var ctx = this._canvas.getContext('2d');
-                ctx.clearRect(0, 0, this._width(), this._height());
+            for (var i = this._stage.children.length - 1; i >= 0; i--) {
+                this._stage.removeChild(this._stage.children[i]);
+            };
 
+            if (this.options.simplify) {
                 var r = this.options.radius,
                     size = this._map.getSize(),
                     bounds = new L.Bounds(
@@ -169,6 +178,7 @@ app.factory('CanvasLayer', function(misc) {
                     }
                 }
 
+                var graphics = new PIXI.Graphics();
                 for (i = 0, len = grid.length; i < len; i++) {
                     if (grid[i]) {
                         for (j = 0, len2 = grid[i].length; j < len2; j++) {
@@ -181,14 +191,17 @@ app.factory('CanvasLayer', function(misc) {
                                 var color = this.options.colorFunction(misc.norm([dx, dy]));
 
                                 // TODO use max velocity to determine scale factor
-                                this._drawArrow(x, y, dx * 500, -dy * 500, color);
+                                this._drawArrow(x, y, dx * 500, -dy * 500, color, graphics);
                             }
                         }
                     }
                 }
+                this._stage.addChild(graphics);
             } else {
                 this._draw();
             }
+
+            this._renderer.render(this._stage);
 
             this._frame = null;
         },
@@ -202,9 +215,7 @@ app.factory('CanvasLayer', function(misc) {
         },
 
         _draw: function () {
-            var ctx = this._canvas.getContext('2d');
-
-            ctx.clearRect(0, 0, this._width(), this._height());
+            var graphics = new PIXI.Graphics();
 
             var bounds = new L.Bounds(
                         L.point([0, 0]),
@@ -218,49 +229,46 @@ app.factory('CanvasLayer', function(misc) {
                         if (bounds.contains(row[j].p)) {
                             // TODO correct 1/2 cell shift
                             var topLeftValue = row[j].values[this._step];
-                            var color = this.options.colorFunction(topLeftValue);
+                            if (topLeftValue) {
+                                var color = this.options.colorFunction(topLeftValue);
 
-                            var p00 = row[j].p;
-                            var p01 = row[j + 1].p;
-                            var p10 = nextRow[j].p;
-                            var p11 = nextRow[j + 1].p;
-                            ctx.beginPath();
-                            ctx.moveTo(p00.x, p00.y);
-                            ctx.lineTo(p01.x, p01.y);
-                            ctx.lineTo(p11.x, p11.y);
-                            ctx.lineTo(p10.x, p10.y);
-                            ctx.closePath();
-                            ctx.fillStyle = color;
-                            ctx.fill();
-                            ctx.strokeStyle = color;
-                            ctx.stroke();
+                                var p00 = row[j].p;
+                                var p01 = row[j + 1].p;
+                                var p10 = nextRow[j].p;
+                                var p11 = nextRow[j + 1].p;
+
+                                graphics.beginFill(+color.replace('#', '0x'));
+                                graphics.moveTo(p00.x, p00.y);
+                                graphics.lineTo(p01.x, p01.y);
+                                graphics.lineTo(p11.x, p11.y);
+                                graphics.lineTo(p10.x, p10.y);
+                                graphics.endFill();
+                            }
                         }
                     }
                 }
             }
 
+            this._stage.addChild(graphics);
+
             return this;
         },
 
-        _drawArrow: function (x, y, dx, dy, color) {
+        _drawArrow: function (x, y, dx, dy, color, graphics) {
             var fromx = x;
             var fromy = y;
             var tox = x + dx;
             var toy = y + dy;
 
-            var ctx = this._canvas.getContext('2d');
-
             var headlen = 10;   // length of head in pixels
             var angle = Math.atan2(toy - fromy, tox - fromx);
-            ctx.beginPath();
-            ctx.moveTo(fromx, fromy);
-            ctx.lineTo(tox, toy);
-            ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
-            ctx.moveTo(tox, toy);
-            ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
-            ctx.closePath();
-            ctx.strokeStyle = color;
-            ctx.stroke();
+
+            graphics.lineStyle(1, +color.replace('#', '0x'));
+            graphics.moveTo(fromx, fromy);
+            graphics.lineTo(tox, toy);
+            graphics.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+            graphics.moveTo(tox, toy);
+            graphics.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
         },
 
         _drawCircle: function (x, y, r, color) {
