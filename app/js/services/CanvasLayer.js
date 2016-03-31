@@ -82,7 +82,7 @@ app.factory('CanvasLayer', function(misc) {
             // canvas.width  = size.x;
             // canvas.height = size.y;
 
-            this._stage = new PIXI.Stage();
+            this._container = new PIXI.Container();
             this._renderer = PIXI.autoDetectRenderer(size.x, size.y, {transparent: true, antialias: true});
             this._canvas = this._renderer.view;
 
@@ -129,8 +129,8 @@ app.factory('CanvasLayer', function(misc) {
         },
 
         _redraw: function () {
-            for (var i = this._stage.children.length - 1; i >= 0; i--) {
-                this._stage.removeChild(this._stage.children[i]);
+            for (var i = this._container.children.length - 1; i >= 0; i--) {
+                this._container.removeChild(this._container.children[i]);
             };
 
             if (this.options.simplify) {
@@ -196,12 +196,12 @@ app.factory('CanvasLayer', function(misc) {
                         }
                     }
                 }
-                this._stage.addChild(graphics);
+                this._container.addChild(graphics);
             } else {
                 this._draw();
             }
 
-            this._renderer.render(this._stage);
+            this._renderer.render(this._container);
 
             this._frame = null;
         },
@@ -249,7 +249,7 @@ app.factory('CanvasLayer', function(misc) {
                 }
             }
 
-            this._stage.addChild(graphics);
+            this._container.addChild(graphics);
 
             return this;
         },
