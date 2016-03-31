@@ -1,12 +1,8 @@
-var app = angular.module("lakeViewApp");
+var app = angular.module('lakeViewApp');
 
-app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope, $scope, Time) {
-    // TODO: get rid of non-Angular dependencies
-    var DATA_HOST = require('./globals').DATA_HOST;
-    var dpp = require('./models/dateplusplus');
-
+app.controller('TimeCtrl', function($rootScope, $scope, Time, DATA_HOST, DateHelpers) {
     var tickTimerId = null;
-    var loopType = "repeat";
+    var loopType = 'repeat';
 
     $scope.Interval = 0;
 
@@ -15,9 +11,9 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
     // ------------------------------------------------------------------------
 
     $scope.play = function() {
-        $("#playButton span").toggleClass("glyphicon-play glyphicon-pause");
+        $('#playButton span').toggleClass('glyphicon-play glyphicon-pause');
 
-        loopType = "repeat";
+        loopType = 'repeat';
 
         if(tickTimerId == null)
             tickTimerId = setInterval(tick, 60);
@@ -28,7 +24,7 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
     $scope.playAll = function() {
         // Play, but instead of looping move to the next week
         $scope.play();
-        loopType = "continue";
+        loopType = 'continue';
     }
 
     $scope.pause = function() {
@@ -44,7 +40,7 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 
     $scope.stop = function() {
         if(tickTimerId != null)
-            $("#playButton span").toggleClass("glyphicon-play glyphicon-pause");
+            $('#playButton span').toggleClass('glyphicon-play glyphicon-pause');
 
         $scope.pause();
         Time.tIndex = 0;
@@ -55,18 +51,18 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
     }
 
     $scope.PrettyPrintTime = function(ti, weekNo, year) {
-        var refDate = dpp.FirstDayOfWeek(weekNo, year);
+        var refDate = DateHelpers.FirstDayOfWeek(weekNo, year);
 
         // tIndex corresponds to intervals, which are given by the global INTERVAL
         // in minutes, so we need to convert it into milliseconds
         var currentDate = new Date(refDate + ti*$scope.Interval*60*1000);
-        return currentDate.toLocaleDateString() + ":" + currentDate.getHours() + "h";     
+        return currentDate.toLocaleDateString() + ':' + currentDate.getHours() + 'h';     
     }
 
     $scope.PrettyPrintWeek = function(week) {
-        var firstDay = dpp.FirstDayOfWeek(week, $scope.SelectedYear);
-        var lastDay = dpp.LastDayOfWeek(week, $scope.SelectedYear);
-        return new Date(firstDay).toLocaleDateString() + " - " + new Date(lastDay).toLocaleDateString();
+        var firstDay = DateHelpers.FirstDayOfWeek(week, $scope.SelectedYear);
+        var lastDay = DateHelpers.LastDayOfWeek(week, $scope.SelectedYear);
+        return new Date(firstDay).toLocaleDateString() + ' - ' + new Date(lastDay).toLocaleDateString();
     }
 
     $scope.ChangeWeek = function(week) {
@@ -86,7 +82,7 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
     $scope.selectWeek = function(week) {
         // Make sure the given week number is not out of bounds with the 
         // current year, and change year if necessary.
-        var numberOfWeeks = dpp.NumberOfWeeks($scope.SelectedYear);
+        var numberOfWeeks = DateHelpers.NumberOfWeeks($scope.SelectedYear);
         if(week >= numberOfWeeks) {
             $scope.selectYear($scope.SelectedYear+1);
             $scope.selectWeek(week - numberOfWeeks + 1);
@@ -103,7 +99,7 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
     $scope.selectYear = function(year) {
         $scope.SelectedYear = year;
         $scope.Weeks = [];
-        weeksForYear = $scope.Dates[$scope.SelectedLake]["data"]["Y" + $scope.SelectedYear];
+        weeksForYear = $scope.Dates[$scope.SelectedLake]['data']['Y' + $scope.SelectedYear];
         weeksForYear.forEach(function(week) {
             $scope.Weeks.push(week);
         });
@@ -112,12 +108,12 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
     function tick() {
         Time.increase(true);
 
-        $rootScope.$emit("tick");
+        $rootScope.$emit('tick');
 
         if(Time.tIndex == 0) {
             // we looped. Decide whether we play again the current week
             // or if we play the next week
-            if(loopType == "continue") {
+            if(loopType == 'continue') {
                 $scope.selectWeek($scope.SelectedWeek+1);
                 emitReload();
             }
@@ -127,18 +123,18 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
     }
 
     /**
-     * Emit a "reloadWeek" message, indicating that the time has passed to 
+     * Emit a 'reloadWeek' message, indicating that the time has passed to 
      * a new week.
      */
     function emitReload() {
-        $rootScope.$emit("reloadWeek", {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:false, folder:$scope.Dates[$scope.SelectedLake]["folder"], weeks:$scope.Dates[$scope.SelectedLake]["data"]["Y" + $scope.SelectedYear]});
+        $rootScope.$emit('reloadWeek', {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:false, folder:$scope.Dates[$scope.SelectedLake]['folder'], weeks:$scope.Dates[$scope.SelectedLake]['data']['Y' + $scope.SelectedYear]});
     }
     /**
-     * Emit a "reloadWeek" message, indicating that the user changed a 
+     * Emit a 'reloadWeek' message, indicating that the user changed a 
      * parameter in the time fields and that all data needs to be reloaded.
      */
     function emitFullReload() {
-        $rootScope.$emit("reloadWeek", {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:true, folder:$scope.Dates[$scope.SelectedLake]["folder"], weeks:$scope.Dates[$scope.SelectedLake]["data"]["Y" + $scope.SelectedYear]});
+        $rootScope.$emit('reloadWeek', {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:true, folder:$scope.Dates[$scope.SelectedLake]['folder'], weeks:$scope.Dates[$scope.SelectedLake]['data']['Y' + $scope.SelectedYear]});
     }
 
     function loadAvailableDates(callback) {
@@ -147,7 +143,7 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
         $scope.Years = [];
         $scope.SelectedYear = undefined;
 
-        d3.json(DATA_HOST + "available_data.json", function(err, data) {
+        d3.json(DATA_HOST + 'available_data.json', function(err, data) {
             $scope.Dates = data;
             $scope.SelectedLake = 0; // first one in the array of lakes (i.e. data[0])
             $scope.Interval = data[$scope.SelectedLake].interval;
@@ -158,13 +154,13 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 
     function selectWeekClosestToNow() {
         var now = new Date();
-        var currentWeek = dpp.GetWeek(now);
+        var currentWeek = DateHelpers.GetWeek(now);
 
         // Find the week closest to now
         var minDiffWeek = Number.MAX_VALUE; // large initial value for week diff
         $scope.Weeks = [];
-        for(var i = 0 ; i <  $scope.Dates[$scope.SelectedLake]["data"]["Y" + $scope.SelectedYear].length ; ++i) {
-            var week = $scope.Dates[$scope.SelectedLake]["data"]["Y" + $scope.SelectedYear][i];
+        for(var i = 0 ; i <  $scope.Dates[$scope.SelectedLake]['data']['Y' + $scope.SelectedYear].length ; ++i) {
+            var week = $scope.Dates[$scope.SelectedLake]['data']['Y' + $scope.SelectedYear][i];
             $scope.Weeks.push(week);
             var diffWeek = Math.abs(week - currentWeek);
             if(diffWeek < minDiffWeek) {
@@ -181,7 +177,7 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
         // Find the year closest to now
         var minDiffYear = Number.MAX_VALUE; // take a large initial value for year diff
         $scope.Years = [];
-        for(var syear in $scope.Dates[$scope.SelectedLake]["data"]) {
+        for(var syear in $scope.Dates[$scope.SelectedLake]['data']) {
             var year = parseInt(syear.substring(1));
             $scope.Years.push(year);
             var diffYear = Math.abs(year - currentYear);
@@ -199,7 +195,7 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
     loadAvailableDates(selectDateClosestToNow);
 
     // When a controller is ready, tell it the selected year/week to load
-    $rootScope.$on("scopeReady", function() {
+    $rootScope.$on('scopeReady', function() {
         if($scope.Dates)
             emitReload();
     })
@@ -208,9 +204,9 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 
 
     // UI Logic to hide/show the sidebar time controls when scrolling
-    $(".sidebar").hide()
+    $('.sidebar').hide()
     $(document).scroll(function() {
-        if (!isScrolledIntoView($("#timeControls"))) {
+        if (!isScrolledIntoView($('#timeControls'))) {
             $('.sidebar').fadeIn();
         } else {
             $('.sidebar').fadeOut();
@@ -226,4 +222,4 @@ app.controller("timeCtrl", ["$rootScope", "$scope", "Time", function($rootScope,
 
         return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
     }    
-}]);
+});

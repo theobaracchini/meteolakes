@@ -22,8 +22,8 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.min.js"
                 integrity="sha384-niXt6LHz3/5ICmM9SeKzwJ/Q+a+7097SlA8uRtZSe0ISV5OpJZEVngjobdrYk8UZ"
                 crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/2.2.9/pixi.js"
-                integrity="sha384-l0oOfrdCRAYbwB1egE+ZXDdRltq1UibEXLHClReM+LAY1inPOD3BV/dDeQtOgOeg"
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/3.0.10/pixi.min.js"
+                integrity="sha384-hwATRINVJeAKm4yd1+IoEScwjlu5Id1G61Zlk2uZ+3SIqCnF3AGAoUDc9xuVTfrO"
                 crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"
                 integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
@@ -34,7 +34,6 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.12/proj4.js"
                 integrity="sha384-g71Vd1BhAzR1AWGvw5hCQvG8P8DqJCCPUvoTqnSxsXOecKi7SayxNDUqZ06bHeEb"
                 crossorigin="anonymous"></script>
-        <script src="js/proj4leaflet.js"></script>
 
         <script src="dist/js/bundle.min.js"></script>
     </head>
@@ -43,7 +42,7 @@
         <div class="container" style="margin-bottom:20px">
             <div class="row" style="margin-left:50px;margin-right:50px">
                 <div class="row">
-                    <div class="col-lg-12" ng-controller="timeCtrl">
+                    <div class="col-lg-12" ng-controller="TimeCtrl">
                         <!-- Side toolbar to display when the normal time tools are hidden -->
                         <div class="sidebar">
                             <div class="btn-group-vertical" role="group">
@@ -87,14 +86,11 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-lg-12" ng-controller="temperatureCtrl">
+                    <div class="col-lg-12" ng-controller="TemperatureCtrl">
                         <h2>TEMPERATURE</h2>
 
                         <div class="col-lg-12">
                             <div class="map" id="tempMap"></div>
-                        </div>
-                        <div id="tempContainer" class="col-lg-12">
-                            <!-- WebGL container will be created here -->
                         </div>
                         <div id="tempLegend" class="col-lg-12"></div>
 
@@ -115,17 +111,13 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-lg-12" ng-controller="velocityCtrl">
+                    <div class="col-lg-12" ng-controller="VelocityCtrl">
                         <h2>VELOCITY</h2>
 
                         <div class="col-lg-12">
                             <!-- <div class="map" id="velMap"></div> -->
                         </div>
-                        <div id="velContainer" class="col-lg-12">
-                            <!-- WebGL container will be created here -->
-                        </div>
                         <div id="velLegend" class="col-lg-12"></div>
-
 
                         <div class="col-lg-12">
                             <div class="row" id="velPlot">
