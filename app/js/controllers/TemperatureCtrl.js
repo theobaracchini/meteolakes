@@ -1,6 +1,6 @@
 var app = angular.module('lakeViewApp');
 
-app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc, TemporalData, Map) {
+app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc, TemporalData, Map, rbush, knn) {
     // ========================================================================
     // PROPERTIES
     // ========================================================================
@@ -10,6 +10,8 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
     var colorLegend = prepareLegend();
 
     var canvasLayer;
+    var knnTree;
+    var marker;
     var map = Map.initMap('tempMap');
 
     Initialize();
@@ -56,9 +58,6 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
         })
 
         $scope.Chart = new Chart($scope, Time, '#tempPlot', function(d) { return d })
-        $rootScope.$on('reloadChart', function(evt, pointIndex) {
-            $scope.Chart.SelectPoint(pointIndex);
-        })
 
         $rootScope.$on('tick', function() {
             animate();
@@ -87,7 +86,10 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
     }
 
     function prepareGraphics() {
+        var knnData = [];
+
         var temperatureData = $scope.tData.map(function(d) {
+            knnData.push(d);
             var latlng = Map.unproject(L.point(d.x, d.y));
             return {
                 lat: latlng.lat,
@@ -99,6 +101,21 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
         if (canvasLayer) {
             map._map.removeLayer(canvasLayer);
         }
+
+        knnTree = rbush(9, ['.x', '.y', '.x', '.y']);
+        knnTree.load(knnData);
+        map._map.on('click', function(e) {
+            var p = Map.project(e.latlng);
+            var closestPoint = knn(knnTree, [p.x, p.y], 1)[0];
+            var latlng = Map.unproject(L.point(closestPoint.x, closestPoint.y));
+            if (marker) {
+                marker.setLatLng(latlng);
+            } else {
+                marker = L.marker(latlng).addTo(map._map);
+            }
+            $scope.Chart.SelectPoint(closestPoint);
+            $scope.$apply();
+        });
 
         canvasLayer = L.canvasLayer(temperatureData, {colorFunction: c});
         canvasLayer.addTo(map._map);

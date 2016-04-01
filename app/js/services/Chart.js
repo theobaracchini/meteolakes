@@ -16,23 +16,22 @@ app.service('Chart', function(DateHelpers, misc) {
 
     Chart.prototype.Close = function() {
         $(this.containerId).fadeOut()
-        this.$scope.pointIndex = undefined
 
         return this;
     }
 
-    Chart.prototype.SelectPoint = function(i) {
-        this.$scope.pointIndex = i
+    Chart.prototype.SelectPoint = function(pointData) {
+        this.$scope.pointData = pointData
         this.UpdateChart()
 
         return this;
     }
 
     Chart.prototype.UpdateChart = function(dataTime) {
-        if(!this.$scope.pointIndex)
+        if(!this.$scope.pointData)
             return this
 
-        var p = this.$scope.tData.Data[this.$scope.pointIndex]
+        var p = this.$scope.pointData
 
         if(!p)
             return this;
@@ -44,7 +43,7 @@ app.service('Chart', function(DateHelpers, misc) {
         var height = this.chartCanvas.height
 
         var tx = d3.scale.linear()
-            .domain([0, p.value.length])
+            .domain([0, p.values.length])
             .range([0, width])
         // assign it here, because the 'this' pointer is changed
         // inside callbacks. This way we can use 'tx' below
@@ -67,7 +66,7 @@ app.service('Chart', function(DateHelpers, misc) {
         plot
             .transition()
             .duration(500)
-            .attr('d', function(d) { return line(d.value) })
+            .attr('d', function(d) { return line(d.values) })
 
         // svg axis
         var me = this;

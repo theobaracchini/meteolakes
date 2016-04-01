@@ -16,6 +16,10 @@ app.factory('Map', function(CanvasLayer) {
 
     var LEMAN_CENTER = unproject(L.point(530000, 135000));
 
+    function project(point) {
+        return CRS.projection.project(point);
+    };
+
     function unproject(point) {
         return CRS.projection.unproject(point);
     };
@@ -74,6 +78,7 @@ app.factory('Map', function(CanvasLayer) {
 
     return {
         initMap: Map,
+        project: project,
         unproject: unproject
     };
 });
