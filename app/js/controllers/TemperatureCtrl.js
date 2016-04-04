@@ -23,47 +23,20 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
         $rootScope.$on('reloadWeek', function(evt, time) {
             isDataReady = false;
 
-            if($scope.tData && !time.fullReload) {
-                // Regular switching of weeks, because the time slider was moving forward.
-                $scope.tData.SwitchToData(time.week, time.year);
-                // Load the next file if available
-                if(time.weeks.indexOf(time.week+1) != -1)
-                    $scope.tData.readData(time.week+1, time.year, function() { 
-                        dataReady();
-                    });
-            } else if($scope.tData && time.fullReload) {
-                // User changed the date in the lists.
-                // Typically means that the required data and the next data are not ready yet.
-                $scope.tData.readData(time.week, time.year, function() {
-                    $scope.tData.SwitchToData(time.week, time.year);
-                    dataReady();
-                    prepareGraphics();
-                });
-                // Load the next file if available
-                if(time.weeks.indexOf(time.week+1) != -1)
-                    $scope.tData.readData(time.week+1, time.year, function() {});
-            } else {
+            if (!$scope.tData) {
                 $scope.tData = new TemporalData(time.folder, 'temperature');
-                $scope.tData.readData(time.week, time.year, function() {
-                    $scope.tData.SwitchToData(time.week, time.year);
-
-                    dataReady();
-                    prepareGraphics();
-
-                    // Load the next file if available
-                    if(time.weeks.indexOf(time.week+1) != -1)
-                        $scope.tData.readData(time.week+1, time.year, function() {});
-                });
             }
-        })
+
+            $scope.tData.readData(time.week, time.year).then(function() {
+                $scope.tData.SwitchToData(time.week, time.year);
+                dataReady();
+                prepareGraphics();
+            });
+        });
 
         $scope.Chart = new Chart($scope, Time, '#tempPlot', function(d) { return d })
 
-        $rootScope.$on('tick', function() {
-            animate();
-        })
-        // start the renderer
-        // d3.timer(animate);
+        $rootScope.$on('tick', animate);
 
         $rootScope.$emit('scopeReady');        
     }
@@ -73,8 +46,8 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
     // ========================================================================
 
     function dataReady() {
-        var tMin = d3.min($scope.tData.Data.map(function(d) { return d3.min(d.values) }));
-        var tMax = d3.max($scope.tData.Data.map(function(d) { return d3.max(d.values) }));
+        var tMin = d3.min($scope.tData.flatArray, function(d) { return d3.min(d.values) });
+        var tMax = d3.max($scope.tData.flatArray, function(d) { return d3.max(d.values) });
 
         c = d3.scale.linear().domain([tMin, (tMin+tMax)/2, tMax]).range(['blue', 'lime', 'red']);
 
@@ -86,10 +59,7 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
     }
 
     function prepareGraphics() {
-        var knnData = [];
-
         var temperatureData = $scope.tData.map(function(d) {
-            knnData.push(d);
             var latlng = Map.unproject(L.point(d.x, d.y));
             return {
                 lat: latlng.lat,
@@ -103,7 +73,7 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
         }
 
         knnTree = rbush(9, ['.x', '.y', '.x', '.y']);
-        knnTree.load(knnData);
+        knnTree.load($scope.tData.flatArray);
         map._map.on('click', function(e) {
             var p = Map.project(e.latlng);
             var closestPoint = knn(knnTree, [p.x, p.y], 1)[0];

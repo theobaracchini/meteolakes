@@ -1,10 +1,14 @@
 var app = angular.module('lakeViewApp');
 
-app.controller('TimeCtrl', function($rootScope, $scope, Time, DATA_HOST, DateHelpers) {
+app.controller('TimeCtrl', function($rootScope, $scope, $q, $interval, Time, DATA_HOST, DateHelpers) {
     var tickTimerId = null;
     var loopType = 'repeat';
 
     $scope.Interval = 0;
+
+    $scope.$watch('Time.tIndex', function() {
+        $rootScope.$emit('tick');
+    });
 
     // ------------------------------------------------------------------------
     // BOUND TO THE HTML
@@ -16,7 +20,7 @@ app.controller('TimeCtrl', function($rootScope, $scope, Time, DATA_HOST, DateHel
         loopType = 'repeat';
 
         if(tickTimerId == null)
-            tickTimerId = setInterval(tick, 60);
+            tickTimerId = $interval(tick, 60);
         else
             $scope.pause();
     }
@@ -28,7 +32,7 @@ app.controller('TimeCtrl', function($rootScope, $scope, Time, DATA_HOST, DateHel
     }
 
     $scope.pause = function() {
-        clearInterval(tickTimerId);
+        $interval.cancel(tickTimerId);
         tickTimerId = null;
     }
     $scope.backward = function() {
@@ -108,8 +112,6 @@ app.controller('TimeCtrl', function($rootScope, $scope, Time, DATA_HOST, DateHel
     function tick() {
         Time.increase(true);
 
-        $rootScope.$emit('tick');
-
         if(Time.tIndex == 0) {
             // we looped. Decide whether we play again the current week
             // or if we play the next week
@@ -118,8 +120,6 @@ app.controller('TimeCtrl', function($rootScope, $scope, Time, DATA_HOST, DateHel
                 emitReload();
             }
         }
-
-        $scope.$apply();
     }
 
     /**
@@ -137,18 +137,24 @@ app.controller('TimeCtrl', function($rootScope, $scope, Time, DATA_HOST, DateHel
         $rootScope.$emit('reloadWeek', {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:true, folder:$scope.Dates[$scope.SelectedLake]['folder'], weeks:$scope.Dates[$scope.SelectedLake]['data']['Y' + $scope.SelectedYear]});
     }
 
-    function loadAvailableDates(callback) {
+    function loadAvailableDates() {
         $scope.Weeks = [];
         $scope.SelectedWeek = undefined;
         $scope.Years = [];
         $scope.SelectedYear = undefined;
 
-        d3.json(DATA_HOST + 'available_data.json', function(err, data) {
-            $scope.Dates = data;
-            $scope.SelectedLake = 0; // first one in the array of lakes (i.e. data[0])
-            $scope.Interval = data[$scope.SelectedLake].interval;
-            Time.recomputeTimesteps($scope.Interval);
-            callback();
+        return $q(function(resolve, reject) {
+            d3.json(DATA_HOST + 'available_data.json', function(err, data) {
+                if (err) {
+                    reject(err);
+                } else {
+                    $scope.Dates = data;
+                    $scope.SelectedLake = 0; // first one in the array of lakes (i.e. data[0])
+                    $scope.Interval = data[$scope.SelectedLake].interval;
+                    Time.recomputeTimesteps($scope.Interval);
+                    resolve();
+                }
+            });
         });
     }
 
@@ -192,7 +198,7 @@ app.controller('TimeCtrl', function($rootScope, $scope, Time, DATA_HOST, DateHel
         emitReload();
     }
 
-    loadAvailableDates(selectDateClosestToNow);
+    loadAvailableDates().then(selectDateClosestToNow);
 
     // When a controller is ready, tell it the selected year/week to load
     $rootScope.$on('scopeReady', function() {
