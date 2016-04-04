@@ -123,6 +123,14 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
         animate();
     }
 
+    $scope.closeChart = function() {
+        if (marker) {
+            map._map.removeLayer(marker);
+            marker = undefined;
+        }
+        $scope.Chart.Close();
+    }
+
     function prepareLegend() {
         var w = 300, h = 120;
         var key = d3.select('#tempLegend').append('svg').attr('id', 'key').attr('width', w).attr('height', h);

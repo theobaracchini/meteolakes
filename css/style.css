@@ -43,3 +43,7 @@
 .leaflet-canvas-layer {
     opacity: 0.8;
 }
+
+.leaflet-clickable, .leaflet-container {
+    cursor: crosshair;
+}
