@@ -4,8 +4,6 @@ app.controller('TimeCtrl', function($rootScope, $scope, $q, $interval, Time, DAT
     var tickTimerId = null;
     var loopType = 'repeat';
 
-    $scope.Interval = 0;
-
     $scope.$watch('Time.tIndex', function() {
         $rootScope.$emit('tick');
     });
@@ -59,8 +57,12 @@ app.controller('TimeCtrl', function($rootScope, $scope, $q, $interval, Time, DAT
 
         // tIndex corresponds to intervals, which are given by the global INTERVAL
         // in minutes, so we need to convert it into milliseconds
-        var currentDate = new Date(refDate + ti*$scope.Interval*60*1000);
-        return currentDate.toLocaleDateString() + ':' + currentDate.getHours() + 'h';     
+        if ($scope.Dates) {
+            var currentDate = new Date(refDate + ti * $scope.Dates[$scope.SelectedLake].interval * 60 * 1000);
+            return currentDate.toLocaleDateString() + ':' + currentDate.getHours() + 'h';
+        } else {
+            return 'Loading...';
+        }
     }
 
     $scope.PrettyPrintWeek = function(week) {
@@ -76,6 +78,11 @@ app.controller('TimeCtrl', function($rootScope, $scope, $q, $interval, Time, DAT
 
     $scope.ChangeYear = function(year) {
         $scope.selectYear(year);
+        emitFullReload();
+    }
+
+    $scope.ChangeLake = function(lake) {
+        $scope.selectLake(lake);
         emitFullReload();
     }
 
@@ -103,10 +110,16 @@ app.controller('TimeCtrl', function($rootScope, $scope, $q, $interval, Time, DAT
     $scope.selectYear = function(year) {
         $scope.SelectedYear = year;
         $scope.Weeks = [];
-        weeksForYear = $scope.Dates[$scope.SelectedLake]['data']['Y' + $scope.SelectedYear];
+        var weeksForYear = $scope.Dates[$scope.SelectedLake]['data']['Y' + $scope.SelectedYear];
         weeksForYear.forEach(function(week) {
             $scope.Weeks.push(week);
         });
+    }
+
+    $scope.selectLake = function(lake) {
+        $scope.SelectedLake = lake;
+        Time.recomputeTimesteps($scope.Dates[$scope.SelectedLake].interval);
+        selectDateClosestToNow();
     }
 
     function tick() {
@@ -150,8 +163,7 @@ app.controller('TimeCtrl', function($rootScope, $scope, $q, $interval, Time, DAT
                 } else {
                     $scope.Dates = data;
                     $scope.SelectedLake = 0; // first one in the array of lakes (i.e. data[0])
-                    $scope.Interval = data[$scope.SelectedLake].interval;
-                    Time.recomputeTimesteps($scope.Interval);
+                    Time.recomputeTimesteps(data[$scope.SelectedLake].interval);
                     resolve();
                 }
             });

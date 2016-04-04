@@ -24,10 +24,10 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
             isDataReady = false;
 
             if (!$scope.tData) {
-                $scope.tData = new TemporalData(time.folder, 'temperature');
+                $scope.tData = new TemporalData('temperature');
             }
 
-            $scope.tData.readData(time.week, time.year).then(function() {
+            $scope.tData.readData(time.folder, time.week, time.year).then(function() {
                 $scope.tData.SwitchToData(time.week, time.year);
                 dataReady();
                 prepareGraphics();

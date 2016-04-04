@@ -1,8 +1,7 @@
 var app = angular.module('lakeViewApp');
 
 app.factory('TemporalData', function(DATA_HOST, $q) {
-    var TemporalData = function(dataFolder, fieldName) {
-        this.dataFolder = dataFolder;
+    var TemporalData = function(fieldName) {
         this.fieldName = fieldName;
         this.DataTime = {};
     }
@@ -22,11 +21,11 @@ app.factory('TemporalData', function(DATA_HOST, $q) {
         return this;
     }
 
-    TemporalData.prototype.readData = function(week, year) {
+    TemporalData.prototype.readData = function(dataFolder, week, year) {
         var me = this;
 
         return $q(function(resolve, reject) {
-            var valuesFile = DATA_HOST + me.dataFolder + '/' + year + '/' + me.fieldName + '/data_week' + week + '.csv'; 
+            var valuesFile = DATA_HOST + dataFolder + '/' + year + '/' + me.fieldName + '/data_week' + week + '.csv'; 
 
             // Read the data config
             d3.json(valuesFile + '.json', function(err, config) {

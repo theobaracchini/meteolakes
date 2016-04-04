@@ -41,7 +41,6 @@ app.factory('CanvasLayer', function(misc) {
             }
 
             map._panes.overlayPane.appendChild(this._canvas);
-            // map._panes.overlayPane.appendChild(this._renderer.view);
 
             map.on('moveend', this._reset, this);
 
@@ -76,11 +75,7 @@ app.factory('CanvasLayer', function(misc) {
         },
 
         _initCanvas: function () {
-            // var canvas = this._canvas = L.DomUtil.create('canvas', 'leaflet-canvas-layer leaflet-layer');
-
             var size = this._map.getSize();
-            // canvas.width  = size.x;
-            // canvas.height = size.y;
 
             this._container = new PIXI.Container();
             this._renderer = PIXI.autoDetectRenderer(size.x, size.y, {transparent: true, antialias: true});
@@ -99,17 +94,9 @@ app.factory('CanvasLayer', function(misc) {
         _reset: function () {
             var topLeft = this._map.containerPointToLayerPoint([0, 0]);
             L.DomUtil.setPosition(this._canvas, topLeft);
-            // L.DomUtil.setPosition(this._renderer.view, topLeft);
 
             var size = this._map.getSize();
             this._renderer.resize(size.x, size.y);
-
-            // if (this._width() !== size.x) {
-            //     this._canvas.width = size.x;
-            // }
-            // if (this._height() !== size.y) {
-            //     this._canvas.height = size.y;
-            // }
 
             this._updateLatLngToPixel();
 

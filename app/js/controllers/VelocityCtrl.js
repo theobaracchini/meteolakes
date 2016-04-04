@@ -22,10 +22,10 @@ app.controller('VelocityCtrl', function($rootScope, $scope, Time, Chart, misc, T
             isDataReady = false;
 
             if (!$scope.tData) {
-                $scope.tData = new TemporalData(time.folder, 'velocity');
+                $scope.tData = new TemporalData('velocity');
             }
 
-            $scope.tData.readData(time.week, time.year).then(function() {
+            $scope.tData.readData(time.folder, time.week, time.year).then(function() {
                 $scope.tData.SwitchToData(time.week, time.year);
                 dataReady();
                 prepareGraphics();
