@@ -12,7 +12,7 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
     var canvasLayer;
     var knnTree;
     var marker;
-    var map = Map.initMap('tempMap');
+    var map;
 
     Initialize();
 
@@ -59,6 +59,12 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
     }
 
     function prepareGraphics() {
+        if (!map) {
+            var minBounds = L.point($scope.tData.xMin, $scope.tData.yMin);
+            var maxBounds = L.point($scope.tData.xMax, $scope.tData.yMax);
+            map = Map.initMap('tempMap', Map.unproject(minBounds), Map.unproject(maxBounds));
+        }
+
         var temperatureData = $scope.tData.map(function(d) {
             var latlng = Map.unproject(L.point(d.x, d.y));
             return {

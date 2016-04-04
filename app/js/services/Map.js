@@ -14,8 +14,6 @@ app.factory('Map', function(CanvasLayer) {
         origin: [TOP_LEFT.x, TOP_LEFT.y]
     });
 
-    var LEMAN_CENTER = unproject(L.point(530000, 135000));
-
     function project(point) {
         return CRS.projection.project(point);
     };
@@ -24,7 +22,7 @@ app.factory('Map', function(CanvasLayer) {
         return CRS.projection.unproject(point);
     };
 
-    function Map(mapId) {
+    function Map(mapId, topLeft, bottomRight) {
         var map = {
             _map: undefined,
             mapId: mapId
@@ -46,8 +44,6 @@ app.factory('Map', function(CanvasLayer) {
                 access_token: 'pk.eyJ1IjoiYXBoeXMiLCJhIjoiY2ltM2g1MzUwMDBwOXZtbTVzdnQ1ZHZpYiJ9.Cm1TVUsbCQLOhUbblOrHfw'
                 // lake-view token for user aphys obtained from mapbox.com
             }).addTo(this._map);
-
-            this._map.setView(LEMAN_CENTER, 10);
         }
 
         map._initSwisstopo = function() {
@@ -67,11 +63,10 @@ app.factory('Map', function(CanvasLayer) {
                 minZoom: 15,
                 attribution: 'Map data &copy; swisstopo'
             }).addTo(this._map);
-
-            this._map.setView(LEMAN_CENTER, 17);
         }
 
         map._initMapbox();
+        map._map.fitBounds(L.latLngBounds(topLeft, bottomRight));
 
         return map;
     }

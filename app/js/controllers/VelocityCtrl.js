@@ -10,7 +10,7 @@ app.controller('VelocityCtrl', function($rootScope, $scope, Time, Chart, misc, T
     var colorLegend = prepareLegend();
 
     var canvasLayer;
-    var map = Map.initMap('velMap');
+    var map;
 
     Initialize();
 
@@ -69,6 +69,12 @@ app.controller('VelocityCtrl', function($rootScope, $scope, Time, Chart, misc, T
     }
 
     function prepareGraphics() {
+        if (!map) {
+            var minBounds = L.point($scope.tData.xMin, $scope.tData.yMin);
+            var maxBounds = L.point($scope.tData.xMax, $scope.tData.yMax);
+            map = Map.initMap('velMap', Map.unproject(minBounds), Map.unproject(maxBounds));
+        }
+
         var velocityData = $scope.tData.map(function(d) {
             var latlng = Map.unproject(L.point(d.x, d.y));
             return {
