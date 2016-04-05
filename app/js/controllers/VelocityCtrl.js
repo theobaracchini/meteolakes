@@ -75,6 +75,11 @@ app.controller('VelocityCtrl', function($rootScope, $scope, Time, Chart, misc, T
             map = Map.initMap('velMap', Map.unproject(minBounds), Map.unproject(maxBounds));
         }
 
+        if (!canvasLayer) {
+            canvasLayer = L.canvasLayer();
+            canvasLayer.addTo(map._map);
+        }
+
         var velocityData = $scope.tData.map(function(d) {
             var latlng = Map.unproject(L.point(d.x, d.y));
             return {
@@ -84,12 +89,8 @@ app.controller('VelocityCtrl', function($rootScope, $scope, Time, Chart, misc, T
             }
         });
 
-        if (canvasLayer) {
-            map._map.removeLayer(canvasLayer);
-        }
-
-        canvasLayer = L.canvasLayer(velocityData, {colorFunction: c, simplify: true, radius: 30});
-        canvasLayer.addTo(map._map);
+        canvasLayer.setData(velocityData);
+        canvasLayer.setOptions({colorFunction: c, simplify: true, radius: 30});
 
         animate();
     }

@@ -12,7 +12,7 @@ app.factory('CanvasLayer', function(misc) {
 
         setData: function (data) {
             this._data = data;
-            return this.redraw();
+            return this._reset();
         },
 
         setStep: function (step) {
@@ -104,12 +104,14 @@ app.factory('CanvasLayer', function(misc) {
         },
 
         _updateLatLngToPixel: function () {
-            for (var i = 0; i < this._data.length; i++) {
-                var row = this._data[i];
-                for (var j = 0; j < row.length; j++) {
-                    var d = row[j];
-                    if (d) {
-                        d.p = this._map.latLngToContainerPoint([d.lat, d.lng]);
+            if (this._data) {
+                for (var i = 0; i < this._data.length; i++) {
+                    var row = this._data[i];
+                    for (var j = 0; j < row.length; j++) {
+                        var d = row[j];
+                        if (d) {
+                            d.p = this._map.latLngToContainerPoint([d.lat, d.lng]);
+                        }
                     }
                 }
             }
@@ -120,72 +122,12 @@ app.factory('CanvasLayer', function(misc) {
                 this._container.removeChild(this._container.children[i]);
             };
 
-            if (this.options.simplify) {
-                var r = this.options.radius,
-                    size = this._map.getSize(),
-                    bounds = new L.Bounds(
-                        L.point([-r, -r]),
-                        size.add([r, r])),
-
-                    cellSize = r / 2,
-                    grid = [],
-                    panePos = this._map._getMapPanePos(),
-                    offsetX = panePos.x % cellSize,
-                    offsetY = panePos.y % cellSize,
-                    i, len, d, p, cell, x, y, j, len2;
-
-                for (i = 0, len = this._data.length; i < len; i++) {
-                    var row = this._data[i];
-                    for (var j = 0; j < row.length; j++) {
-                        d = row[j];
-                        if (d) {
-                            if (bounds.contains(d.p)) {
-                                x = Math.floor((d.p.x - offsetX) / cellSize) + 2;
-                                y = Math.floor((d.p.y - offsetY) / cellSize) + 2;
-
-                                var value = d.values[this._step];
-
-                                if (value) {
-                                    grid[y] = grid[y] || [];
-                                    cell = grid[y][x];
-
-                                    // TODO move velocity-specific simplification code elsewhere
-                                    if (!cell) {
-                                        grid[y][x] = [d.p.x, d.p.y, value[0], value[1], 1];
-                                    } else {
-                                        cell[0] += d.p.x;
-                                        cell[1] += d.p.y;
-                                        cell[2] += value[0];
-                                        cell[3] += value[1];
-                                        cell[4]++;
-                                    }
-                                }
-                            }
-                        }
-                    }
+            if (this._data && this.options.colorFunction) {
+                if (this.options.simplify) {
+                    this._drawVel();
+                } else {
+                    this._drawTemp();
                 }
-
-                var graphics = new PIXI.Graphics();
-                for (i = 0, len = grid.length; i < len; i++) {
-                    if (grid[i]) {
-                        for (j = 0, len2 = grid[i].length; j < len2; j++) {
-                            cell = grid[i][j];
-                            if (cell) {
-                                var x = cell[0] / cell[4];
-                                var y = cell[1] / cell[4];
-                                var dx = cell[2] / cell[4]
-                                var dy = cell[3] / cell[4]
-                                var color = this.options.colorFunction(misc.norm([dx, dy]));
-
-                                // TODO use max velocity to determine scale factor
-                                this._drawArrow(x, y, dx * 500, -dy * 500, color, graphics);
-                            }
-                        }
-                    }
-                }
-                this._container.addChild(graphics);
-            } else {
-                this._draw();
             }
 
             this._renderer.render(this._container);
@@ -201,7 +143,7 @@ app.factory('CanvasLayer', function(misc) {
             return this._canvas.height;
         },
 
-        _draw: function () {
+        _drawTemp: function () {
             var graphics = new PIXI.Graphics();
 
             var bounds = new L.Bounds(
@@ -239,6 +181,72 @@ app.factory('CanvasLayer', function(misc) {
             this._container.addChild(graphics);
 
             return this;
+        },
+
+        _drawVel: function () {
+            var r = this.options.radius,
+                size = this._map.getSize(),
+                bounds = new L.Bounds(
+                    L.point([-r, -r]),
+                    size.add([r, r])),
+
+                cellSize = r / 2,
+                grid = [],
+                panePos = this._map._getMapPanePos(),
+                offsetX = panePos.x % cellSize,
+                offsetY = panePos.y % cellSize,
+                i, len, d, p, cell, x, y, j, len2;
+
+            for (i = 0, len = this._data.length; i < len; i++) {
+                var row = this._data[i];
+                for (var j = 0; j < row.length; j++) {
+                    d = row[j];
+                    if (d) {
+                        if (bounds.contains(d.p)) {
+                            x = Math.floor((d.p.x - offsetX) / cellSize) + 2;
+                            y = Math.floor((d.p.y - offsetY) / cellSize) + 2;
+
+                            var value = d.values[this._step];
+
+                            if (value) {
+                                grid[y] = grid[y] || [];
+                                cell = grid[y][x];
+
+                                // TODO move velocity-specific simplification code elsewhere
+                                if (!cell) {
+                                    grid[y][x] = [d.p.x, d.p.y, value[0], value[1], 1];
+                                } else {
+                                    cell[0] += d.p.x;
+                                    cell[1] += d.p.y;
+                                    cell[2] += value[0];
+                                    cell[3] += value[1];
+                                    cell[4]++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            var graphics = new PIXI.Graphics();
+            for (i = 0, len = grid.length; i < len; i++) {
+                if (grid[i]) {
+                    for (j = 0, len2 = grid[i].length; j < len2; j++) {
+                        cell = grid[i][j];
+                        if (cell) {
+                            var x = cell[0] / cell[4];
+                            var y = cell[1] / cell[4];
+                            var dx = cell[2] / cell[4]
+                            var dy = cell[3] / cell[4]
+                            var color = this.options.colorFunction(misc.norm([dx, dy]));
+
+                            // TODO use max velocity to determine scale factor
+                            this._drawArrow(x, y, dx * 500, -dy * 500, color, graphics);
+                        }
+                    }
+                }
+            }
+            this._container.addChild(graphics);
         },
 
         _drawArrow: function (x, y, dx, dy, color, graphics) {

@@ -65,6 +65,11 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
             map = Map.initMap('tempMap', Map.unproject(minBounds), Map.unproject(maxBounds));
         }
 
+        if (!canvasLayer) {
+            canvasLayer = L.canvasLayer();
+            canvasLayer.addTo(map._map);
+        }
+
         var temperatureData = $scope.tData.map(function(d) {
             var latlng = Map.unproject(L.point(d.x, d.y));
             return {
@@ -74,9 +79,8 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
             }
         });
 
-        if (canvasLayer) {
-            map._map.removeLayer(canvasLayer);
-        }
+        canvasLayer.setData(temperatureData);
+        canvasLayer.setOptions({colorFunction: c});
 
         knnTree = rbush(9, ['.x', '.y', '.x', '.y']);
         knnTree.load($scope.tData.flatArray);
@@ -92,9 +96,6 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
             $scope.Chart.SelectPoint(closestPoint);
             $scope.$apply();
         });
-
-        canvasLayer = L.canvasLayer(temperatureData, {colorFunction: c});
-        canvasLayer.addTo(map._map);
 
         animate();
     }
