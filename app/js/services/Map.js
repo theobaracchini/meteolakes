@@ -1,6 +1,4 @@
-var app = angular.module('lakeViewApp');
-
-app.factory('Map', function(CanvasLayer) {
+angular.module('lakeViewApp').factory('Map', function(CanvasLayer) {
     // Definition of available swisstopo tiles (bounding box) and resolutions
     // Source: https://api3.geo.admin.ch/services/sdiservices.html#parameters
     var TOP_LEFT = L.point(420000, 350000);

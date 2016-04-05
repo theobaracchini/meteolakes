@@ -1,6 +1,4 @@
-var app = angular.module('lakeViewApp');
-
-app.controller('VelocityCtrl', function($rootScope, $scope, $element, Time, Chart, misc, TemporalData, Map) {
+angular.module('lakeViewApp').controller('VelocityCtrl', function($rootScope, $scope, $element, Time, Chart, TemporalData, Map) {
     // ========================================================================
     // PROPERTIES
     // ========================================================================
@@ -32,7 +30,7 @@ app.controller('VelocityCtrl', function($rootScope, $scope, $element, Time, Char
             });
         });
 
-        $scope.Chart = new Chart($scope, Time, $element.find('.lv-plot'), function(d) { return misc.norm(d); })
+        $scope.Chart = new Chart($scope, Time, $element.find('.lv-plot'), function(d) { return norm(d); })
         $rootScope.$on('reloadChart', function(evt, pointIndex) {
             $scope.Chart.SelectPoint(pointIndex);
         })
@@ -53,10 +51,10 @@ app.controller('VelocityCtrl', function($rootScope, $scope, $element, Time, Char
      */
     function dataReady() {
         var minVel = d3.min($scope.tData.flatArray, function(d) {
-            return d3.min(d.values, function(v) { return misc.norm(v); });
+            return d3.min(d.values, function(v) { return norm(v); });
         });
         var maxVel = d3.max($scope.tData.flatArray, function(d) {
-            return d3.max(d.values, function(v) { return misc.norm(v); });
+            return d3.max(d.values, function(v) { return norm(v); });
         });
 
         c = d3.scale.linear().domain([minVel, (minVel+maxVel)/2, maxVel]).range(['blue', 'lime', 'red']);
@@ -90,7 +88,7 @@ app.controller('VelocityCtrl', function($rootScope, $scope, $element, Time, Char
         });
 
         canvasLayer.setData(velocityData);
-        canvasLayer.setOptions({colorFunction: c, simplify: true, radius: 30});
+        canvasLayer.setOptions({colorFunction: colorFunction, simplify: true, radius: 30});
 
         animate();
     }
@@ -125,5 +123,17 @@ app.controller('VelocityCtrl', function($rootScope, $scope, $element, Time, Char
 
         // render the timeline on the chart
         $scope.Chart.UpdateTimeLine()
+    }
+
+    function colorFunction(vec) {
+        return c(norm(vec));
+    }
+
+    /*
+     * Returns the norm of a vector.
+     * The vector is expected to be an array [x, y].
+     */
+    function norm(vec) {
+        return Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
     }
 });

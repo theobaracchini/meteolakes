@@ -1,6 +1,4 @@
-var app = angular.module('lakeViewApp');
-
-app.factory('TemporalData', function(DATA_HOST, $q) {
+angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q) {
     var TemporalData = function(fieldName) {
         this.fieldName = fieldName;
         this.DataTime = {};

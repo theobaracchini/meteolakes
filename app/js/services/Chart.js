@@ -1,6 +1,4 @@
-var app = angular.module('lakeViewApp');
-
-app.service('Chart', function(DateHelpers, misc) {
+angular.module('lakeViewApp').service('Chart', function(DateHelpers) {
     var Chart = function($scope, Time, container, conversionFct) {
         this.$scope = $scope
         this.Time = Time
@@ -98,7 +96,7 @@ app.service('Chart', function(DateHelpers, misc) {
         var me = this
         var drag = d3.behavior.drag().on('drag', function() { me.dragTime() })
 
-        var chartCanvas = misc.PrepareSvgCanvas(this.container.find('div')[0], 2)
+        var chartCanvas = prepareCanvas(this.container.find('div')[0], 2);
         chartCanvas.svg.append('g')
             .attr('transform', 'translate(0,' + chartCanvas.height + ')')
             .attr('class', 'x axis')
@@ -122,6 +120,26 @@ app.service('Chart', function(DateHelpers, misc) {
 
     Chart.prototype.dragTime = function() {
         this.Time.tIndex = parseInt(this.tx.invert(d3.event.x))
+    }
+
+    function prepareCanvas(containerId, aspectRatio) {
+        var container = d3.select(containerId);
+
+        var dim = findDimensions(container, aspectRatio);
+        container.style('height', dim.height);
+
+        return {
+            svg: container.append('svg').attr('width', dim.width).attr('height', dim.height),
+            width: dim.width,
+            height: dim.height
+        };
+    }
+
+    function findDimensions(container, aspectRatio) {
+        var width = parseInt(container.style('width'));
+
+        // adapt the height to fit the given width
+        return { width: width, height: width / aspectRatio };
     }
 
     return Chart;

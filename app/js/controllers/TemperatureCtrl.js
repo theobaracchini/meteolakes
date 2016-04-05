@@ -1,6 +1,4 @@
-var app = angular.module('lakeViewApp');
-
-app.controller('TemperatureCtrl', function($rootScope, $scope, $element, Time, Chart, misc, TemporalData, Map, rbush, knn) {
+angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope, $scope, $element, Time, Chart, TemporalData, Map, rbush, knn) {
     // ========================================================================
     // PROPERTIES
     // ========================================================================

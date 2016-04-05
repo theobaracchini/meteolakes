@@ -1,6 +1,4 @@
-var app = angular.module('lakeViewApp');
-
-app.service('DateHelpers', function() {
+angular.module('lakeViewApp').service('DateHelpers', function() {
     // Get the week number for the created date
     function GetWeek(date) {
         var onejan = new Date(date.getFullYear(),0,1);

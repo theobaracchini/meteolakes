@@ -1,6 +1,4 @@
-var app = angular.module('lakeViewApp');
-
-app.factory('CanvasLayer', function(misc) {
+angular.module('lakeViewApp').factory('CanvasLayer', function() {
     L.CanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
 
         initialize: function (data, options) {
@@ -238,7 +236,7 @@ app.factory('CanvasLayer', function(misc) {
                             var y = cell[1] / cell[4];
                             var dx = cell[2] / cell[4]
                             var dy = cell[3] / cell[4]
-                            var color = this.options.colorFunction(misc.norm([dx, dy]));
+                            var color = this.options.colorFunction([dx, dy]);
 
                             // TODO use max velocity to determine scale factor
                             this._drawArrow(x, y, dx * 500, -dy * 500, color, graphics);

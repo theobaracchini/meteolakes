@@ -1,6 +1,4 @@
-var app = angular.module('lakeViewApp');
-
-app.controller('TimeCtrl', function($rootScope, $scope, $q, $interval, Time, DATA_HOST, DateHelpers) {
+angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope, $q, $interval, Time, DATA_HOST, DateHelpers) {
     var tickTimerId = null;
     var loopType = 'repeat';
 
