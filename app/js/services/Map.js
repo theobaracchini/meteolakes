@@ -22,10 +22,10 @@ app.factory('Map', function(CanvasLayer) {
         return CRS.projection.unproject(point);
     };
 
-    function Map(mapId, topLeft, bottomRight) {
+    function Map(mapContainer, topLeft, bottomRight) {
         var map = {
             _map: undefined,
-            mapId: mapId
+            mapContainer: mapContainer
         };
 
         map._initMapbox = function() {
@@ -34,7 +34,7 @@ app.factory('Map', function(CanvasLayer) {
                          'Imagery © <a href="https://mapbox.com">Mapbox</a>';
             var mbUrl = 'https://{s}.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={access_token}';
 
-            this._map = L.map(mapId);
+            this._map = L.map(mapContainer);
 
             L.tileLayer(mbUrl, {
                 subdomains: 'abcd',
@@ -51,7 +51,7 @@ app.factory('Map', function(CanvasLayer) {
                 return 1 / RESOLUTIONS[zoom];
             };
 
-            this._map = L.map(mapId, {
+            this._map = L.map(mapContainer, {
                 crs: CRS,
                 maxBounds: L.latLngBounds(unproject(TOP_LEFT), unproject(BOTTOM_RIGHT)),
                 scale: scale

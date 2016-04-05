@@ -1,10 +1,10 @@
 var app = angular.module('lakeViewApp');
 
 app.service('Chart', function(DateHelpers, misc) {
-    var Chart = function($scope, Time, containerId, conversionFct) {
+    var Chart = function($scope, Time, container, conversionFct) {
         this.$scope = $scope
         this.Time = Time
-        this.containerId = containerId
+        this.container = container
         this.chartCanvas = this.prepareChart()
         this.fct = conversionFct
 
@@ -15,7 +15,7 @@ app.service('Chart', function(DateHelpers, misc) {
     Chart.prototype.Min = function(m) { this.min = m; return this; }
 
     Chart.prototype.Close = function() {
-        $(this.containerId).fadeOut()
+        this.container.fadeOut()
 
         return this;
     }
@@ -36,7 +36,7 @@ app.service('Chart', function(DateHelpers, misc) {
         if(!p)
             return this;
 
-        $(this.containerId).fadeIn()
+        this.container.fadeIn()
 
         var svg = this.chartCanvas.svg
         var width = this.chartCanvas.width
@@ -98,7 +98,7 @@ app.service('Chart', function(DateHelpers, misc) {
         var me = this
         var drag = d3.behavior.drag().on('drag', function() { me.dragTime() })
 
-        var chartCanvas = misc.PrepareSvgCanvas(this.containerId + ' div', 2)
+        var chartCanvas = misc.PrepareSvgCanvas(this.container.find('div')[0], 2)
         chartCanvas.svg.append('g')
             .attr('transform', 'translate(0,' + chartCanvas.height + ')')
             .attr('class', 'x axis')
@@ -115,7 +115,7 @@ app.service('Chart', function(DateHelpers, misc) {
             .append('path')
             .attr('class', 'timeLine')
 
-        $(this.containerId).hide()
+        this.container.hide()
 
         return chartCanvas
     }

@@ -1,6 +1,6 @@
 var app = angular.module('lakeViewApp');
 
-app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc, TemporalData, Map, rbush, knn) {
+app.controller('TemperatureCtrl', function($rootScope, $scope, $element, Time, Chart, misc, TemporalData, Map, rbush, knn) {
     // ========================================================================
     // PROPERTIES
     // ========================================================================
@@ -34,11 +34,11 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
             });
         });
 
-        $scope.Chart = new Chart($scope, Time, '#tempPlot', function(d) { return d })
+        $scope.Chart = new Chart($scope, Time, $element.find('.lv-plot'), function(d) { return d })
 
         $rootScope.$on('tick', animate);
 
-        $rootScope.$emit('scopeReady');        
+        $rootScope.$emit('scopeReady');
     }
 
     // ========================================================================
@@ -62,7 +62,7 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
         if (!map) {
             var minBounds = L.point($scope.tData.xMin, $scope.tData.yMin);
             var maxBounds = L.point($scope.tData.xMax, $scope.tData.yMax);
-            map = Map.initMap('tempMap', Map.unproject(minBounds), Map.unproject(maxBounds));
+            map = Map.initMap($element.find('.lv-map')[0], Map.unproject(minBounds), Map.unproject(maxBounds));
         }
 
         if (!canvasLayer) {
@@ -110,7 +110,7 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
 
     function prepareLegend() {
         var w = 300, h = 120;
-        var key = d3.select('#tempLegend').append('svg').attr('id', 'key').attr('width', w).attr('height', h);
+        var key = d3.select($element.find('.lv-legend')[0]).append('svg').attr('id', 'key').attr('width', w).attr('height', h);
         var legend = key.append('defs').append('svg:linearGradient').attr('id', 'gradient').attr('x1', '0%').attr('y1', '100%').attr('x2', '100%').attr('y2', '100%').attr('spreadMethod', 'pad');
         legend.append('stop').attr('offset', '0%').attr('stop-color', 'blue').attr('stop-opacity', 1);
         legend.append('stop').attr('offset', '50%').attr('stop-color', 'lime').attr('stop-opacity', 1);
