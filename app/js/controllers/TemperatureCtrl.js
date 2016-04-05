@@ -53,6 +53,9 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope,
         updateLegend(tMin, tMax);
         $scope.Chart.UpdateChart($scope.tData.DataTime).Max(tMax).Min(tMin);
 
+        var noValues = $scope.tData.flatArray[0].values.length;
+        $rootScope.$emit('dataReady', noValues);
+
         isDataReady = true;
     }
 

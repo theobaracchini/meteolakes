@@ -9,6 +9,31 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
         $rootScope.$emit('tick');
     });
 
+    loadAvailableDates().then(selectDateClosestToNow);
+
+    // When a controller is ready, tell it the selected year/week to load
+    $rootScope.$on('scopeReady', function() {
+        if($scope.Dates) {
+            emitReload();
+        }
+    });
+
+    $rootScope.$on('dataReady', function(evt, noValues) {
+        Time.nT = noValues;
+    });
+
+    $scope.Time = Time;
+
+    // UI Logic to hide/show the sidebar time controls when scrolling
+    $('.sidebar').hide()
+    $(document).scroll(function() {
+        if (!isScrolledIntoView($('#timeControls'))) {
+            $('.sidebar').fadeIn();
+        } else {
+            $('.sidebar').fadeOut();
+        }
+    });
+
     // ------------------------------------------------------------------------
     // BOUND TO THE HTML
     // ------------------------------------------------------------------------
@@ -125,7 +150,6 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
 
     $scope.selectLake = function(lake) {
         $scope.SelectedLake = lake;
-        Time.recomputeTimesteps($scope.Dates[$scope.SelectedLake].interval);
         selectDateClosestToNow();
     }
 
@@ -182,7 +206,6 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
                 } else {
                     $scope.Dates = data;
                     $scope.SelectedLake = 0; // first one in the array of lakes (i.e. data[0])
-                    Time.recomputeTimesteps(data[$scope.SelectedLake].interval);
                     resolve();
                 }
             });
@@ -249,27 +272,6 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
     function localISOTime(date) {
         return pad(date.getHours()) + ':' + pad(date.getMinutes());
     };
-
-    loadAvailableDates().then(selectDateClosestToNow);
-
-    // When a controller is ready, tell it the selected year/week to load
-    $rootScope.$on('scopeReady', function() {
-        if($scope.Dates)
-            emitReload();
-    })
-
-    $scope.Time = Time;
-
-
-    // UI Logic to hide/show the sidebar time controls when scrolling
-    $('.sidebar').hide()
-    $(document).scroll(function() {
-        if (!isScrolledIntoView($('#timeControls'))) {
-            $('.sidebar').fadeIn();
-        } else {
-            $('.sidebar').fadeOut();
-        }
-    });
 
     function isScrolledIntoView(elem) {
         var docViewTop = $(window).scrollTop();

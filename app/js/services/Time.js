@@ -15,8 +15,5 @@ angular.module('lakeViewApp').factory('Time', function() {
         decrease: function() {
             this.tIndex = Math.max(0, this.tIndex-1);
         },
-        recomputeTimesteps: function(interval) {
-            this.nT = 7*24*60/interval;
-        }
     };
 });
