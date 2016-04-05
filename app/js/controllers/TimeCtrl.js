@@ -90,17 +90,17 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
     }    
 
     $scope.getDate = function() {
-        return $scope.Dates ? localISODate(currentDate()) : '';
+        return $scope.Dates ? DateHelpers.yearMonthDay(currentDate()) : '';
     }
 
     $scope.getTime = function() {
-        return $scope.Dates ? localISOTime(currentDate()) : '';
+        return $scope.Dates ? DateHelpers.hoursMinutes(currentDate()) : '';
     }
 
     $scope.PrettyPrintWeek = function(week) {
-        var firstDay = DateHelpers.FirstDayOfWeek(week, $scope.SelectedYear);
-        var lastDay = DateHelpers.LastDayOfWeek(week, $scope.SelectedYear);
-        return localISODate(firstDay) + ' - ' + localISODate(lastDay);
+        var firstDay = DateHelpers.firstDayOfWeek(week, $scope.SelectedYear);
+        var lastDay = DateHelpers.lastDayOfWeek(week, $scope.SelectedYear);
+        return DateHelpers.yearMonthDay(firstDay) + ' - ' + DateHelpers.yearMonthDay(lastDay);
     }
 
     $scope.ChangeWeek = function(week) {
@@ -125,7 +125,7 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
     $scope.selectWeek = function(week) {
         // Make sure the given week number is not out of bounds with the 
         // current year, and change year if necessary.
-        var numberOfWeeks = DateHelpers.NumberOfWeeks($scope.SelectedYear);
+        var numberOfWeeks = DateHelpers.numberOfWeeks($scope.SelectedYear);
         if(week >= numberOfWeeks) {
             $scope.selectYear($scope.SelectedYear+1);
             $scope.selectWeek(week - numberOfWeeks + 1);
@@ -213,8 +213,7 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
     }
 
     function selectWeekClosestToNow() {
-        var now = new Date();
-        var currentWeek = DateHelpers.GetWeek(now);
+        var currentWeek = moment().isoWeek();
 
         // Find the week closest to now
         var minDiffWeek = Number.MAX_VALUE; // large initial value for week diff
@@ -231,8 +230,7 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
     }
 
     function selectDateClosestToNow() {
-        var now = new Date();
-        var currentYear = now.getFullYear();
+        var currentYear = moment().year();
         
         // Find the year closest to now
         var minDiffYear = Number.MAX_VALUE; // take a large initial value for year diff
@@ -253,25 +251,9 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
     }
 
     function currentDate() {
-        var refDate = DateHelpers.FirstDayOfWeek($scope.SelectedWeek, $scope.SelectedYear);
-        // tIndex corresponds to intervals, which are given by the global INTERVAL
-        // in minutes, so we need to convert it into milliseconds
-        return new Date(refDate.getTime() + Time.tIndex * $scope.Dates[$scope.SelectedLake].interval * 60 * 1000);
+        var refDate = DateHelpers.firstDayOfWeek($scope.SelectedWeek, $scope.SelectedYear);
+        return DateHelpers.addMinutes(refDate, Time.tIndex * $scope.Dates[$scope.SelectedLake].interval);
     }
-
-    function pad(n) {
-        return n < 10 ? '0' + n : n;
-    }
-
-    function localISODate(date) {
-        return date.getFullYear() + '-'
-            + pad(date.getMonth() + 1) + '-'
-            + pad(date.getDate());
-    };
-
-    function localISOTime(date) {
-        return pad(date.getHours()) + ':' + pad(date.getMinutes());
-    };
 
     function isScrolledIntoView(elem) {
         var docViewTop = $(window).scrollTop();

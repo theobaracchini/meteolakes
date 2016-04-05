@@ -78,7 +78,8 @@ angular.module('lakeViewApp').service('Chart', function(DateHelpers) {
     }
 
     Chart.prototype.formatTime = function(d) {
-        var monday = DateHelpers.FirstDayOfWeek(this.$scope.tData.DataTime.Week, this.$scope.tData.DataTime.Year);
+        // TODO: simplify and fix date calculations
+        var monday = DateHelpers.firstDayOfWeek(this.$scope.tData.DataTime.Week, this.$scope.tData.DataTime.Year).toDate();
         var hoursInAWeek = 7*24;
         var addedHours = d/this.Time.nT*hoursInAWeek;
         monday.setHours(monday.getHours() + addedHours);

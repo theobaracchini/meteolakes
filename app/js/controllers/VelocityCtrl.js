@@ -30,7 +30,7 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($rootScope, $s
             });
         });
 
-        $scope.Chart = new Chart($scope, Time, $element.find('.lv-plot'), function(d) { return norm(d); })
+        $scope.Chart = new Chart($scope, Time, $element.find('.lv-plot'), norm);
         $rootScope.$on('reloadChart', function(evt, pointIndex) {
             $scope.Chart.SelectPoint(pointIndex);
         })
@@ -51,10 +51,10 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($rootScope, $s
      */
     function dataReady() {
         var minVel = d3.min($scope.tData.flatArray, function(d) {
-            return d3.min(d.values, function(v) { return norm(v); });
+            return d3.min(d.values, norm);
         });
         var maxVel = d3.max($scope.tData.flatArray, function(d) {
-            return d3.max(d.values, function(v) { return norm(v); });
+            return d3.max(d.values, norm);
         });
 
         c = d3.scale.linear().domain([minVel, (minVel+maxVel)/2, maxVel]).range(['blue', 'lime', 'red']);
