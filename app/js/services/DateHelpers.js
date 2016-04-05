@@ -14,8 +14,9 @@ angular.module('lakeViewApp').service('DateHelpers', function() {
             weekTime   = weeksToMilliseconds(week),
             targetTime = date.getTime() + weekTime;
 
-        return date.setTime(targetTime); 
+        date.setTime(targetTime);
 
+        return date;
     }
 
     function LastDayOfWeek(week, year) {
@@ -27,8 +28,9 @@ angular.module('lakeViewApp').service('DateHelpers', function() {
             weekTime   = weeksToMilliseconds(week+1)-1,
             targetTime = date.getTime() + weekTime;
 
-        return date.setTime(targetTime); 
+        date.setTime(targetTime);
 
+        return date;
     }
 
     function weeksToMilliseconds(weeks) {

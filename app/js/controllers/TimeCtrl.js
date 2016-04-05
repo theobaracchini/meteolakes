@@ -1,6 +1,9 @@
 angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope, $q, $interval, Time, DATA_HOST, DateHelpers) {
-    var tickTimerId = null;
     var loopType = 'repeat';
+    var TICK_INTERVAL_MIN = 50;
+    var TICK_INTERVAL_MAX = 800;
+    var tickInterval = 400;
+    var tickTimerId = null;
 
     $scope.$watch('Time.tIndex', function() {
         $rootScope.$emit('tick');
@@ -15,10 +18,11 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
 
         loopType = 'repeat';
 
-        if(tickTimerId == null)
-            tickTimerId = $interval(tick, 60);
-        else
+        if (tickTimerId == null) {
+            tickTimerId = $interval(tick, tickInterval);
+        } else {
             $scope.pause();
+        }
     }
 
     $scope.playAll = function() {
@@ -37,6 +41,20 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
     $scope.forward = function() {
         Time.increase(true);
     }
+    $scope.slower = function() {
+        if (tickInterval < TICK_INTERVAL_MAX) {
+            tickInterval *= 2;
+        }
+        resetTimer();
+        updateSpeedButtons();
+    }
+    $scope.faster = function() {
+        if (tickInterval > TICK_INTERVAL_MIN) {
+            tickInterval /= 2;
+        }
+        resetTimer();
+        updateSpeedButtons();
+    }
 
     $scope.stop = function() {
         if(tickTimerId != null)
@@ -46,27 +64,18 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
         Time.tIndex = 0;
     }    
 
-    $scope.getTime = function() {
-        return $scope.PrettyPrintTime(Time.tIndex, $scope.SelectedWeek, $scope.SelectedYear);
+    $scope.getDate = function() {
+        return $scope.Dates ? localISODate(currentDate()) : '';
     }
 
-    $scope.PrettyPrintTime = function(ti, weekNo, year) {
-        var refDate = DateHelpers.FirstDayOfWeek(weekNo, year);
-
-        // tIndex corresponds to intervals, which are given by the global INTERVAL
-        // in minutes, so we need to convert it into milliseconds
-        if ($scope.Dates) {
-            var currentDate = new Date(refDate + ti * $scope.Dates[$scope.SelectedLake].interval * 60 * 1000);
-            return currentDate.toLocaleDateString() + ':' + currentDate.getHours() + 'h';
-        } else {
-            return 'Loading...';
-        }
+    $scope.getTime = function() {
+        return $scope.Dates ? localISOTime(currentDate()) : '';
     }
 
     $scope.PrettyPrintWeek = function(week) {
         var firstDay = DateHelpers.FirstDayOfWeek(week, $scope.SelectedYear);
         var lastDay = DateHelpers.LastDayOfWeek(week, $scope.SelectedYear);
-        return new Date(firstDay).toLocaleDateString() + ' - ' + new Date(lastDay).toLocaleDateString();
+        return localISODate(firstDay) + ' - ' + localISODate(lastDay);
     }
 
     $scope.ChangeWeek = function(week) {
@@ -118,6 +127,18 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
         $scope.SelectedLake = lake;
         Time.recomputeTimesteps($scope.Dates[$scope.SelectedLake].interval);
         selectDateClosestToNow();
+    }
+
+    function resetTimer() {
+        if (tickTimerId) {
+            $interval.cancel(tickTimerId);
+            tickTimerId = $interval(tick, tickInterval);
+        }
+    }
+
+    function updateSpeedButtons() {
+        $('.lv-faster').prop('disabled', tickInterval == TICK_INTERVAL_MIN);
+        $('.lv-slower').prop('disabled', tickInterval == TICK_INTERVAL_MAX);
     }
 
     function tick() {
@@ -207,6 +228,27 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
 
         emitReload();
     }
+
+    function currentDate() {
+        var refDate = DateHelpers.FirstDayOfWeek($scope.SelectedWeek, $scope.SelectedYear);
+        // tIndex corresponds to intervals, which are given by the global INTERVAL
+        // in minutes, so we need to convert it into milliseconds
+        return new Date(refDate.getTime() + Time.tIndex * $scope.Dates[$scope.SelectedLake].interval * 60 * 1000);
+    }
+
+    function pad(n) {
+        return n < 10 ? '0' + n : n;
+    }
+
+    function localISODate(date) {
+        return date.getFullYear() + '-'
+            + pad(date.getMonth() + 1) + '-'
+            + pad(date.getDate());
+    };
+
+    function localISOTime(date) {
+        return pad(date.getHours()) + ':' + pad(date.getMinutes());
+    };
 
     loadAvailableDates().then(selectDateClosestToNow);
 
