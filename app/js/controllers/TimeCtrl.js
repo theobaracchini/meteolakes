@@ -1,10 +1,38 @@
-var app = angular.module('lakeViewApp');
-
-app.controller('TimeCtrl', function($rootScope, $scope, Time, DATA_HOST, DateHelpers) {
-    var tickTimerId = null;
+angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope, $q, $interval, Time, DATA_HOST, DateHelpers) {
     var loopType = 'repeat';
+    var TICK_INTERVAL_MIN = 50;
+    var TICK_INTERVAL_MAX = 800;
+    var tickInterval = 400;
+    var tickTimerId = null;
 
-    $scope.Interval = 0;
+    $scope.$watch('Time.tIndex', function() {
+        $rootScope.$emit('tick');
+    });
+
+    loadAvailableDates().then(selectDateClosestToNow);
+
+    // When a controller is ready, tell it the selected year/week to load
+    $rootScope.$on('scopeReady', function() {
+        if($scope.Dates) {
+            emitReload();
+        }
+    });
+
+    $rootScope.$on('dataReady', function(evt, noValues) {
+        Time.nT = noValues;
+    });
+
+    $scope.Time = Time;
+
+    // UI Logic to hide/show the sidebar time controls when scrolling
+    $('.sidebar').hide()
+    $(document).scroll(function() {
+        if (!isScrolledIntoView($('#timeControls'))) {
+            $('.sidebar').fadeIn();
+        } else {
+            $('.sidebar').fadeOut();
+        }
+    });
 
     // ------------------------------------------------------------------------
     // BOUND TO THE HTML
@@ -15,10 +43,11 @@ app.controller('TimeCtrl', function($rootScope, $scope, Time, DATA_HOST, DateHel
 
         loopType = 'repeat';
 
-        if(tickTimerId == null)
-            tickTimerId = setInterval(tick, 60);
-        else
+        if (tickTimerId == null) {
+            tickTimerId = $interval(tick, tickInterval);
+        } else {
             $scope.pause();
+        }
     }
 
     $scope.playAll = function() {
@@ -28,7 +57,7 @@ app.controller('TimeCtrl', function($rootScope, $scope, Time, DATA_HOST, DateHel
     }
 
     $scope.pause = function() {
-        clearInterval(tickTimerId);
+        $interval.cancel(tickTimerId);
         tickTimerId = null;
     }
     $scope.backward = function() {
@@ -36,6 +65,20 @@ app.controller('TimeCtrl', function($rootScope, $scope, Time, DATA_HOST, DateHel
     }
     $scope.forward = function() {
         Time.increase(true);
+    }
+    $scope.slower = function() {
+        if (tickInterval < TICK_INTERVAL_MAX) {
+            tickInterval *= 2;
+        }
+        resetTimer();
+        updateSpeedButtons();
+    }
+    $scope.faster = function() {
+        if (tickInterval > TICK_INTERVAL_MIN) {
+            tickInterval /= 2;
+        }
+        resetTimer();
+        updateSpeedButtons();
     }
 
     $scope.stop = function() {
@@ -46,23 +89,18 @@ app.controller('TimeCtrl', function($rootScope, $scope, Time, DATA_HOST, DateHel
         Time.tIndex = 0;
     }    
 
-    $scope.getTime = function() {
-        return $scope.PrettyPrintTime(Time.tIndex, $scope.SelectedWeek, $scope.SelectedYear);
+    $scope.getDate = function() {
+        return $scope.Dates ? DateHelpers.yearMonthDay(currentDate()) : '';
     }
 
-    $scope.PrettyPrintTime = function(ti, weekNo, year) {
-        var refDate = DateHelpers.FirstDayOfWeek(weekNo, year);
-
-        // tIndex corresponds to intervals, which are given by the global INTERVAL
-        // in minutes, so we need to convert it into milliseconds
-        var currentDate = new Date(refDate + ti*$scope.Interval*60*1000);
-        return currentDate.toLocaleDateString() + ':' + currentDate.getHours() + 'h';     
+    $scope.getTime = function() {
+        return $scope.Dates ? DateHelpers.hoursMinutes(currentDate()) : '';
     }
 
     $scope.PrettyPrintWeek = function(week) {
-        var firstDay = DateHelpers.FirstDayOfWeek(week, $scope.SelectedYear);
-        var lastDay = DateHelpers.LastDayOfWeek(week, $scope.SelectedYear);
-        return new Date(firstDay).toLocaleDateString() + ' - ' + new Date(lastDay).toLocaleDateString();
+        var firstDay = DateHelpers.firstDayOfWeek(week, $scope.SelectedYear);
+        var lastDay = DateHelpers.lastDayOfWeek(week, $scope.SelectedYear);
+        return DateHelpers.yearMonthDay(firstDay) + ' - ' + DateHelpers.yearMonthDay(lastDay);
     }
 
     $scope.ChangeWeek = function(week) {
@@ -75,6 +113,11 @@ app.controller('TimeCtrl', function($rootScope, $scope, Time, DATA_HOST, DateHel
         emitFullReload();
     }
 
+    $scope.ChangeLake = function(lake) {
+        $scope.selectLake(lake);
+        emitFullReload();
+    }
+
     // ------------------------------------------------------------------------
     // UTILITY METHODS
     // ------------------------------------------------------------------------
@@ -82,7 +125,7 @@ app.controller('TimeCtrl', function($rootScope, $scope, Time, DATA_HOST, DateHel
     $scope.selectWeek = function(week) {
         // Make sure the given week number is not out of bounds with the 
         // current year, and change year if necessary.
-        var numberOfWeeks = DateHelpers.NumberOfWeeks($scope.SelectedYear);
+        var numberOfWeeks = DateHelpers.numberOfWeeks($scope.SelectedYear);
         if(week >= numberOfWeeks) {
             $scope.selectYear($scope.SelectedYear+1);
             $scope.selectWeek(week - numberOfWeeks + 1);
@@ -99,16 +142,31 @@ app.controller('TimeCtrl', function($rootScope, $scope, Time, DATA_HOST, DateHel
     $scope.selectYear = function(year) {
         $scope.SelectedYear = year;
         $scope.Weeks = [];
-        weeksForYear = $scope.Dates[$scope.SelectedLake]['data']['Y' + $scope.SelectedYear];
+        var weeksForYear = $scope.Dates[$scope.SelectedLake]['data']['Y' + $scope.SelectedYear];
         weeksForYear.forEach(function(week) {
             $scope.Weeks.push(week);
         });
     }
 
+    $scope.selectLake = function(lake) {
+        $scope.SelectedLake = lake;
+        selectDateClosestToNow();
+    }
+
+    function resetTimer() {
+        if (tickTimerId) {
+            $interval.cancel(tickTimerId);
+            tickTimerId = $interval(tick, tickInterval);
+        }
+    }
+
+    function updateSpeedButtons() {
+        $('.lv-faster').prop('disabled', tickInterval == TICK_INTERVAL_MIN);
+        $('.lv-slower').prop('disabled', tickInterval == TICK_INTERVAL_MAX);
+    }
+
     function tick() {
         Time.increase(true);
-
-        $rootScope.$emit('tick');
 
         if(Time.tIndex == 0) {
             // we looped. Decide whether we play again the current week
@@ -118,8 +176,6 @@ app.controller('TimeCtrl', function($rootScope, $scope, Time, DATA_HOST, DateHel
                 emitReload();
             }
         }
-
-        $scope.$apply();
     }
 
     /**
@@ -137,24 +193,27 @@ app.controller('TimeCtrl', function($rootScope, $scope, Time, DATA_HOST, DateHel
         $rootScope.$emit('reloadWeek', {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:true, folder:$scope.Dates[$scope.SelectedLake]['folder'], weeks:$scope.Dates[$scope.SelectedLake]['data']['Y' + $scope.SelectedYear]});
     }
 
-    function loadAvailableDates(callback) {
+    function loadAvailableDates() {
         $scope.Weeks = [];
         $scope.SelectedWeek = undefined;
         $scope.Years = [];
         $scope.SelectedYear = undefined;
 
-        d3.json(DATA_HOST + 'available_data.json', function(err, data) {
-            $scope.Dates = data;
-            $scope.SelectedLake = 0; // first one in the array of lakes (i.e. data[0])
-            $scope.Interval = data[$scope.SelectedLake].interval;
-            Time.recomputeTimesteps($scope.Interval);
-            callback();
+        return $q(function(resolve, reject) {
+            d3.json(DATA_HOST + 'available_data.json', function(err, data) {
+                if (err) {
+                    reject(err);
+                } else {
+                    $scope.Dates = data;
+                    $scope.SelectedLake = 0; // first one in the array of lakes (i.e. data[0])
+                    resolve();
+                }
+            });
         });
     }
 
     function selectWeekClosestToNow() {
-        var now = new Date();
-        var currentWeek = DateHelpers.GetWeek(now);
+        var currentWeek = moment().isoWeek();
 
         // Find the week closest to now
         var minDiffWeek = Number.MAX_VALUE; // large initial value for week diff
@@ -171,8 +230,7 @@ app.controller('TimeCtrl', function($rootScope, $scope, Time, DATA_HOST, DateHel
     }
 
     function selectDateClosestToNow() {
-        var now = new Date();
-        var currentYear = now.getFullYear();
+        var currentYear = moment().year();
         
         // Find the year closest to now
         var minDiffYear = Number.MAX_VALUE; // take a large initial value for year diff
@@ -192,26 +250,10 @@ app.controller('TimeCtrl', function($rootScope, $scope, Time, DATA_HOST, DateHel
         emitReload();
     }
 
-    loadAvailableDates(selectDateClosestToNow);
-
-    // When a controller is ready, tell it the selected year/week to load
-    $rootScope.$on('scopeReady', function() {
-        if($scope.Dates)
-            emitReload();
-    })
-
-    $scope.Time = Time;
-
-
-    // UI Logic to hide/show the sidebar time controls when scrolling
-    $('.sidebar').hide()
-    $(document).scroll(function() {
-        if (!isScrolledIntoView($('#timeControls'))) {
-            $('.sidebar').fadeIn();
-        } else {
-            $('.sidebar').fadeOut();
-        }
-    });
+    function currentDate() {
+        var refDate = DateHelpers.firstDayOfWeek($scope.SelectedWeek, $scope.SelectedYear);
+        return DateHelpers.addMinutes(refDate, Time.tIndex * $scope.Dates[$scope.SelectedLake].interval);
+    }
 
     function isScrolledIntoView(elem) {
         var docViewTop = $(window).scrollTop();

@@ -1,6 +1,4 @@
-var app = angular.module('lakeViewApp');
-
-app.factory('Map', function(CanvasLayer) {
+angular.module('lakeViewApp').factory('Map', function(CanvasLayer) {
     // Definition of available swisstopo tiles (bounding box) and resolutions
     // Source: https://api3.geo.admin.ch/services/sdiservices.html#parameters
     var TOP_LEFT = L.point(420000, 350000);
@@ -14,16 +12,18 @@ app.factory('Map', function(CanvasLayer) {
         origin: [TOP_LEFT.x, TOP_LEFT.y]
     });
 
-    var LEMAN_CENTER = unproject(L.point(530000, 135000));
+    function project(point) {
+        return CRS.projection.project(point);
+    };
 
     function unproject(point) {
         return CRS.projection.unproject(point);
     };
 
-    function Map(mapId) {
+    function Map(mapContainer, topLeft, bottomRight) {
         var map = {
             _map: undefined,
-            mapId: mapId
+            mapContainer: mapContainer
         };
 
         map._initMapbox = function() {
@@ -32,7 +32,7 @@ app.factory('Map', function(CanvasLayer) {
                          'Imagery © <a href="https://mapbox.com">Mapbox</a>';
             var mbUrl = 'https://{s}.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={access_token}';
 
-            this._map = L.map(mapId);
+            this._map = L.map(mapContainer);
 
             L.tileLayer(mbUrl, {
                 subdomains: 'abcd',
@@ -42,8 +42,6 @@ app.factory('Map', function(CanvasLayer) {
                 access_token: 'pk.eyJ1IjoiYXBoeXMiLCJhIjoiY2ltM2g1MzUwMDBwOXZtbTVzdnQ1ZHZpYiJ9.Cm1TVUsbCQLOhUbblOrHfw'
                 // lake-view token for user aphys obtained from mapbox.com
             }).addTo(this._map);
-
-            this._map.setView(LEMAN_CENTER, 10);
         }
 
         map._initSwisstopo = function() {
@@ -51,7 +49,7 @@ app.factory('Map', function(CanvasLayer) {
                 return 1 / RESOLUTIONS[zoom];
             };
 
-            this._map = L.map(mapId, {
+            this._map = L.map(mapContainer, {
                 crs: CRS,
                 maxBounds: L.latLngBounds(unproject(TOP_LEFT), unproject(BOTTOM_RIGHT)),
                 scale: scale
@@ -63,17 +61,17 @@ app.factory('Map', function(CanvasLayer) {
                 minZoom: 15,
                 attribution: 'Map data &copy; swisstopo'
             }).addTo(this._map);
-
-            this._map.setView(LEMAN_CENTER, 17);
         }
 
         map._initMapbox();
+        map._map.fitBounds(L.latLngBounds(topLeft, bottomRight));
 
         return map;
     }
 
     return {
         initMap: Map,
+        project: project,
         unproject: unproject
     };
 });

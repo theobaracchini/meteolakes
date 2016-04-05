@@ -8,7 +8,7 @@ var ngAnnotate = require('gulp-ng-annotate');
 var sourcemaps = require('gulp-sourcemaps');
 var uglify = require('gulp-uglify');
 
-var sources = ['app/js/app.js', 'app/vendor/js/**/*.js', 'app/js/**/*.js'];
+var sources = ['app/js/app.js', 'app/js/**/*.js', 'app/vendor/js/rbush/module.js', 'app/vendor/js/**/*.js'];
 
 gulp.task('build', function () {
     gulp.src(sources)

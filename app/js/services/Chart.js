@@ -1,10 +1,8 @@
-var app = angular.module('lakeViewApp');
-
-app.service('Chart', function(DateHelpers, misc) {
-    var Chart = function($scope, Time, containerId, conversionFct) {
+angular.module('lakeViewApp').service('Chart', function(DateHelpers) {
+    var Chart = function($scope, Time, container, conversionFct) {
         this.$scope = $scope
         this.Time = Time
-        this.containerId = containerId
+        this.container = container
         this.chartCanvas = this.prepareChart()
         this.fct = conversionFct
 
@@ -15,36 +13,35 @@ app.service('Chart', function(DateHelpers, misc) {
     Chart.prototype.Min = function(m) { this.min = m; return this; }
 
     Chart.prototype.Close = function() {
-        $(this.containerId).fadeOut()
-        this.$scope.pointIndex = undefined
+        this.container.fadeOut()
 
         return this;
     }
 
-    Chart.prototype.SelectPoint = function(i) {
-        this.$scope.pointIndex = i
+    Chart.prototype.SelectPoint = function(pointData) {
+        this.$scope.pointData = pointData
         this.UpdateChart()
 
         return this;
     }
 
     Chart.prototype.UpdateChart = function(dataTime) {
-        if(!this.$scope.pointIndex)
+        if(!this.$scope.pointData)
             return this
 
-        var p = this.$scope.tData.Data[this.$scope.pointIndex]
+        var p = this.$scope.pointData
 
         if(!p)
             return this;
 
-        $(this.containerId).fadeIn()
+        this.container.fadeIn()
 
         var svg = this.chartCanvas.svg
         var width = this.chartCanvas.width
         var height = this.chartCanvas.height
 
         var tx = d3.scale.linear()
-            .domain([0, p.value.length])
+            .domain([0, p.values.length])
             .range([0, width])
         // assign it here, because the 'this' pointer is changed
         // inside callbacks. This way we can use 'tx' below
@@ -67,7 +64,7 @@ app.service('Chart', function(DateHelpers, misc) {
         plot
             .transition()
             .duration(500)
-            .attr('d', function(d) { return line(d.value) })
+            .attr('d', function(d) { return line(d.values) })
 
         // svg axis
         var me = this;
@@ -81,7 +78,8 @@ app.service('Chart', function(DateHelpers, misc) {
     }
 
     Chart.prototype.formatTime = function(d) {
-        var monday = new Date(DateHelpers.FirstDayOfWeek(this.$scope.tData.DataTime.Week, this.$scope.tData.DataTime.Year));
+        // TODO: simplify and fix date calculations
+        var monday = DateHelpers.firstDayOfWeek(this.$scope.tData.DataTime.Week, this.$scope.tData.DataTime.Year).toDate();
         var hoursInAWeek = 7*24;
         var addedHours = d/this.Time.nT*hoursInAWeek;
         monday.setHours(monday.getHours() + addedHours);
@@ -99,7 +97,7 @@ app.service('Chart', function(DateHelpers, misc) {
         var me = this
         var drag = d3.behavior.drag().on('drag', function() { me.dragTime() })
 
-        var chartCanvas = misc.PrepareSvgCanvas(this.containerId + ' div', 2)
+        var chartCanvas = prepareCanvas(this.container.find('div')[0], 2);
         chartCanvas.svg.append('g')
             .attr('transform', 'translate(0,' + chartCanvas.height + ')')
             .attr('class', 'x axis')
@@ -116,13 +114,33 @@ app.service('Chart', function(DateHelpers, misc) {
             .append('path')
             .attr('class', 'timeLine')
 
-        $(this.containerId).hide()
+        this.container.hide()
 
         return chartCanvas
     }
 
     Chart.prototype.dragTime = function() {
         this.Time.tIndex = parseInt(this.tx.invert(d3.event.x))
+    }
+
+    function prepareCanvas(containerId, aspectRatio) {
+        var container = d3.select(containerId);
+
+        var dim = findDimensions(container, aspectRatio);
+        container.style('height', dim.height);
+
+        return {
+            svg: container.append('svg').attr('width', dim.width).attr('height', dim.height),
+            width: dim.width,
+            height: dim.height
+        };
+    }
+
+    function findDimensions(container, aspectRatio) {
+        var width = parseInt(container.style('width'));
+
+        // adapt the height to fit the given width
+        return { width: width, height: width / aspectRatio };
     }
 
     return Chart;

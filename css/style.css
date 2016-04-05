@@ -35,11 +35,15 @@
     left: 10px;
 }
 
-.map {
+.lv-map {
     width: 100%;
     height: 600px;
 }
 
 .leaflet-canvas-layer {
     opacity: 0.8;
+}
+
+.leaflet-clickable, .leaflet-container {
+    cursor: crosshair;
 }

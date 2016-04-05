@@ -1,6 +1,4 @@
-var app = angular.module('lakeViewApp');
-
-app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc, TemporalData, Map) {
+angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope, $scope, $element, Time, Chart, TemporalData, Map, rbush, knn) {
     // ========================================================================
     // PROPERTIES
     // ========================================================================
@@ -10,7 +8,9 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
     var colorLegend = prepareLegend();
 
     var canvasLayer;
-    var map = Map.initMap('tempMap');
+    var knnTree;
+    var marker;
+    var map;
 
     Initialize();
 
@@ -21,52 +21,22 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
         $rootScope.$on('reloadWeek', function(evt, time) {
             isDataReady = false;
 
-            if($scope.tData && !time.fullReload) {
-                // Regular switching of weeks, because the time slider was moving forward.
-                $scope.tData.SwitchToData(time.week, time.year);
-                // Load the next file if available
-                if(time.weeks.indexOf(time.week+1) != -1)
-                    $scope.tData.readData(time.week+1, time.year, function() { 
-                        dataReady();
-                    });
-            } else if($scope.tData && time.fullReload) {
-                // User changed the date in the lists.
-                // Typically means that the required data and the next data are not ready yet.
-                $scope.tData.readData(time.week, time.year, function() {
-                    $scope.tData.SwitchToData(time.week, time.year);
-                    dataReady();
-                    prepareGraphics();
-                });
-                // Load the next file if available
-                if(time.weeks.indexOf(time.week+1) != -1)
-                    $scope.tData.readData(time.week+1, time.year, function() {});
-            } else {
-                $scope.tData = new TemporalData(time.folder, 'temperature');
-                $scope.tData.readData(time.week, time.year, function() {
-                    $scope.tData.SwitchToData(time.week, time.year);
-
-                    dataReady();
-                    prepareGraphics();
-
-                    // Load the next file if available
-                    if(time.weeks.indexOf(time.week+1) != -1)
-                        $scope.tData.readData(time.week+1, time.year, function() {});
-                });
+            if (!$scope.tData) {
+                $scope.tData = new TemporalData('temperature');
             }
-        })
 
-        $scope.Chart = new Chart($scope, Time, '#tempPlot', function(d) { return d })
-        $rootScope.$on('reloadChart', function(evt, pointIndex) {
-            $scope.Chart.SelectPoint(pointIndex);
-        })
+            $scope.tData.readData(time.folder, time.week, time.year).then(function() {
+                $scope.tData.SwitchToData(time.week, time.year);
+                dataReady();
+                prepareGraphics();
+            });
+        });
 
-        $rootScope.$on('tick', function() {
-            animate();
-        })
-        // start the renderer
-        // d3.timer(animate);
+        $scope.Chart = new Chart($scope, Time, $element.find('.lv-plot'), function(d) { return d })
 
-        $rootScope.$emit('scopeReady');        
+        $rootScope.$on('tick', animate);
+
+        $rootScope.$emit('scopeReady');
     }
 
     // ========================================================================
@@ -74,8 +44,8 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
     // ========================================================================
 
     function dataReady() {
-        var tMin = d3.min($scope.tData.Data.map(function(d) { return d3.min(d.values) }));
-        var tMax = d3.max($scope.tData.Data.map(function(d) { return d3.max(d.values) }));
+        var tMin = d3.min($scope.tData.flatArray, function(d) { return d3.min(d.values) });
+        var tMax = d3.max($scope.tData.flatArray, function(d) { return d3.max(d.values) });
 
         c = d3.scale.linear().domain([tMin, (tMin+tMax)/2, tMax]).range(['blue', 'lime', 'red']);
 
@@ -83,10 +53,24 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
         updateLegend(tMin, tMax);
         $scope.Chart.UpdateChart($scope.tData.DataTime).Max(tMax).Min(tMin);
 
+        var noValues = $scope.tData.flatArray[0].values.length;
+        $rootScope.$emit('dataReady', noValues);
+
         isDataReady = true;
     }
 
     function prepareGraphics() {
+        if (!map) {
+            var minBounds = L.point($scope.tData.xMin, $scope.tData.yMin);
+            var maxBounds = L.point($scope.tData.xMax, $scope.tData.yMax);
+            map = Map.initMap($element.find('.lv-map')[0], Map.unproject(minBounds), Map.unproject(maxBounds));
+        }
+
+        if (!canvasLayer) {
+            canvasLayer = L.canvasLayer();
+            canvasLayer.addTo(map._map);
+        }
+
         var temperatureData = $scope.tData.map(function(d) {
             var latlng = Map.unproject(L.point(d.x, d.y));
             return {
@@ -96,19 +80,38 @@ app.controller('TemperatureCtrl', function($rootScope, $scope, Time, Chart, misc
             }
         });
 
-        if (canvasLayer) {
-            map._map.removeLayer(canvasLayer);
-        }
+        canvasLayer.setData(temperatureData);
+        canvasLayer.setOptions({colorFunction: c});
 
-        canvasLayer = L.canvasLayer(temperatureData, {colorFunction: c});
-        canvasLayer.addTo(map._map);
+        knnTree = rbush(9, ['.x', '.y', '.x', '.y']);
+        knnTree.load($scope.tData.flatArray);
+        map._map.on('click', function(e) {
+            var p = Map.project(e.latlng);
+            var closestPoint = knn(knnTree, [p.x, p.y], 1)[0];
+            var latlng = Map.unproject(L.point(closestPoint.x, closestPoint.y));
+            if (marker) {
+                marker.setLatLng(latlng);
+            } else {
+                marker = L.marker(latlng).addTo(map._map);
+            }
+            $scope.Chart.SelectPoint(closestPoint);
+            $scope.$apply();
+        });
 
         animate();
     }
 
+    $scope.closeChart = function() {
+        if (marker) {
+            map._map.removeLayer(marker);
+            marker = undefined;
+        }
+        $scope.Chart.Close();
+    }
+
     function prepareLegend() {
         var w = 300, h = 120;
-        var key = d3.select('#tempLegend').append('svg').attr('id', 'key').attr('width', w).attr('height', h);
+        var key = d3.select($element.find('.lv-legend')[0]).append('svg').attr('id', 'key').attr('width', w).attr('height', h);
         var legend = key.append('defs').append('svg:linearGradient').attr('id', 'gradient').attr('x1', '0%').attr('y1', '100%').attr('x2', '100%').attr('y2', '100%').attr('spreadMethod', 'pad');
         legend.append('stop').attr('offset', '0%').attr('stop-color', 'blue').attr('stop-opacity', 1);
         legend.append('stop').attr('offset', '50%').attr('stop-color', 'lime').attr('stop-opacity', 1);
