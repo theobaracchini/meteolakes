@@ -3,6 +3,8 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope,
     // PROPERTIES
     // ========================================================================
 
+    var LEGEND_COLORS = ['purple', 'cyan', 'lime', 'red'];
+
     var isDataReady = false;
     var c; // coloring function
     var colorLegend = prepareLegend();
@@ -47,7 +49,10 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope,
         var tMin = d3.min($scope.tData.flatArray, function(d) { return d3.min(d.values) });
         var tMax = d3.max($scope.tData.flatArray, function(d) { return d3.max(d.values) });
 
-        c = d3.scale.linear().domain([tMin, (tMin+tMax)/2, tMax]).range(['blue', 'lime', 'red']);
+        var domain = LEGEND_COLORS.map(function(d, i) {
+            return tMin + i / (LEGEND_COLORS.length - 1) * (tMax - tMin);
+        });
+        c = d3.scale.linear().domain(domain).range(LEGEND_COLORS);
 
         // Prepare all thingies
         updateLegend(tMin, tMax);
@@ -116,11 +121,12 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope,
     function prepareLegend() {
         var w = 300, h = 80;
         var key = d3.select($element.find('.lv-legend')[0]).append('svg').attr('id', 'key').attr('width', w).attr('height', h);
-        var legend = key.append('defs').append('svg:linearGradient').attr('id', 'gradient').attr('x1', '0%').attr('y1', '100%').attr('x2', '100%').attr('y2', '100%').attr('spreadMethod', 'pad');
-        legend.append('stop').attr('offset', '0%').attr('stop-color', 'blue').attr('stop-opacity', 1);
-        legend.append('stop').attr('offset', '50%').attr('stop-color', 'lime').attr('stop-opacity', 1);
-        legend.append('stop').attr('offset', '100%').attr('stop-color', 'red').attr('stop-opacity', 1);
-        key.append('rect').attr('width', w - 100).attr('height', h - 60).style('fill', 'url(#gradient)')
+        var legend = key.append('defs').append('svg:linearGradient').attr('id', 'tempGradient').attr('x1', '0%').attr('y1', '100%').attr('x2', '100%').attr('y2', '100%').attr('spreadMethod', 'pad');
+        LEGEND_COLORS.forEach(function(color, i) {
+            var offset = i * 100 / (LEGEND_COLORS.length - 1);
+            legend.append('stop').attr('offset', offset + '%').attr('stop-color', color).attr('stop-opacity', 1);
+        });
+        key.append('rect').attr('width', w - 100).attr('height', h - 60).style('fill', 'url(#tempGradient)')
         var color = key.append('g').attr('class', 'x axis').attr('transform', 'translate(0,22)');
         color.append('text').attr('y', 42).attr('dx', '.71em').style('text-anchor', 'start').text('Temperature (°C)');
         return color;

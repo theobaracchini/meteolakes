@@ -122,11 +122,11 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($rootScope, $s
     function prepareLegend() {
         var w = 300, h = 80;
         var key = d3.select($element.find('.lv-legend')[0]).append('svg').attr('id', 'key').attr('width', w).attr('height', h);
-        var legend = key.append('defs').append('svg:linearGradient').attr('id', 'gradient').attr('x1', '0%').attr('y1', '100%').attr('x2', '100%').attr('y2', '100%').attr('spreadMethod', 'pad');
+        var legend = key.append('defs').append('svg:linearGradient').attr('id', 'velGradient').attr('x1', '0%').attr('y1', '100%').attr('x2', '100%').attr('y2', '100%').attr('spreadMethod', 'pad');
         legend.append('stop').attr('offset', '0%').attr('stop-color', 'blue').attr('stop-opacity', 1);
         legend.append('stop').attr('offset', '50%').attr('stop-color', 'lime').attr('stop-opacity', 1);
         legend.append('stop').attr('offset', '100%').attr('stop-color', 'red').attr('stop-opacity', 1);
-        key.append('rect').attr('width', w - 100).attr('height', h - 60).style('fill', 'url(#gradient)');
+        key.append('rect').attr('width', w - 100).attr('height', h - 60).style('fill', 'url(#velGradient)');
         var color = key.append('g').attr('class', 'x axis').attr('transform', 'translate(0,22)');
         color.append('text').attr('y', 42).attr('dx', '.71em').style('text-anchor', 'start').text('Velocity (m/s)');        
         return color;
