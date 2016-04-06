@@ -2,6 +2,9 @@
 <html ng-app="lakeViewApp" ng-strict-di>
     <head>
         <meta charset="utf-8">
+
+        <title>Forecasting Hydrodynamic Lake Model</title>
+
         <!-- Integrity hashes generated using https://www.srihash.org/ -->
         <link rel="stylesheet"
               href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css"
@@ -42,106 +45,136 @@
     </head>
 
     <body>
-        <div class="container" style="margin-bottom:20px">
-            <div class="row" style="margin-left:50px;margin-right:50px">
-                <div class="row">
-                    <div class="col-lg-12" ng-controller="TimeCtrl">
-                        <!-- Side toolbar to display when the normal time tools are hidden -->
-                        <div class="sidebar">
-                            <div class="btn-group-vertical" role="group">
-                                <button id="playButton" type="button" class="btn btn-default" ng-click="play()"><span class="glyphicon glyphicon-play"></span></button>
-                                <!-- <button type="button" class="btn btn-default" ng-click="playAll()"><span class="glyphicon glyphicon-forward"></span></button> -->
-                                <button type="button" class="btn btn-default" ng-click="stop()"><span class="glyphicon glyphicon-stop"></span></button>
-                                <button type="button" class="btn btn-default" ng-click="backward()"><span class="glyphicon glyphicon-step-backward"></span></button>
-                                <button type="button" class="btn btn-default" ng-click="forward()"><span class="glyphicon glyphicon-step-forward"></span></button>
-                            </div>
-                        </div>
-
-                        <h3>Date: <span ng-bind="getDate()"></span> Time: <span ng-bind="getTime()"></span></h3>
-                        
-                        <div class="row">
-                            <div class="col-lg-12" id="timeControls">
-                                <div class="btn-group">
-                                    <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">{{ Dates[SelectedLake].name + " " }}<span class="caret"></span></button>
-                                    <ul class="dropdown-menu scrollable-menu" role="menu">
-                                        <li ng-repeat="lake in Dates"><a href="#" ng-click="ChangeLake($index)">{{ lake.name }}</a></li>
-                                    </ul>
-                                </div>                            
-                                <div class="btn-group">
-                                    <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">{{ "Year " + SelectedYear + " " }}<span class="caret"></span></button>
-                                    <ul class="dropdown-menu scrollable-menu" role="menu">
-                                        <li ng-repeat="year in Years"><a href="#" ng-click="ChangeYear(year)">{{ year }}</a></li>
-                                    </ul>
-                                </div>                            
-                                <div class="btn-group">
-                                    <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">{{ "Week " + SelectedWeek + " " }}<span class="caret"></span></button>
-                                    <ul class="dropdown-menu scrollable-menu" role="menu">
-                                        <li ng-repeat="week in Weeks"><a href="#" ng-click="ChangeWeek(week)">{{ "Week " + week + " (" + PrettyPrintWeek(week) + ")" }}</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <input type="range" ng-model="Time.tIndex" min="0" max="{{ Time.nT - 1 }}" style="margin:10px">
-
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-default lv-slower" ng-click="slower()"><span class="glyphicon glyphicon-fast-backward"></span></button>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12" ng-controller="TimeCtrl">
+                    <!-- Side toolbar to display when the normal time tools are hidden -->
+                    <div class="sidebar">
+                        <div class="btn-group-vertical" role="group">
                             <button id="playButton" type="button" class="btn btn-default" ng-click="play()"><span class="glyphicon glyphicon-play"></span></button>
-                            <button type="button" class="btn btn-default lv-faster" ng-click="faster()"><span class="glyphicon glyphicon-fast-forward"></span></button>
                             <!-- <button type="button" class="btn btn-default" ng-click="playAll()"><span class="glyphicon glyphicon-forward"></span></button> -->
                             <button type="button" class="btn btn-default" ng-click="stop()"><span class="glyphicon glyphicon-stop"></span></button>
-                        </div>
-                        <div class="btn-group" role="group">
                             <button type="button" class="btn btn-default" ng-click="backward()"><span class="glyphicon glyphicon-step-backward"></span></button>
                             <button type="button" class="btn btn-default" ng-click="forward()"><span class="glyphicon glyphicon-step-forward"></span></button>
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-lg-12" ng-controller="TemperatureCtrl">
-                        <h2>TEMPERATURE</h2>
+                    <h2>Forecasting Hydrodynamic Lake Model</h2>
 
-                        <div class="col-lg-12">
-                            <div class="lv-map"></div>
-                        </div>
-                        <div class="col-lg-12 lv-legend"></div>
-
-                        <div class="col-lg-12">
-                            <div class="row lv-plot">
-                                <h5><button class="close" type="button" ng-click="closeChart()">x</button>TEMPERATURE OVER TIME (&deg;C)</h5>
-                                <div class="col-lg-6" style="width:100%; height:25%">
-                                    <!-- SVG Plot for temperature over time will be created here -->
-                                </div>
-                                <div class="col-lg-6">
-                                    <span class="label label-info">{{ "X: " + pointData.x + " m" }}</span>
-                                    <span class="label label-info">{{ "Y: " + pointData.y + " m" }}</span>
-                                </div>
+                    <h4>Date: <span ng-bind="getDate()"></span> Time: <span ng-bind="getTime()"></span></h4>
+                    
+                    <div class="row">
+                        <div class="col-sm-12" id="timeControls">
+                            <div class="btn-group">
+                                <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">{{ Dates[SelectedLake].name + " " }}<span class="caret"></span></button>
+                                <ul class="dropdown-menu scrollable-menu" role="menu">
+                                    <li ng-repeat="lake in Dates"><a href="#" ng-click="ChangeLake($index)">{{ lake.name }}</a></li>
+                                </ul>
+                            </div>                            
+                            <div class="btn-group">
+                                <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">{{ "Year " + SelectedYear + " " }}<span class="caret"></span></button>
+                                <ul class="dropdown-menu scrollable-menu" role="menu">
+                                    <li ng-repeat="year in Years"><a href="#" ng-click="ChangeYear(year)">{{ year }}</a></li>
+                                </ul>
+                            </div>                            
+                            <div class="btn-group">
+                                <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">{{ "Week " + SelectedWeek + " " }}<span class="caret"></span></button>
+                                <ul class="dropdown-menu scrollable-menu" role="menu">
+                                    <li ng-repeat="week in Weeks"><a href="#" ng-click="ChangeWeek(week)">{{ "Week " + week + " (" + PrettyPrintWeek(week) + ")" }}</a></li>
+                                </ul>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-lg-12" ng-controller="VelocityCtrl">
-                        <h2>VELOCITY</h2>
+                    <input type="range" ng-model="Time.tIndex" min="0" max="{{ Time.nT - 1 }}" style="margin:10px">
 
-                        <div class="col-lg-12">
-                            <div class="lv-map"></div>
-                        </div>
-                        <div class="col-lg-12 lv-legend"></div>
-
-                        <div class="col-lg-12">
-                            <div class="row lv-plot">
-                                <h5><button class="close" type="button" ng-click="Chart.Close()">x</button>VELOCITY OVER TIME (m/s)</h5>
-                                <div class="col-lg-6" style="width:100%; height:25%">
-                                    <!-- SVG Plot for velocity over time will be created here -->
-                                </div>
+                    <div class="row">
+                        <div class="col-xs-8">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-default lv-slower" ng-click="slower()"><span class="glyphicon glyphicon-backward"></span></button>
+                                <button id="playButton" type="button" class="btn btn-default" ng-click="play()"><span class="glyphicon glyphicon-play"></span></button>
+                                <button type="button" class="btn btn-default lv-faster" ng-click="faster()"><span class="glyphicon glyphicon-forward"></span></button>
+                                <!-- <button type="button" class="btn btn-default" ng-click="playAll()"><span class="glyphicon glyphicon-forward"></span></button> -->
+                                <button type="button" class="btn btn-default" ng-click="stop()"><span class="glyphicon glyphicon-stop"></span></button>
                             </div>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-default" ng-click="backward()"><span class="glyphicon glyphicon-step-backward"></span></button>
+                                <button type="button" class="btn btn-default" ng-click="forward()"><span class="glyphicon glyphicon-step-forward"></span></button>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="alert alert-info text-center lv-larger-font" role="alert">Satellite validation available <a href="http://aphyspc1.epfl.ch/prototype/">here</a>.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div ng-controller="TemperatureCtrl">
+                    <div class="col-sm-12">
+                        <h3>Temperature <small>(1 meter below surface)</small></h3>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <div class="lv-map"></div>
+                    </div>
+                    <div class="col-sm-12 lv-legend"></div>
+
+                    <div class="col-sm-12">
+                        <div class="row lv-plot">
+                            <h5><button class="close" type="button" ng-click="closeChart()">&times;</button>TEMPERATURE OVER TIME (&deg;C)</h5>
+                            <div class="col-sm-6" style="width:100%; height:25%">
+                                <!-- SVG Plot for temperature over time will be created here -->
+                            </div>
+                            <div class="col-sm-6">
+                                <span class="label label-info">{{ "X: " + pointData.x + " m" }}</span>
+                                <span class="label label-info">{{ "Y: " + pointData.y + " m" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="alert alert-info" role="alert">
+                            Click on a point of interest on the map to see a time series of the temperature.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div ng-controller="VelocityCtrl">
+                    <div class="col-sm-12">
+                        <h3>Velocity <small>(1 meter below surface)</small></h3>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <div class="lv-map"></div>
+                    </div>
+                    <div class="col-sm-12 lv-legend"></div>
+
+                    <div class="col-sm-12">
+                        <div class="row lv-plot">
+                            <h5><button class="close" type="button" ng-click="closeChart()">&times;</button>VELOCITY OVER TIME (m/s)</h5>
+                            <div class="col-sm-6" style="width:100%; height:25%">
+                                <!-- SVG Plot for velocity over time will be created here -->
+                            </div>
+                            <div class="col-sm-6">
+                                <span class="label label-info">{{ "X: " + pointData.x + " m" }}</span>
+                                <span class="label label-info">{{ "Y: " + pointData.y + " m" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="alert alert-info" role="alert">
+                            Click on a point of interest on the map to see a time series of the velocity.
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <nav class="navbar navbar-inverse navbar-fixed-bottom">
+            <div class="container">
+                <p class="navbar-text">This is a development version, please contact <a href="mailto:theo.baracchini@epfl.ch">theo.baracchini@epfl.ch</a> for further information.</p>
+            </div>
+        </nav>
     </body>
 </html>

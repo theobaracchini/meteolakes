@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').controller('VelocityCtrl', function($rootScope, $scope, $element, Time, Chart, TemporalData, Map) {
+angular.module('lakeViewApp').controller('VelocityCtrl', function($rootScope, $scope, $element, Time, Chart, TemporalData, Map, rbush, knn) {
     // ========================================================================
     // PROPERTIES
     // ========================================================================
@@ -8,6 +8,8 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($rootScope, $s
     var colorLegend = prepareLegend();
 
     var canvasLayer;
+    var knnTree;
+    var marker;
     var map;
 
     Initialize();
@@ -16,24 +18,21 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($rootScope, $s
     // INIT (I know, code above is also initialization. Deal with it.)
     // ========================================================================
     function Initialize() {
-        $rootScope.$on('reloadWeek', function(evt, time) {
+        $rootScope.$on('reloadWeek', function(evt, data) {
             isDataReady = false;
 
             if (!$scope.tData) {
                 $scope.tData = new TemporalData('velocity');
             }
 
-            $scope.tData.readData(time.folder, time.week, time.year).then(function() {
-                $scope.tData.SwitchToData(time.week, time.year);
+            $scope.tData.readData(data.folder, data.week, data.year).then(function() {
+                $scope.tData.SwitchToData(data.week, data.year);
                 dataReady();
-                prepareGraphics();
+                prepareGraphics(data.centerMap);
             });
         });
 
         $scope.Chart = new Chart($scope, Time, $element.find('.lv-plot'), norm);
-        $rootScope.$on('reloadChart', function(evt, pointIndex) {
-            $scope.Chart.SelectPoint(pointIndex);
-        })
 
         $rootScope.$on('tick', animate);
 
@@ -66,11 +65,15 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($rootScope, $s
         isDataReady = true;
     }
 
-    function prepareGraphics() {
+    function prepareGraphics(centerMap) {
         if (!map) {
-            var minBounds = L.point($scope.tData.xMin, $scope.tData.yMin);
-            var maxBounds = L.point($scope.tData.xMax, $scope.tData.yMax);
-            map = Map.initMap($element.find('.lv-map')[0], Map.unproject(minBounds), Map.unproject(maxBounds));
+            map = Map.initMap($element.find('.lv-map')[0]);
+        }
+
+        if (centerMap) {
+            var minBounds = Map.unproject(L.point($scope.tData.xMin, $scope.tData.yMin));
+            var maxBounds = Map.unproject(L.point($scope.tData.xMax, $scope.tData.yMax));
+            map._map.fitBounds(L.latLngBounds(minBounds, maxBounds));            
         }
 
         if (!canvasLayer) {
@@ -78,7 +81,7 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($rootScope, $s
             canvasLayer.addTo(map._map);
         }
 
-        var velocityData = $scope.tData.map(function(d) {
+        var data = $scope.tData.map(function(d) {
             var latlng = Map.unproject(L.point(d.x, d.y));
             return {
                 lat: latlng.lat,
@@ -87,20 +90,43 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($rootScope, $s
             }
         });
 
-        canvasLayer.setData(velocityData);
+        canvasLayer.setData(data);
         canvasLayer.setOptions({colorFunction: colorFunction, simplify: true, radius: 30});
+
+        knnTree = rbush(9, ['.x', '.y', '.x', '.y']);
+        knnTree.load($scope.tData.flatArray);
+        map._map.on('click', function(e) {
+            var p = Map.project(e.latlng);
+            var closestPoint = knn(knnTree, [p.x, p.y], 1)[0];
+            var latlng = Map.unproject(L.point(closestPoint.x, closestPoint.y));
+            if (marker) {
+                marker.setLatLng(latlng);
+            } else {
+                marker = L.marker(latlng).addTo(map._map);
+            }
+            $scope.Chart.SelectPoint(closestPoint);
+            $scope.$apply();
+        });
 
         animate();
     }
 
+    $scope.closeChart = function() {
+        if (marker) {
+            map._map.removeLayer(marker);
+            marker = undefined;
+        }
+        $scope.Chart.Close();
+    }
+
     function prepareLegend() {
-        var w = 300, h = 120;
+        var w = 300, h = 80;
         var key = d3.select($element.find('.lv-legend')[0]).append('svg').attr('id', 'key').attr('width', w).attr('height', h);
-        var legend = key.append('defs').append('svg:linearGradient').attr('id', 'gradient').attr('x1', '0%').attr('y1', '100%').attr('x2', '100%').attr('y2', '100%').attr('spreadMethod', 'pad');
+        var legend = key.append('defs').append('svg:linearGradient').attr('id', 'velGradient').attr('x1', '0%').attr('y1', '100%').attr('x2', '100%').attr('y2', '100%').attr('spreadMethod', 'pad');
         legend.append('stop').attr('offset', '0%').attr('stop-color', 'blue').attr('stop-opacity', 1);
         legend.append('stop').attr('offset', '50%').attr('stop-color', 'lime').attr('stop-opacity', 1);
         legend.append('stop').attr('offset', '100%').attr('stop-color', 'red').attr('stop-opacity', 1);
-        key.append('rect').attr('width', w - 100).attr('height', h - 100).style('fill', 'url(#gradient)');
+        key.append('rect').attr('width', w - 100).attr('height', h - 60).style('fill', 'url(#velGradient)');
         var color = key.append('g').attr('class', 'x axis').attr('transform', 'translate(0,22)');
         color.append('text').attr('y', 42).attr('dx', '.71em').style('text-anchor', 'start').text('Velocity (m/s)');        
         return color;
