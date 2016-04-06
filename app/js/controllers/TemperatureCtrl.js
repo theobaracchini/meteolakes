@@ -18,17 +18,17 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope,
     // INIT (I know, code above is also some initialization. Deal with it.)
     // ========================================================================
     function Initialize() {
-        $rootScope.$on('reloadWeek', function(evt, time) {
+        $rootScope.$on('reloadWeek', function(evt, data) {
             isDataReady = false;
 
             if (!$scope.tData) {
                 $scope.tData = new TemporalData('temperature');
             }
 
-            $scope.tData.readData(time.folder, time.week, time.year).then(function() {
-                $scope.tData.SwitchToData(time.week, time.year);
+            $scope.tData.readData(data.folder, data.week, data.year).then(function() {
+                $scope.tData.SwitchToData(data.week, data.year);
                 dataReady();
-                prepareGraphics();
+                prepareGraphics(data.centerMap);
             });
         });
 
@@ -59,11 +59,15 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope,
         isDataReady = true;
     }
 
-    function prepareGraphics() {
+    function prepareGraphics(centerMap) {
         if (!map) {
-            var minBounds = L.point($scope.tData.xMin, $scope.tData.yMin);
-            var maxBounds = L.point($scope.tData.xMax, $scope.tData.yMax);
-            map = Map.initMap($element.find('.lv-map')[0], Map.unproject(minBounds), Map.unproject(maxBounds));
+            map = Map.initMap($element.find('.lv-map')[0]);
+        }
+
+        if (centerMap) {
+            var minBounds = Map.unproject(L.point($scope.tData.xMin, $scope.tData.yMin));
+            var maxBounds = Map.unproject(L.point($scope.tData.xMax, $scope.tData.yMax));
+            map._map.fitBounds(L.latLngBounds(minBounds, maxBounds));            
         }
 
         if (!canvasLayer) {
@@ -71,7 +75,7 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope,
             canvasLayer.addTo(map._map);
         }
 
-        var temperatureData = $scope.tData.map(function(d) {
+        var data = $scope.tData.map(function(d) {
             var latlng = Map.unproject(L.point(d.x, d.y));
             return {
                 lat: latlng.lat,
@@ -80,7 +84,7 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope,
             }
         });
 
-        canvasLayer.setData(temperatureData);
+        canvasLayer.setData(data);
         canvasLayer.setOptions({colorFunction: c});
 
         knnTree = rbush(9, ['.x', '.y', '.x', '.y']);
@@ -110,13 +114,13 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope,
     }
 
     function prepareLegend() {
-        var w = 300, h = 120;
+        var w = 300, h = 80;
         var key = d3.select($element.find('.lv-legend')[0]).append('svg').attr('id', 'key').attr('width', w).attr('height', h);
         var legend = key.append('defs').append('svg:linearGradient').attr('id', 'gradient').attr('x1', '0%').attr('y1', '100%').attr('x2', '100%').attr('y2', '100%').attr('spreadMethod', 'pad');
         legend.append('stop').attr('offset', '0%').attr('stop-color', 'blue').attr('stop-opacity', 1);
         legend.append('stop').attr('offset', '50%').attr('stop-color', 'lime').attr('stop-opacity', 1);
         legend.append('stop').attr('offset', '100%').attr('stop-color', 'red').attr('stop-opacity', 1);
-        key.append('rect').attr('width', w - 100).attr('height', h - 100).style('fill', 'url(#gradient)')
+        key.append('rect').attr('width', w - 100).attr('height', h - 60).style('fill', 'url(#gradient)')
         var color = key.append('g').attr('class', 'x axis').attr('transform', 'translate(0,22)');
         color.append('text').attr('y', 42).attr('dx', '.71em').style('text-anchor', 'start').text('Temperature (°C)');
         return color;

@@ -20,7 +20,7 @@ angular.module('lakeViewApp').factory('Map', function(CanvasLayer) {
         return CRS.projection.unproject(point);
     };
 
-    function Map(mapContainer, topLeft, bottomRight) {
+    function Map(mapContainer) {
         var map = {
             _map: undefined,
             mapContainer: mapContainer
@@ -64,7 +64,6 @@ angular.module('lakeViewApp').factory('Map', function(CanvasLayer) {
         }
 
         map._initMapbox();
-        map._map.fitBounds(L.latLngBounds(topLeft, bottomRight));
 
         return map;
     }

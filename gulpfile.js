@@ -10,13 +10,20 @@ var uglify = require('gulp-uglify');
 
 var sources = ['app/js/app.js', 'app/js/**/*.js', 'app/vendor/js/rbush/module.js', 'app/vendor/js/**/*.js'];
 
-gulp.task('build', function () {
+gulp.task('build-dev', function () {
     gulp.src(sources)
         .pipe(sourcemaps.init())
         .pipe(concat('bundle.min.js'))
         .pipe(ngAnnotate())
-        .pipe(uglify())
         .pipe(sourcemaps.write())
+        .pipe(gulp.dest('./dist/js/'));
+});
+
+gulp.task('build-prod', function () {
+    gulp.src(sources)
+        .pipe(concat('bundle.min.js'))
+        .pipe(ngAnnotate())
+        .pipe(uglify())
         .pipe(gulp.dest('./dist/js/'));
 });
 
@@ -27,7 +34,7 @@ gulp.task('connect', function() {
 });
 
 gulp.task('watch', function() {
-    gulp.watch(sources, ['build']);
+    gulp.watch(sources, ['build-dev']);
 });
 
-gulp.task('default', ['connect', 'build', 'watch']);
+gulp.task('default', ['connect', 'build-dev', 'watch']);

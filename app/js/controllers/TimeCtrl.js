@@ -14,7 +14,8 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
     // When a controller is ready, tell it the selected year/week to load
     $rootScope.$on('scopeReady', function() {
         if($scope.Dates) {
-            emitReload();
+            // TODO improve logic of when to emit first reload
+            emitReload({centerMap: true});
         }
     });
 
@@ -105,17 +106,17 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
 
     $scope.ChangeWeek = function(week) {
         $scope.selectWeek(week);
-        emitFullReload();
+        emitReload();
     }
 
     $scope.ChangeYear = function(year) {
         $scope.selectYear(year);
-        emitFullReload();
+        emitReload();
     }
 
     $scope.ChangeLake = function(lake) {
         $scope.selectLake(lake);
-        emitFullReload();
+        emitReload({centerMap: true});
     }
 
     // ------------------------------------------------------------------------
@@ -182,15 +183,17 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
      * Emit a 'reloadWeek' message, indicating that the time has passed to 
      * a new week.
      */
-    function emitReload() {
-        $rootScope.$emit('reloadWeek', {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:false, folder:$scope.Dates[$scope.SelectedLake]['folder'], weeks:$scope.Dates[$scope.SelectedLake]['data']['Y' + $scope.SelectedYear]});
-    }
-    /**
-     * Emit a 'reloadWeek' message, indicating that the user changed a 
-     * parameter in the time fields and that all data needs to be reloaded.
-     */
-    function emitFullReload() {
-        $rootScope.$emit('reloadWeek', {week:$scope.SelectedWeek, year:$scope.SelectedYear, fullReload:true, folder:$scope.Dates[$scope.SelectedLake]['folder'], weeks:$scope.Dates[$scope.SelectedLake]['data']['Y' + $scope.SelectedYear]});
+    function emitReload(options) {
+        var data = {
+            week: $scope.SelectedWeek,
+            year: $scope.SelectedYear,
+            folder: $scope.Dates[$scope.SelectedLake]['folder'],
+            weeks: $scope.Dates[$scope.SelectedLake]['data']['Y' + $scope.SelectedYear]
+        };
+        if (options) {
+            $.extend(data, options);
+        }
+        $rootScope.$emit('reloadWeek', data);
     }
 
     function loadAvailableDates() {
@@ -247,7 +250,8 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
 
         selectWeekClosestToNow();
 
-        emitReload();
+        // TODO improve logic of when to emit first reload
+        emitReload({centerMap: true});
     }
 
     function currentDate() {
