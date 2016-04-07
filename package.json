@@ -1,6 +1,6 @@
 {
   "name": "lake-view",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Forecasting hydrodynamic model of Lake Geneva",
   "scripts": {
     "prepublish": "gulp build-prod",
