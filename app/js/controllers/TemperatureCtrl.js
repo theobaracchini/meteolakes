@@ -104,6 +104,18 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope,
                 marker = L.marker(latlng).addTo(map._map);
             }
             $scope.Chart.SelectPoint(closestPoint);
+            var fakeStartDate = moment('1970-01-01');
+            var data = closestPoint.values.map(function(d, i) {
+                return {
+                    date: fakeStartDate.clone().add(i * 3, 'hours').toDate(),
+                    value: d
+                };
+            });
+            $scope.chartData = {
+                x: closestPoint.x,
+                y: closestPoint.y,
+                data: data
+            };
             $scope.$apply();
         });
 

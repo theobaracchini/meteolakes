@@ -2,7 +2,7 @@ body {
     padding-bottom: 70px;
 }
 
-.x.axis {
+/*.x.axis {
     stroke:black;
     fill: none;
 }
@@ -20,7 +20,29 @@ body {
 .plot {
     stroke: blue;
     fill: none;
+}*/
+
+
+
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
 }
+
+.line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
+
+
+
+
+
+
 
 .timeLine {
     stroke:blue;
