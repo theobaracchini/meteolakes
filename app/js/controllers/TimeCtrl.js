@@ -1,24 +1,36 @@
-angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope, $q, $interval, Time, DATA_HOST, DateHelpers) {
+angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope, $interval, Time, DATA_HOST, DateHelpers, DataIndex) {
     var loopType = 'repeat';
     var TICK_INTERVAL_MIN = 50;
     var TICK_INTERVAL_MAX = 800;
     var tickInterval = 400;
     var tickTimerId = null;
 
-    $scope.$watch('Time.tIndex', function() {
-        $rootScope.$emit('tick');
-    });
+    $scope.selection = {};
 
-    loadAvailableDates().then(selectDateClosestToNow);
-
-    // When a controller is ready, tell it the selected year/week to load
-    $rootScope.$on('scopeReady', function() {
-        if($scope.Dates) {
-            // TODO improve logic of when to emit first reload
-            emitReload({centerMap: true});
+    $scope.$watch('selection', function(selection) {
+        if (!$.isEmptyObject(selection)) {
+            $scope.$broadcast('updateTimeSelection', selection);
         }
+    }, true);
+
+    $scope.$watch('Time.tIndex', function() {
+        $scope.$broadcast('tick');
     });
 
+    DataIndex.onReady(function() {
+        $scope.index = DataIndex.index();
+
+        // Initialize with current year/week, closest existing data for selected lake will be determined later
+        var now = moment();
+        $scope.selection = {
+            year: now.year(),
+            week: now.isoWeek()
+        }
+
+        $scope.ChangeLake(0);
+    });
+
+    // TODO refactor
     $rootScope.$on('dataReady', function(evt, noValues) {
         Time.nT = noValues;
     });
@@ -99,36 +111,65 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
     }
 
     $scope.PrettyPrintWeek = function(week) {
-        var firstDay = DateHelpers.firstDayOfWeek(week, $scope.SelectedYear);
-        var lastDay = DateHelpers.lastDayOfWeek(week, $scope.SelectedYear);
+        var firstDay = DateHelpers.firstDayOfWeek(week, $scope.selection.year);
+        var lastDay = DateHelpers.lastDayOfWeek(week, $scope.selection.year);
         return DateHelpers.yearMonthDay(firstDay) + ' - ' + DateHelpers.yearMonthDay(lastDay);
     }
 
     $scope.ChangeWeek = function(week) {
-        $scope.selectWeek(week);
-        emitReload();
+        $scope.selection.week = week;
     }
 
     $scope.ChangeYear = function(year) {
-        $scope.selectYear(year);
-        emitReload();
+        $scope.selection.year = year;
+        selectClosestWeek();
     }
 
     $scope.ChangeLake = function(lake) {
-        $scope.selectLake(lake);
-        emitReload({centerMap: true});
+        var lakeData = $scope.index[lake];
+        $scope.selection.lake = lake;
+        $scope.selection.folder = lakeData.folder;
+        selectClosestYear();
+        selectClosestWeek();
     }
 
     // ------------------------------------------------------------------------
     // UTILITY METHODS
     // ------------------------------------------------------------------------
 
+    function selectClosestYear() {
+        var lakeData = $scope.index[$scope.selection.lake];
+        $scope.selection.year = closest(lakeData.years, $scope.selection.year);
+    }
+
+    function selectClosestWeek() {
+        var lakeData = $scope.index[$scope.selection.lake];
+        $scope.selection.week = closest(lakeData.data.get($scope.selection.year), $scope.selection.week);
+    }
+
+    /**
+      * finds the entry closest to <query> in <collection>
+      */
+    function closest(collection, query) {
+        var minDiff = Number.MAX_VALUE;
+        var result;
+        collection.forEach(function(entry) {
+            var diff = Math.abs(entry - query);
+            if(diff < minDiff) {
+                minDiff = diff;
+                result = entry;
+            }
+        });
+        return result;
+    }
+
+/*
     $scope.selectWeek = function(week) {
         // Make sure the given week number is not out of bounds with the 
         // current year, and change year if necessary.
-        var numberOfWeeks = DateHelpers.numberOfWeeks($scope.SelectedYear);
+        var numberOfWeeks = DateHelpers.numberOfWeeks($scope.selection.year);
         if(week >= numberOfWeeks) {
-            $scope.selectYear($scope.SelectedYear+1);
+            $scope.selectYear($scope.selection.year+1);
             $scope.selectWeek(week - numberOfWeeks + 1);
             return;
         } else if(week < 0) {
@@ -137,23 +178,9 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
             return;
         }
 
-        $scope.SelectedWeek = week;
+        $scope.selection.week = week;
     }
-
-    $scope.selectYear = function(year) {
-        $scope.SelectedYear = year;
-        $scope.Weeks = [];
-        var weeksForYear = $scope.Dates[$scope.SelectedLake]['data']['Y' + $scope.SelectedYear];
-        weeksForYear.forEach(function(week) {
-            $scope.Weeks.push(week);
-        });
-    }
-
-    $scope.selectLake = function(lake) {
-        $scope.SelectedLake = lake;
-        selectDateClosestToNow();
-    }
-
+*/
     function resetTimer() {
         if (tickTimerId) {
             $interval.cancel(tickTimerId);
@@ -173,90 +200,15 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
             // we looped. Decide whether we play again the current week
             // or if we play the next week
             if(loopType == 'continue') {
-                $scope.selectWeek($scope.SelectedWeek+1);
+                $scope.selectWeek($scope.selection.week+1);
                 emitReload();
             }
         }
     }
 
-    /**
-     * Emit a 'reloadWeek' message, indicating that the time has passed to 
-     * a new week.
-     */
-    function emitReload(options) {
-        var data = {
-            week: $scope.SelectedWeek,
-            year: $scope.SelectedYear,
-            folder: $scope.Dates[$scope.SelectedLake]['folder'],
-            weeks: $scope.Dates[$scope.SelectedLake]['data']['Y' + $scope.SelectedYear]
-        };
-        if (options) {
-            $.extend(data, options);
-        }
-        $rootScope.$emit('reloadWeek', data);
-    }
-
-    function loadAvailableDates() {
-        $scope.Weeks = [];
-        $scope.SelectedWeek = undefined;
-        $scope.Years = [];
-        $scope.SelectedYear = undefined;
-
-        return $q(function(resolve, reject) {
-            d3.json(DATA_HOST + 'available_data.json', function(err, data) {
-                if (err) {
-                    reject(err);
-                } else {
-                    $scope.Dates = data;
-                    $scope.SelectedLake = 0; // first one in the array of lakes (i.e. data[0])
-                    resolve();
-                }
-            });
-        });
-    }
-
-    function selectWeekClosestToNow() {
-        var currentWeek = moment().isoWeek();
-
-        // Find the week closest to now
-        var minDiffWeek = Number.MAX_VALUE; // large initial value for week diff
-        $scope.Weeks = [];
-        for(var i = 0 ; i <  $scope.Dates[$scope.SelectedLake]['data']['Y' + $scope.SelectedYear].length ; ++i) {
-            var week = $scope.Dates[$scope.SelectedLake]['data']['Y' + $scope.SelectedYear][i];
-            $scope.Weeks.push(week);
-            var diffWeek = Math.abs(week - currentWeek);
-            if(diffWeek < minDiffWeek) {
-                minDiffWeek = diffWeek;
-                $scope.SelectedWeek = week;
-            }
-        }
-    }
-
-    function selectDateClosestToNow() {
-        var currentYear = moment().year();
-        
-        // Find the year closest to now
-        var minDiffYear = Number.MAX_VALUE; // take a large initial value for year diff
-        $scope.Years = [];
-        for(var syear in $scope.Dates[$scope.SelectedLake]['data']) {
-            var year = parseInt(syear.substring(1));
-            $scope.Years.push(year);
-            var diffYear = Math.abs(year - currentYear);
-            if(diffYear < minDiffYear) {
-                minDiffYear = diffYear;
-                $scope.SelectedYear = year;
-            }
-        }
-
-        selectWeekClosestToNow();
-
-        // TODO improve logic of when to emit first reload
-        emitReload({centerMap: true});
-    }
-
     function currentDate() {
-        var refDate = DateHelpers.firstDayOfWeek($scope.SelectedWeek, $scope.SelectedYear);
-        return DateHelpers.addMinutes(refDate, Time.tIndex * $scope.Dates[$scope.SelectedLake].interval);
+        var refDate = DateHelpers.firstDayOfWeek($scope.selection.week, $scope.selection.year);
+        return DateHelpers.addMinutes(refDate, Time.tIndex * $scope.Dates[$scope.selection.lake].interval);
     }
 
     function isScrolledIntoView(elem) {

@@ -1,7 +1,9 @@
-angular.module('lakeViewApp').controller('VelocityCtrl', function($rootScope, $scope, $element, Time, Chart, TemporalData, Map, rbush, knn) {
+angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, $element, Time, Chart, TemporalData, Map, rbush, knn) {
     // ========================================================================
     // PROPERTIES
     // ========================================================================
+
+    var timeSelection;
 
     var isDataReady = false;
     var c; // coloring function
@@ -18,25 +20,28 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($rootScope, $s
     // INIT (I know, code above is also initialization. Deal with it.)
     // ========================================================================
     function Initialize() {
-        $rootScope.$on('reloadWeek', function(evt, data) {
+        $scope.$on('updateTimeSelection', function(evt, newTimeSelection) {
             isDataReady = false;
+            var recenterMap = !timeSelection || (newTimeSelection.lake != timeSelection.lake);
+
+            // clone object
+            timeSelection = $.extend({}, newTimeSelection);
 
             if (!$scope.tData) {
                 $scope.tData = new TemporalData('velocity');
             }
 
-            $scope.tData.readData(data.folder, data.week, data.year).then(function() {
-                $scope.tData.SwitchToData(data.week, data.year);
+            $scope.tData.readData(timeSelection.folder, timeSelection.week, timeSelection.year).then(function() {
+                $scope.tData.SwitchToData(timeSelection.week, timeSelection.year);
                 dataReady();
-                prepareGraphics(data.centerMap);
+                prepareGraphics(recenterMap);
             });
         });
 
+
         $scope.Chart = new Chart($scope, Time, $element.find('.lv-plot'), norm);
 
-        $rootScope.$on('tick', animate);
-
-        $rootScope.$emit('scopeReady');
+        $scope.$on('tick', animate);
     }
 
     // ========================================================================

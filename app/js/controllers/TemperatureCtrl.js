@@ -5,6 +5,8 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope,
 
     var LEGEND_COLORS = ['purple', 'cyan', 'lime', 'red'];
 
+    var timeSelection;
+
     var isDataReady = false;
     var c; // coloring function
     var colorLegend = prepareLegend();
@@ -20,25 +22,27 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope,
     // INIT (I know, code above is also some initialization. Deal with it.)
     // ========================================================================
     function Initialize() {
-        $rootScope.$on('reloadWeek', function(evt, data) {
+        $scope.$on('updateTimeSelection', function(evt, newTimeSelection) {
             isDataReady = false;
+            var recenterMap = !timeSelection || (newTimeSelection.lake != timeSelection.lake);
+
+            // clone object
+            timeSelection = $.extend({}, newTimeSelection);
 
             if (!$scope.tData) {
                 $scope.tData = new TemporalData('temperature');
             }
 
-            $scope.tData.readData(data.folder, data.week, data.year).then(function() {
-                $scope.tData.SwitchToData(data.week, data.year);
+            $scope.tData.readData(timeSelection.folder, timeSelection.week, timeSelection.year).then(function() {
+                $scope.tData.SwitchToData(timeSelection.week, timeSelection.year);
                 dataReady();
-                prepareGraphics(data.centerMap);
+                prepareGraphics(recenterMap);
             });
         });
 
         $scope.Chart = new Chart($scope, Time, $element.find('.lv-plot'), function(d) { return d })
 
-        $rootScope.$on('tick', animate);
-
-        $rootScope.$emit('scopeReady');
+        $scope.$on('tick', animate);
     }
 
     // ========================================================================
@@ -59,6 +63,8 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope,
         $scope.Chart.UpdateChart($scope.tData.DataTime).Max(tMax).Min(tMin);
 
         var noValues = $scope.tData.flatArray[0].values.length;
+
+        // TODO refactor
         $rootScope.$emit('dataReady', noValues);
 
         isDataReady = true;
