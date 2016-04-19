@@ -5,10 +5,11 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
     var tickInterval = 400;
     var tickTimerId = null;
 
+    var ready = false;
     $scope.selection = {};
 
     $scope.$watch('selection', function(selection) {
-        if (!$.isEmptyObject(selection)) {
+        if (ready) {
             $scope.$broadcast('updateTimeSelection', selection);
         }
     }, true);
@@ -28,6 +29,7 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
         }
 
         $scope.ChangeLake(0);
+        ready = true;
     });
 
     // TODO refactor
@@ -103,11 +105,11 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
     }    
 
     $scope.getDate = function() {
-        return $scope.Dates ? DateHelpers.yearMonthDay(currentDate()) : '';
+        return ready ? DateHelpers.yearMonthDay(currentDate()) : '';
     }
 
     $scope.getTime = function() {
-        return $scope.Dates ? DateHelpers.hoursMinutes(currentDate()) : '';
+        return ready ? DateHelpers.hoursMinutes(currentDate()) : '';
     }
 
     $scope.PrettyPrintWeek = function(week) {
@@ -129,6 +131,7 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
         var lakeData = $scope.index[lake];
         $scope.selection.lake = lake;
         $scope.selection.folder = lakeData.folder;
+        $scope.selection.interval = lakeData.interval;
         selectClosestYear();
         selectClosestWeek();
     }
@@ -208,7 +211,7 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
 
     function currentDate() {
         var refDate = DateHelpers.firstDayOfWeek($scope.selection.week, $scope.selection.year);
-        return DateHelpers.addMinutes(refDate, Time.tIndex * $scope.Dates[$scope.selection.lake].interval);
+        return DateHelpers.addMinutes(refDate, Time.tIndex * $scope.selection.interval);
     }
 
     function isScrolledIntoView(elem) {
