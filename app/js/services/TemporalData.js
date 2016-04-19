@@ -44,43 +44,59 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q) {
                 if(err) {
                     reject('File not found: ' + file);
                 } else {
-                    me.flatArray = [];
-                    me.Data = d3.csv.parseRows(data, function(row) {
-                        var parsedRow = [];
-                        for (var i = 0; i < config.GridHeight; i++) {
-                            var x = +row[i];
-                            var y = +row[config.GridHeight + i];
-                            if (isNaN(x) || isNaN(y)) {
-                                // No data for this cell
-                                parsedRow.push(null);
-                            } else {
-                                var values = [];
-                                // Get values for all time steps
-                                for (var j = 0; j < config.Timesteps; j++) {
-                                    var value = [];
-                                    for (var k = 0; k < config.NumberOfValues; k++) {
-                                        value.push(+row[(2 + k * config.Timesteps + j) * config.GridHeight + i]);
-                                    }
-                                    if (config.NumberOfValues == 1) {
-                                        value = value[0];
-                                    }
-                                    values.push(value);
-                                }
-                                var entry = {
-                                    x: x,
-                                    y: y,
-                                    values: values
-                                };
-                                me.flatArray.push(entry);
-                                parsedRow.push(entry);
-                            }
-                        }
-                        return parsedRow;
-                    });
+                    me.parseCSV(config, data);
                     me.recomputeBounds();
                     resolve();
                 }
             });
+        });
+    }
+
+    TemporalData.prototype.parseCSV = function(config, data) {
+        var me = this;
+
+        this.flatArray = [];
+        this.Data = d3.csv.parseRows(data, function(row) {
+            var parsedRow = [];
+            for (var i = 0; i < config.GridHeight; i++) {
+                var x = +row[i];
+                var y = +row[config.GridHeight + i];
+                if (isNaN(x) || isNaN(y)) {
+                    // No data for this cell
+                    parsedRow.push(null);
+                } else {
+                    var values = [];
+                    var hasNaN = false;
+                    // Get values for all time steps
+                    for (var j = 0; j < config.Timesteps; j++) {
+                        var value = [];
+                        for (var k = 0; k < config.NumberOfValues; k++) {
+                            var v = +row[(2 + k * config.Timesteps + j) * config.GridHeight + i];
+                            if (isNaN(v)) {
+                                hasNaN = true;
+                            }
+                            value.push(v);
+                        }
+                        if (config.NumberOfValues == 1) {
+                            value = value[0];
+                        }
+                        values.push(value);
+                    }
+                    if (hasNaN) {
+                        // No data for this cell
+                        parsedRow.push(null);
+                    } else {
+                        var entry = {
+                            x: x,
+                            y: y,
+                            values: values
+                        };
+                        me.flatArray.push(entry);
+                        parsedRow.push(entry);
+                    }
+                }
+            }
+            return parsedRow;
         });
     }
 
