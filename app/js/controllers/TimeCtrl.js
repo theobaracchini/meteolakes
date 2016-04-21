@@ -1,15 +1,18 @@
-angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope, $interval, Time, DATA_HOST, DateHelpers, DataIndex) {
+angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval, Time, DATA_HOST, DateHelpers, DataIndex) {
     var loopType = 'repeat';
     var TICK_INTERVAL_MIN = 50;
     var TICK_INTERVAL_MAX = 800;
     var tickInterval = 400;
     var tickTimerId = null;
+    var steps = [];
 
-    var ready = false;
+    var indexReady = false;
+    var dataReady = false;
     $scope.selection = {};
 
     $scope.$watch('selection', function(selection) {
-        if (ready) {
+        if (indexReady) {
+            $scope.stop();
             $scope.$broadcast('updateTimeSelection', selection);
         }
     }, true);
@@ -29,12 +32,14 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
         }
 
         $scope.ChangeLake(0);
-        ready = true;
+        indexReady = true;
     });
 
-    // TODO refactor
-    $rootScope.$on('dataReady', function(evt, noValues) {
-        Time.nT = noValues;
+    $scope.$on('dataReady', function(evt, timeSteps) {
+        // TODO refactor
+        Time.nT = timeSteps.length;
+        steps = timeSteps;
+        dataReady = true;
     });
 
     $scope.Time = Time;
@@ -105,11 +110,11 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
     }    
 
     $scope.getDate = function() {
-        return ready ? DateHelpers.yearMonthDay(currentDate()) : '';
+        return dataReady ? DateHelpers.yearMonthDay(currentDate()) : '';
     }
 
     $scope.getTime = function() {
-        return ready ? DateHelpers.hoursMinutes(currentDate()) : '';
+        return dataReady ? DateHelpers.hoursMinutes(currentDate()) : '';
     }
 
     $scope.PrettyPrintWeek = function(week) {
@@ -210,8 +215,7 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($rootScope, $scope
     }
 
     function currentDate() {
-        var refDate = DateHelpers.firstDayOfWeek($scope.selection.week, $scope.selection.year);
-        return DateHelpers.addMinutes(refDate, Time.tIndex * $scope.selection.interval);
+        return steps[Time.tIndex];
     }
 
     function isScrolledIntoView(elem) {

@@ -2,47 +2,22 @@ body {
     padding-bottom: 70px;
 }
 
-/*.x.axis {
-    stroke:black;
-    fill: none;
+d3-chart {
+    display: block;
 }
 
-.y.axis {
-    stroke:black;
-    fill: none;
-}
-
-.axis text {
-    stroke: none;
-    fill: #333;
-}
-
-.plot {
-    stroke: blue;
-    fill: none;
-}*/
-
-
-
-
-.axis path,
-.axis line {
+.chart-axis path,
+.chart-axis line {
     fill: none;
     stroke: #000;
     shape-rendering: crispEdges;
 }
 
-.line {
+.chart-line {
     fill: none;
     stroke: steelblue;
     stroke-width: 1.5px;
 }
-
-
-
-
-
-
 
 .timeLine {
     stroke:blue;

@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, $element, Time, Chart, TemporalData, Map, rbush, knn) {
+angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, $element, Time, TemporalData, Map, rbush, knn) {
     // ========================================================================
     // PROPERTIES
     // ========================================================================
@@ -31,15 +31,11 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, $eleme
                 $scope.tData = new TemporalData('velocity');
             }
 
-            $scope.tData.readData(timeSelection.folder, timeSelection.week, timeSelection.year).then(function() {
-                $scope.tData.SwitchToData(timeSelection.week, timeSelection.year);
+            $scope.tData.readData(timeSelection).then(function() {
                 dataReady();
                 prepareGraphics(recenterMap);
             });
         });
-
-
-        $scope.Chart = new Chart($scope, Time, $element.find('.lv-plot'), norm);
 
         $scope.$on('tick', animate);
     }
@@ -65,7 +61,6 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, $eleme
 
         // Prepare all thingies
         updateLegend(minVel, maxVel);
-        $scope.Chart.UpdateChart($scope.tData.DataTime).Max(maxVel).Min(minVel);
 
         isDataReady = true;
     }
@@ -109,7 +104,6 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, $eleme
             } else {
                 marker = L.marker(latlng).addTo(map._map);
             }
-            $scope.Chart.SelectPoint(closestPoint);
             $scope.$apply();
         });
 
@@ -132,7 +126,7 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, $eleme
         legend.append('stop').attr('offset', '50%').attr('stop-color', 'lime').attr('stop-opacity', 1);
         legend.append('stop').attr('offset', '100%').attr('stop-color', 'red').attr('stop-opacity', 1);
         key.append('rect').attr('width', w - 100).attr('height', h - 60).style('fill', 'url(#velGradient)');
-        var color = key.append('g').attr('class', 'x axis').attr('transform', 'translate(0,22)');
+        var color = key.append('g').attr('class', 'chart-axis x').attr('transform', 'translate(0,22)');
         color.append('text').attr('y', 42).attr('dx', '.71em').style('text-anchor', 'start').text('Velocity (m/s)');        
         return color;
     }
@@ -151,9 +145,6 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, $eleme
         if(!isDataReady) return;
 
         canvasLayer.setStep(Time.tIndex);
-
-        // render the timeline on the chart
-        $scope.Chart.UpdateTimeLine()
     }
 
     function colorFunction(vec) {

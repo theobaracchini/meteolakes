@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope, $scope, $element, Time, Chart, TemporalData, Map, rbush, knn) {
+angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $element, Time, TemporalData, Map, rbush, knn) {
     // ========================================================================
     // PROPERTIES
     // ========================================================================
@@ -14,6 +14,7 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope,
     var canvasLayer;
     var knnTree;
     var marker;
+    var selectedPoint;
     var map;
 
     Initialize();
@@ -33,14 +34,11 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope,
                 $scope.tData = new TemporalData('temperature');
             }
 
-            $scope.tData.readData(timeSelection.folder, timeSelection.week, timeSelection.year).then(function() {
-                $scope.tData.SwitchToData(timeSelection.week, timeSelection.year);
+            $scope.tData.readData(timeSelection).then(function() {
                 dataReady();
                 prepareGraphics(recenterMap);
             });
         });
-
-        $scope.Chart = new Chart($scope, Time, $element.find('.lv-plot'), function(d) { return d })
 
         $scope.$on('tick', animate);
     }
@@ -60,12 +58,8 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope,
 
         // Prepare all thingies
         updateLegend(tMin, tMax);
-        $scope.Chart.UpdateChart($scope.tData.DataTime).Max(tMax).Min(tMin);
 
-        var noValues = $scope.tData.flatArray[0].values.length;
-
-        // TODO refactor
-        $rootScope.$emit('dataReady', noValues);
+        $scope.$emit('dataReady', $scope.tData.timeSteps);
 
         isDataReady = true;
     }
@@ -73,12 +67,18 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope,
     function prepareGraphics(centerMap) {
         if (!map) {
             map = Map.initMap($element.find('.lv-map')[0]);
+            map._map.on('click', mapClicked);
         }
 
         if (centerMap) {
             var minBounds = Map.unproject(L.point($scope.tData.xMin, $scope.tData.yMin));
             var maxBounds = Map.unproject(L.point($scope.tData.xMax, $scope.tData.yMax));
-            map._map.fitBounds(L.latLngBounds(minBounds, maxBounds));            
+            map._map.fitBounds(L.latLngBounds(minBounds, maxBounds));
+            if (marker) {
+                map._map.removeLayer(marker);
+                marker = undefined;
+                selectedPoint = undefined;
+            }
         }
 
         if (!canvasLayer) {
@@ -98,42 +98,35 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope,
         canvasLayer.setData(data);
         canvasLayer.setOptions({colorFunction: c});
 
+        var knnData = [];
+        $scope.tData.map(function(d, i, j) {
+            knnData.push({
+                x: d.x,
+                y: d.y,
+                i: i,
+                j: j
+            });
+        });
         knnTree = rbush(9, ['.x', '.y', '.x', '.y']);
-        knnTree.load($scope.tData.flatArray);
-        map._map.on('click', function(e) {
+        knnTree.load(knnData);
+        function mapClicked(e) {
             var p = Map.project(e.latlng);
-            var closestPoint = knn(knnTree, [p.x, p.y], 1)[0];
-            var latlng = Map.unproject(L.point(closestPoint.x, closestPoint.y));
+            selectedPoint = knn(knnTree, [p.x, p.y], 1)[0];
+
+            updateChart();
+
+            // Update marker
+            var latlng = Map.unproject(L.point(selectedPoint.x, selectedPoint.y));
             if (marker) {
                 marker.setLatLng(latlng);
             } else {
                 marker = L.marker(latlng).addTo(map._map);
             }
-            $scope.Chart.SelectPoint(closestPoint);
-            var fakeStartDate = moment('1970-01-01');
-            var data = closestPoint.values.map(function(d, i) {
-                return {
-                    date: fakeStartDate.clone().add(i * 3, 'hours').toDate(),
-                    value: d
-                };
-            });
-            $scope.chartData = {
-                x: closestPoint.x,
-                y: closestPoint.y,
-                data: data
-            };
+
             $scope.$apply();
-        });
+        }
 
         animate();
-    }
-
-    $scope.closeChart = function() {
-        if (marker) {
-            map._map.removeLayer(marker);
-            marker = undefined;
-        }
-        $scope.Chart.Close();
     }
 
     function prepareLegend() {
@@ -145,7 +138,7 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope,
             legend.append('stop').attr('offset', offset + '%').attr('stop-color', color).attr('stop-opacity', 1);
         });
         key.append('rect').attr('width', w - 100).attr('height', h - 60).style('fill', 'url(#tempGradient)')
-        var color = key.append('g').attr('class', 'x axis').attr('transform', 'translate(0,22)');
+        var color = key.append('g').attr('class', 'chart-axis x').attr('transform', 'translate(0,22)');
         color.append('text').attr('y', 42).attr('dx', '.71em').style('text-anchor', 'start').text('Temperature (°C)');
         return color;
     }
@@ -156,12 +149,23 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($rootScope,
         colorLegend.call(xAxis);
     }
 
+    function updateChart() {
+        if (selectedPoint) {
+            var data = $scope.tData.Data[selectedPoint.i][selectedPoint.j];
+            $scope.chartData = {
+                x: data.x,
+                y: data.y,
+                data: $scope.tData.withTimeSteps(data.values)
+            };
+        } else {
+            $scope.chartData = undefined;
+        }
+    }
+
     function animate() {
         if(!isDataReady) return;
 
         canvasLayer.setStep(Time.tIndex);
-
-        // render the timeline on the chart
-        $scope.Chart.UpdateTimeLine();
+        updateChart();
     }
 });

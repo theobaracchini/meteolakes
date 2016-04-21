@@ -1,36 +1,35 @@
-angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q) {
+angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, DateHelpers) {
     var TemporalData = function(fieldName) {
         this.fieldName = fieldName;
-        this.DataTime = {};
+        this.timeSteps = [];
     }
 
     TemporalData.prototype.map = function(fn) {
-        return this.Data.map(function(d) {
-            return d.map(function(d0) {
-                return d0 ? fn(d0) : null;
+        return this.Data.map(function(d, i) {
+            return d.map(function(d0, j) {
+                return d0 ? fn(d0, i, j) : null;
             });
         });
     }
 
-    TemporalData.prototype.SwitchToData = function(week, year) {
-        this.DataTime.Year = year;
-        this.DataTime.Week = week;
-
-        return this;
-    }
-
-    TemporalData.prototype.readData = function(dataFolder, week, year) {
+    TemporalData.prototype.readData = function(selection) {
         var me = this;
+        var year = selection.year;
+        var week = selection.week;
 
         return $q(function(resolve, reject) {
-            var valuesFile = DATA_HOST + dataFolder + '/' + year + '/' + me.fieldName + '/data_week' + week + '.csv'; 
+            var valuesFile = DATA_HOST + selection.folder + '/' + year + '/' + me.fieldName + '/data_week' + week + '.csv'; 
 
             // Read the data config
             d3.json(valuesFile + '.json', function(err, config) {
                 if(err) {
                     reject('File not found: ' + valuesFile);
                 } else {
-                    me.readArray(valuesFile, config).then(resolve);
+                    me.readArray(valuesFile, config).then(function() {
+                        me.resetBounds();
+                        me.timeSteps = me.computeTimeSteps(selection);
+                        resolve();
+                    });
                 }
             });
         });
@@ -45,7 +44,6 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q) {
                     reject('File not found: ' + file);
                 } else {
                     me.parseCSV(config, data);
-                    me.recomputeBounds();
                     resolve();
                 }
             });
@@ -100,12 +98,35 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q) {
         });
     }
 
-    TemporalData.prototype.recomputeBounds = function() {
+    TemporalData.prototype.resetBounds = function() {
         this.xMin = d3.min(this.flatArray, function(d) { return d.x });
         this.xMax = d3.max(this.flatArray, function(d) { return d.x });
 
         this.yMin = d3.min(this.flatArray, function(d) { return d.y });
         this.yMax = d3.max(this.flatArray, function(d) { return d.y });
+    }
+
+    TemporalData.prototype.computeTimeSteps = function(selection) {
+        var result = [];
+        var noValues = this.flatArray[0].values.length;
+        var start = DateHelpers.firstDayOfWeek(selection.week, selection.year);
+        for (var i = 0; i < noValues; i++) {
+            var step = moment(start).add(i * selection.interval, 'minutes');
+            result.push(step);
+        }
+        return result;
+    }
+
+    TemporalData.prototype.withTimeSteps = function(values) {
+        var resultLength = Math.min(values.length, this.timeSteps.length);
+        var result = [];
+        for (var i = 0; i < resultLength; i++) {
+            result.push({
+                date: this.timeSteps[i],
+                value: values[i]
+            });
+        }
+        return result;
     }
 
     return TemporalData;

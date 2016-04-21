@@ -111,7 +111,6 @@
 
             <div class="row">
                 <div ng-controller="TemperatureCtrl">
-                    <d3-chart data="chartData" label="Temperature (&deg;C)"></d3-chart>
                     <div class="col-sm-12">
                         <h3>Temperature <small>(1 meter below surface)</small></h3>
                     </div>
@@ -122,21 +121,7 @@
                     <div class="col-sm-12 lv-legend"></div>
 
                     <div class="col-sm-12">
-                        <div class="row lv-plot">
-                            <h5><button class="close" type="button" ng-click="closeChart()">&times;</button>TEMPERATURE OVER TIME (&deg;C)</h5>
-                            <div class="col-sm-6" style="width:100%; height:25%">
-                                <!-- SVG Plot for temperature over time will be created here -->
-                            </div>
-                            <div class="col-sm-6">
-                                <span class="label label-info">{{ "X: " + pointData.x + " m" }}</span>
-                                <span class="label label-info">{{ "Y: " + pointData.y + " m" }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-12">
-                        <div class="alert alert-info" role="alert">
-                            Click on a point of interest on the map to see a time series of the temperature.
-                        </div>
+                        <d3-chart data="chartData" label="Temperature (&deg;C)"></d3-chart>
                     </div>
                 </div>
             </div>
@@ -152,18 +137,7 @@
                     </div>
                     <div class="col-sm-12 lv-legend"></div>
 
-                    <div class="col-sm-12">
-                        <div class="row lv-plot">
-                            <h5><button class="close" type="button" ng-click="closeChart()">&times;</button>VELOCITY OVER TIME (m/s)</h5>
-                            <div class="col-sm-6" style="width:100%; height:25%">
-                                <!-- SVG Plot for velocity over time will be created here -->
-                            </div>
-                            <div class="col-sm-6">
-                                <span class="label label-info">{{ "X: " + pointData.x + " m" }}</span>
-                                <span class="label label-info">{{ "Y: " + pointData.y + " m" }}</span>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- <d3-chart data="chartData" label="Velocity (m/s)"></d3-chart> -->
                     <div class="col-sm-12">
                         <div class="alert alert-info" role="alert">
                             Click on a point of interest on the map to see a time series of the velocity.
