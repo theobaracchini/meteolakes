@@ -155,22 +155,19 @@ angular.module('lakeViewApp').factory('CanvasLayer', function() {
                     if (row[j] && row[j + 1] && nextRow[j] && nextRow[j + 1]) {
                         if (bounds.contains(row[j].p)) {
                             // TODO correct 1/2 cell shift
-                            var topLeftValue = row[j].values[this._step];
-                            if (topLeftValue) {
-                                var color = this.options.colorFunction(topLeftValue);
+                            var color = this.options.colorFunction(row[j].values[this._step]);
 
-                                var p00 = row[j].p;
-                                var p01 = row[j + 1].p;
-                                var p10 = nextRow[j].p;
-                                var p11 = nextRow[j + 1].p;
+                            var p00 = row[j].p;
+                            var p01 = row[j + 1].p;
+                            var p10 = nextRow[j].p;
+                            var p11 = nextRow[j + 1].p;
 
-                                graphics.beginFill(+color.replace('#', '0x'));
-                                graphics.moveTo(p00.x, p00.y);
-                                graphics.lineTo(p01.x, p01.y);
-                                graphics.lineTo(p11.x, p11.y);
-                                graphics.lineTo(p10.x, p10.y);
-                                graphics.endFill();
-                            }
+                            graphics.beginFill(+color.replace('#', '0x'));
+                            graphics.moveTo(p00.x, p00.y);
+                            graphics.lineTo(p01.x, p01.y);
+                            graphics.lineTo(p11.x, p11.y);
+                            graphics.lineTo(p10.x, p10.y);
+                            graphics.endFill();
                         }
                     }
                 }
@@ -206,20 +203,18 @@ angular.module('lakeViewApp').factory('CanvasLayer', function() {
 
                             var value = d.values[this._step];
 
-                            if (value) {
-                                grid[y] = grid[y] || [];
-                                cell = grid[y][x];
+                            grid[y] = grid[y] || [];
+                            cell = grid[y][x];
 
-                                // TODO move velocity-specific simplification code elsewhere
-                                if (!cell) {
-                                    grid[y][x] = [d.p.x, d.p.y, value[0], value[1], 1];
-                                } else {
-                                    cell[0] += d.p.x;
-                                    cell[1] += d.p.y;
-                                    cell[2] += value[0];
-                                    cell[3] += value[1];
-                                    cell[4]++;
-                                }
+                            // TODO move velocity-specific simplification code elsewhere
+                            if (!cell) {
+                                grid[y][x] = [d.p.x, d.p.y, value[0], value[1], 1];
+                            } else {
+                                cell[0] += d.p.x;
+                                cell[1] += d.p.y;
+                                cell[2] += value[0];
+                                cell[3] += value[1];
+                                cell[4]++;
                             }
                         }
                     }

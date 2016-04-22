@@ -22,15 +22,10 @@ angular.module('lakeViewApp').service('DateHelpers', function() {
         return date.format('HH:mm');
     }
 
-    function addMinutes(date, minutes) {
-        return date.add(minutes, 'minutes');
-    }
-
     return {
         firstDayOfWeek: firstDayOfWeek,
         lastDayOfWeek: lastDayOfWeek,
         numberOfWeeks: numberOfWeeks,
-        addMinutes: addMinutes,
         yearMonthDay: yearMonthDay,
         hoursMinutes: hoursMinutes
     };
