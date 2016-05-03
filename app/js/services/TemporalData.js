@@ -2,6 +2,7 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
     var TemporalData = function(fieldName) {
         this.fieldName = fieldName;
         this.timeSteps = [];
+        this.Data = [];
     }
 
     TemporalData.prototype.map = function(fn) {

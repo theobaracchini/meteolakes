@@ -13,11 +13,17 @@ angular.module('lakeViewApp').factory('CanvasLayer', function() {
             return this._reset();
         },
 
+        setDrawFunction: function(drawFunction) {
+            this._drawFunction = drawFunction;
+        },
+
+        // TODO remove
         setStep: function (step) {
             this._step = step;
             return this.redraw();
         },
 
+        // TODO remove
         setOptions: function (options) {
             L.setOptions(this, options);
             this._updateOptions();
@@ -25,7 +31,7 @@ angular.module('lakeViewApp').factory('CanvasLayer', function() {
         },
 
         redraw: function () {
-            if (!this._frame && !this._dragging) {
+            if (this._canvas && !this._frame && !this._dragging) {
                 this._frame = L.Util.requestAnimFrame(this._redraw, this);
             }
             return this;
@@ -120,12 +126,17 @@ angular.module('lakeViewApp').factory('CanvasLayer', function() {
                 this._container.removeChild(this._container.children[i]);
             };
 
+            // TODO remove
             if (this._data && this.options.colorFunction) {
                 if (this.options.simplify) {
                     this._drawVel();
                 } else {
                     this._drawTemp();
                 }
+            }
+
+            if (this._data && this._drawFunction) {
+                this._container.addChild(this._drawFunction(this._map.getSize(), this._data));
             }
 
             this._renderer.render(this._container);
@@ -141,6 +152,7 @@ angular.module('lakeViewApp').factory('CanvasLayer', function() {
             return this._canvas.height;
         },
 
+        // TODO remove
         _drawTemp: function () {
             var graphics = new PIXI.Graphics();
 
@@ -234,7 +246,7 @@ angular.module('lakeViewApp').factory('CanvasLayer', function() {
                             var color = this.options.colorFunction([dx, dy]);
 
                             // TODO use max velocity to determine scale factor
-                            this._drawArrow(x, y, dx * 500, -dy * 500, color, graphics);
+                            this._drawArrow(x, y, dx, -dy, color, graphics);
                         }
                     }
                 }
@@ -243,20 +255,24 @@ angular.module('lakeViewApp').factory('CanvasLayer', function() {
         },
 
         _drawArrow: function (x, y, dx, dy, color, graphics) {
-            var fromx = x;
-            var fromy = y;
-            var tox = x + dx;
-            var toy = y + dy;
+            var extent = Math.sqrt(dx * dx + dy * dy);
+            if (extent > 0.001) {
+                var clampedExtent = Math.min(extent, 0.1);
+                var fromx = x;
+                var fromy = y;
+                var tox = x + 500 * dx / extent * clampedExtent;
+                var toy = y + 500 * dy / extent * clampedExtent;
 
-            var headlen = 10;   // length of head in pixels
-            var angle = Math.atan2(toy - fromy, tox - fromx);
+                var headlen = 100 * clampedExtent;   // length of head in pixels
+                var angle = Math.atan2(toy - fromy, tox - fromx);
 
-            graphics.lineStyle(1, +color.replace('#', '0x'));
-            graphics.moveTo(fromx, fromy);
-            graphics.lineTo(tox, toy);
-            graphics.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
-            graphics.moveTo(tox, toy);
-            graphics.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+                graphics.lineStyle(1 + 5 * extent, +color.replace('#', '0x'));
+                graphics.moveTo(fromx, fromy);
+                graphics.lineTo(tox, toy);
+                graphics.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+                graphics.moveTo(tox, toy);
+                graphics.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+            }
         },
 
         _drawCircle: function (x, y, r, color) {
