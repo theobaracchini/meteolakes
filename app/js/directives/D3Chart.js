@@ -2,7 +2,7 @@ angular.module('lakeViewApp').directive('d3Chart', function($window) {
     return {
         restrict: 'E',
         scope: {
-            'setHandler': '&',
+            setHandler: '&',
             data: '=',
             label: '@',
             onClose: '&'

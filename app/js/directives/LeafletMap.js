@@ -66,11 +66,11 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer) {
     return {
         restrict: 'E',
         scope: {
-            'setHandler': '&',
-            'onClick': '&',
-            'marker': '=',
-            'data': '=',
-            'draw': '='
+            setHandler: '&',
+            onClick: '&',
+            marker: '=',
+            data: '=',
+            draw: '='
         },
         link: function(scope, element, attrs) {
             element.addClass('lv-map');

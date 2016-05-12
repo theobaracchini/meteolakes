@@ -119,7 +119,9 @@
                     <div class="col-sm-12">
                         <leaflet-map set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="temporalData" draw="drawTemperatureOverlay"></leaflet-map>
                     </div>
-                    <div class="col-sm-12 lv-legend"></div>
+                    <div class="col-sm-12">
+                        <color-legend colors="LEGEND_COLORS" extent="dataExtent" label="Temperature (&deg;C)"></color-legend>
+                    </div>
 
                     <div class="col-sm-12">
                         <d3-chart set-handler="addAnimationHandler(handler)" data="chartData" label="Temperature (&deg;C)" on-close="closeChart()"></d3-chart>
