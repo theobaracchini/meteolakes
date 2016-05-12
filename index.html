@@ -136,15 +136,14 @@
                     </div>
 
                     <div class="col-sm-12">
-                        <div class="lv-map"></div>
+                        <leaflet-map set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="temporalData" draw="drawVelocityOverlay"></leaflet-map>
                     </div>
-                    <div class="col-sm-12 lv-legend"></div>
-
-                    <!-- <d3-chart data="chartData" label="Velocity (m/s)"></d3-chart> -->
                     <div class="col-sm-12">
-                        <div class="alert alert-info" role="alert">
-                            Click on a point of interest on the map to see a time series of the velocity.
-                        </div>
+                        <color-legend colors="LEGEND_COLORS" extent="dataExtent" label="Velocity (m/s)"></color-legend>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <d3-chart set-handler="addAnimationHandler(handler)" data="chartData" label="Velocity (m/s)" on-close="closeChart()"></d3-chart>
                     </div>
                 </div>
             </div>

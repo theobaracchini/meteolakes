@@ -12,8 +12,6 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer) {
         origin: [TOP_LEFT.x, TOP_LEFT.y]
     });
 
-    var bounds = L.latLngBounds(unproject(TOP_LEFT), unproject(BOTTOM_RIGHT));
-
     function project(point) {
         return CRS.projection.project(point);
     };
@@ -80,6 +78,7 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer) {
             var canvasLayer = L.canvasLayer();
             canvasLayer.addTo(map);
             var markerLayer;
+            var bounds = L.latLngBounds(unproject(TOP_LEFT), unproject(BOTTOM_RIGHT));
 
             // center on Switzerland
             // map.fitBounds(bounds);
