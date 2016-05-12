@@ -1,13 +1,16 @@
-angular.module('lakeViewApp').directive('d3Chart', function($window, $timeout) {
+angular.module('lakeViewApp').directive('d3Chart', function($window) {
     return {
         restrict: 'E',
         scope: {
+            setHandler: '&',
             data: '=',
-            label: '@'
+            label: '@',
+            onClose: '&'
         },
         link: function(scope, element, attrs) {
             var container = element[0];
             var data;
+            var step = 0;
             var label;
             var enableTransition = false;
 
@@ -17,6 +20,17 @@ angular.module('lakeViewApp').directive('d3Chart', function($window, $timeout) {
                 .append('div')
                 .attr('class', 'alert alert-info')
                 .text('Click on the map to show a time series for that point.');
+
+            var content = d3.select(container).append('div');
+
+            content
+                .append('div')
+                .attr('class', 'close')
+                .html('&times;')
+                .on('click', function() {
+                    scope.onClose();
+                    scope.$apply();
+                });
 
             var margin = {top: 20, right: 20, bottom: 30, left: 50},
                 width = 1000,
@@ -47,7 +61,7 @@ angular.module('lakeViewApp').directive('d3Chart', function($window, $timeout) {
                 .x(function(d) { return x(d.date); })
                 .y(function(d) { return y(d.value); });
 
-            var svg = d3.select(container).append('svg')
+            var svg = content.append('svg')
                 .style('width', '100%')
                 .attr('height', height + margin.top + margin.bottom)
 
@@ -72,7 +86,17 @@ angular.module('lakeViewApp').directive('d3Chart', function($window, $timeout) {
                 .attr('text-anchor', 'middle');
 
             g.append('path')
-                .attr('class', 'chart-line');
+                .attr('class', 'chart-data');
+
+            g.append('line')
+                .attr('class', 'chart-vertical-line')
+                .attr("x1", 10).attr("x2", 10)
+                .attr("y1", 0).attr("y2", height);
+
+            scope.setHandler({handler: function(newStep) {
+                step = newStep;
+                render();
+            }});
 
             // Run digest on window resize; this is required to detect container size changes
             angular.element($window).bind('resize', function() {
@@ -82,9 +106,9 @@ angular.module('lakeViewApp').directive('d3Chart', function($window, $timeout) {
             scope.$watch(getContainerWidth, render);
 
             // watch for data changes and re-render
-            scope.$watch('data', function(values) {
+            scope.$watch('data', function(values, oldValues) {
                 if (values) {
-                    if (!data) {
+                    if (!oldValues) {
                         // Disable transition when rendering the first time after chart has been hidden
                         enableTransition = false;
                     }
@@ -95,7 +119,6 @@ angular.module('lakeViewApp').directive('d3Chart', function($window, $timeout) {
                     show();
                     render();
                 } else {
-                    data = undefined;
                     hide();
                 }
             });
@@ -115,8 +138,13 @@ angular.module('lakeViewApp').directive('d3Chart', function($window, $timeout) {
                         .text(label)
                         .attr('transform', 'translate(' + (width / 2) + ')');
 
-                    renderRoot.select('.chart-line')
+                    renderRoot.select('.chart-data')
                         .attr('d', line(data));
+
+                    var linePosition = x(data[step].date);
+                    renderRoot.select('.chart-vertical-line')
+                        .attr("x1", linePosition)
+                        .attr("x2", linePosition);
                 }
             }
 
@@ -130,12 +158,12 @@ angular.module('lakeViewApp').directive('d3Chart', function($window, $timeout) {
 
             function show() {
                 placeholder.attr('class', 'hidden');
-                svg.attr('class', null);
+                content.attr('class', null);
             }
 
             function hide() {
                 placeholder.attr('class', null);
-                svg.attr('class', 'hidden');
+                content.attr('class', 'hidden');
             }
         }
     };

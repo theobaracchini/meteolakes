@@ -13,10 +13,15 @@ d3-chart {
     shape-rendering: crispEdges;
 }
 
-.chart-line {
+.chart-data {
     fill: none;
     stroke: steelblue;
     stroke-width: 1.5px;
+}
+
+.chart-vertical-line {
+    stroke: gray;
+    stroke-width: 2px;
 }
 
 .timeLine {
@@ -37,6 +42,7 @@ d3-chart {
 }
 
 .lv-map {
+    display: block;
     width: 100%;
     height: 600px;
     margin-bottom: 10px;
