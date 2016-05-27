@@ -1,7 +1,7 @@
 angular.module('lakeViewApp').directive('pixiCanvas', function(Util) {
     var TOP_LEFT = L.point(0, 0);
     var BOTTOM_RIGHT = L.point(1e6, 1e6);
-    var HORIZONTAL_SCALE = 0.01;
+    var HORIZONTAL_SCALE = 0.02;
     var CRS = L.CRS.Simple;
 
     function project(point) {

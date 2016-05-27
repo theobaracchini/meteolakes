@@ -1,27 +1,6 @@
 angular.module('lakeViewApp').service('DataIndex', function($q, DATA_HOST, DateHelpers) {
-    var _index;
-    var callbacks = [];
-
-    loadIndex().then(parseLakes).then(function(result) {
-        _index = result;
-        callbacks.forEach(function(callback) {
-            callback();
-        });
-    }, function(err) {
-        console.error('Failed to load data index!', err);
-    });
-
-    this.index = function() {
-        return _index;
-    }
-
-    // TODO: use $q instead?
-    this.onReady = function(callback) {
-        if (_index) {
-            callback();
-        } else {
-            callbacks.push(callback);
-        }
+    this.load = function() {
+        return loadIndex().then(parseLakes);
     }
 
     function loadIndex() {

@@ -1,7 +1,7 @@
 angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval, Time, DATA_HOST, DateHelpers, DataIndex, Util) {
-    var loopType = 'repeat';
     var TICK_INTERVAL_MIN = 50;
     var TICK_INTERVAL_MAX = 800;
+
     var tickInterval = 400;
     var tickTimerId = null;
     var steps = [];
@@ -21,8 +21,8 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
         $scope.$broadcast('tick');
     });
 
-    DataIndex.onReady(function() {
-        $scope.index = DataIndex.index();
+    DataIndex.load().then(function(index) {
+        $scope.index = index;
 
         // Initialize with current year/week, closest existing data for selected lake will be determined later
         var now = moment();
@@ -33,6 +33,8 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
 
         $scope.ChangeLake(0);
         indexReady = true;
+    }, function(err) {
+        console.error('Failed to load data index!', err);
     });
 
     $scope.$on('dataReady', function(evt, timeSteps) {
@@ -54,52 +56,44 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
         }
     });
 
-    // ------------------------------------------------------------------------
-    // BOUND TO THE HTML
-    // ------------------------------------------------------------------------
-
     $scope.play = function() {
         $('#playButton span').toggleClass('glyphicon-play glyphicon-pause');
-
-        loopType = 'repeat';
 
         if (tickTimerId == null) {
             tickTimerId = $interval(tick, tickInterval);
         } else {
             $scope.pause();
         }
-    }
-
-    $scope.playAll = function() {
-        // Play, but instead of looping move to the next week
-        $scope.play();
-        loopType = 'continue';
-    }
+    };
 
     $scope.pause = function() {
         $interval.cancel(tickTimerId);
         tickTimerId = null;
-    }
+    };
+
     $scope.backward = function() {
         Time.decrease();
-    }
+    };
+
     $scope.forward = function() {
         Time.increase(true);
-    }
+    };
+
     $scope.slower = function() {
         if (tickInterval < TICK_INTERVAL_MAX) {
             tickInterval *= 2;
         }
         resetTimer();
         updateSpeedButtons();
-    }
+    };
+
     $scope.faster = function() {
         if (tickInterval > TICK_INTERVAL_MIN) {
             tickInterval /= 2;
         }
         resetTimer();
         updateSpeedButtons();
-    }
+    };
 
     $scope.stop = function() {
         if(tickTimerId != null)
@@ -107,30 +101,30 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
 
         $scope.pause();
         Time.tIndex = 0;
-    }    
+    };  
 
     $scope.getDate = function() {
         return dataReady ? DateHelpers.yearMonthDay(currentDate()) : '';
-    }
+    };
 
     $scope.getTime = function() {
         return dataReady ? DateHelpers.hoursMinutes(currentDate()) : '';
-    }
+    };
 
     $scope.PrettyPrintWeek = function(week) {
         var firstDay = DateHelpers.firstDayOfWeek(week, $scope.selection.year);
         var lastDay = DateHelpers.lastDayOfWeek(week, $scope.selection.year);
         return DateHelpers.yearMonthDay(firstDay) + ' - ' + DateHelpers.yearMonthDay(lastDay);
-    }
+    };
 
     $scope.ChangeWeek = function(week) {
         $scope.selection.week = week;
-    }
+    };
 
     $scope.ChangeYear = function(year) {
         $scope.selection.year = year;
         selectClosestWeek();
-    }
+    };
 
     $scope.ChangeLake = function(lake) {
         var lakeData = $scope.index[lake];
@@ -139,11 +133,7 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
         $scope.selection.interval = lakeData.interval;
         selectClosestYear();
         selectClosestWeek();
-    }
-
-    // ------------------------------------------------------------------------
-    // UTILITY METHODS
-    // ------------------------------------------------------------------------
+    };
 
     function selectClosestYear() {
         var lakeData = $scope.index[$scope.selection.lake];
@@ -155,24 +145,6 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
         $scope.selection.week = Util.closest(lakeData.data.get($scope.selection.year), $scope.selection.week);
     }
 
-/*
-    $scope.selectWeek = function(week) {
-        // Make sure the given week number is not out of bounds with the 
-        // current year, and change year if necessary.
-        var numberOfWeeks = DateHelpers.numberOfWeeks($scope.selection.year);
-        if(week >= numberOfWeeks) {
-            $scope.selectYear($scope.selection.year+1);
-            $scope.selectWeek(week - numberOfWeeks + 1);
-            return;
-        } else if(week < 0) {
-            $scope.selectYear --;
-            $scope.selectWeek(week + numberOfWeeks);
-            return;
-        }
-
-        $scope.selection.week = week;
-    }
-*/
     function resetTimer() {
         if (tickTimerId) {
             $interval.cancel(tickTimerId);
@@ -187,21 +159,13 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
 
     function tick() {
         Time.increase(true);
-
-        if(Time.tIndex == 0) {
-            // we looped. Decide whether we play again the current week
-            // or if we play the next week
-            if(loopType == 'continue') {
-                $scope.selectWeek($scope.selection.week+1);
-                emitReload();
-            }
-        }
     }
 
     function currentDate() {
         return steps[Time.tIndex];
     }
 
+    // TODO remove
     function isScrolledIntoView(elem) {
         var docViewTop = $(window).scrollTop();
         var docViewBottom = docViewTop + $(window).height();
