@@ -1,14 +1,13 @@
-angular.module('lakeViewApp').factory('CanvasLayer', function() {
+angular.module('lakeViewApp').service('CanvasLayer', function() {
     L.CanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
-
-        initialize: function (data, options) {
+        initialize: function(data, options) {
             this._data = data;
             this._step = 0;
             this._dragging = false;
             L.setOptions(this, options);
         },
 
-        setData: function (data) {
+        setData: function(data) {
             this._data = data;
             return this._reset();
         },
@@ -17,14 +16,14 @@ angular.module('lakeViewApp').factory('CanvasLayer', function() {
             this._drawFunction = drawFunction;
         },
 
-        redraw: function () {
+        redraw: function() {
             if (this._canvas && !this._frame && !this._dragging) {
                 this._frame = L.Util.requestAnimFrame(this._redraw, this);
             }
             return this;
         },
 
-        onAdd: function (map) {
+        onAdd: function(map) {
             this._map = map;
 
             if (!this._canvas) {
@@ -50,7 +49,7 @@ angular.module('lakeViewApp').factory('CanvasLayer', function() {
             this._reset();
         },
 
-        onRemove: function (map) {
+        onRemove: function(map) {
             map.getPanes().overlayPane.removeChild(this._canvas);
 
             map.off('moveend', this._reset, this);
@@ -60,12 +59,12 @@ angular.module('lakeViewApp').factory('CanvasLayer', function() {
             }
         },
 
-        addTo: function (map) {
+        addTo: function(map) {
             map.addLayer(this);
             return this;
         },
 
-        _initCanvas: function () {
+        _initCanvas: function() {
             var size = this._map.getSize();
 
             this._container = new PIXI.Container();
@@ -75,14 +74,9 @@ angular.module('lakeViewApp').factory('CanvasLayer', function() {
             var animated = this._map.options.zoomAnimation && L.Browser.any3d;
             L.DomUtil.addClass(this._canvas, 'leaflet-canvas-layer');
             L.DomUtil.addClass(this._canvas, 'leaflet-zoom-' + (animated ? 'animated' : 'hide'));
-
-            this._updateOptions();
         },
 
-        _updateOptions: function () {
-        },
-
-        _reset: function () {
+        _reset: function() {
             var topLeft = this._map.containerPointToLayerPoint([0, 0]);
             L.DomUtil.setPosition(this._canvas, topLeft);
 
@@ -94,7 +88,7 @@ angular.module('lakeViewApp').factory('CanvasLayer', function() {
             this._redraw();
         },
 
-        _updateLatLngToPixel: function () {
+        _updateLatLngToPixel: function() {
             if (this._data) {
                 for (var i = 0; i < this._data.length; i++) {
                     var row = this._data[i];
@@ -108,7 +102,7 @@ angular.module('lakeViewApp').factory('CanvasLayer', function() {
             }
         },
 
-        _redraw: function () {
+        _redraw: function() {
             for (var i = this._container.children.length - 1; i >= 0; i--) {
                 this._container.removeChild(this._container.children[i]);
             };
@@ -130,7 +124,7 @@ angular.module('lakeViewApp').factory('CanvasLayer', function() {
             return this._canvas.height;
         },
 
-        _animateZoom: function (e) {
+        _animateZoom: function(e) {
             var scale = this._map.getZoomScale(e.zoom),
                 offset = this._map._getCenterOffset(e.center)._multiplyBy(-scale).subtract(this._map._getMapPanePos());
 
@@ -143,9 +137,7 @@ angular.module('lakeViewApp').factory('CanvasLayer', function() {
         }
     });
 
-    L.canvasLayer = function (data, options) {
+    L.canvasLayer = function(data, options) {
         return new L.CanvasLayer(data, options);
     };
-
-    return {};
 });

@@ -117,7 +117,7 @@
                     </div>
 
                     <div class="col-sm-12">
-                        <leaflet-map set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="temporalData" draw="drawTemperatureOverlay"></leaflet-map>
+                        <leaflet-map set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="surfaceData" draw="drawTemperatureOverlay"></leaflet-map>
                     </div>
                     <div class="col-sm-12">
                         <color-legend colors="LEGEND_COLORS" extent="dataExtent" label="Temperature (&deg;C)"></color-legend>
@@ -125,6 +125,14 @@
 
                     <div class="col-sm-12">
                         <d3-chart set-handler="addAnimationHandler(handler)" data="chartData" label="Temperature (&deg;C)" on-close="closeChart()"></d3-chart>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <pixi-canvas set-handler="addAnimationHandler(handler)" data="sliceDataXZ" draw="drawTemperatureOverlay"></pixi-canvas>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <pixi-canvas set-handler="addAnimationHandler(handler)" data="sliceDataYZ" draw="drawTemperatureOverlay"></pixi-canvas>
                     </div>
                 </div>
             </div>
@@ -136,7 +144,7 @@
                     </div>
 
                     <div class="col-sm-12">
-                        <leaflet-map set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="temporalData" draw="drawVelocityOverlay"></leaflet-map>
+                        <leaflet-map set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="surfaceData" draw="drawVelocityOverlay"></leaflet-map>
                     </div>
                     <div class="col-sm-12">
                         <color-legend colors="LEGEND_COLORS" extent="dataExtent" label="Velocity (m/s)"></color-legend>

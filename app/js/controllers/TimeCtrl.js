@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval, Time, DATA_HOST, DateHelpers, DataIndex) {
+angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval, Time, DATA_HOST, DateHelpers, DataIndex, Util) {
     var loopType = 'repeat';
     var TICK_INTERVAL_MIN = 50;
     var TICK_INTERVAL_MAX = 800;
@@ -147,28 +147,12 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
 
     function selectClosestYear() {
         var lakeData = $scope.index[$scope.selection.lake];
-        $scope.selection.year = closest(lakeData.years, $scope.selection.year);
+        $scope.selection.year = Util.closest(lakeData.years, $scope.selection.year);
     }
 
     function selectClosestWeek() {
         var lakeData = $scope.index[$scope.selection.lake];
-        $scope.selection.week = closest(lakeData.data.get($scope.selection.year), $scope.selection.week);
-    }
-
-    /**
-      * finds the entry closest to <query> in <collection>
-      */
-    function closest(collection, query) {
-        var minDiff = Number.MAX_VALUE;
-        var result;
-        collection.forEach(function(entry) {
-            var diff = Math.abs(entry - query);
-            if(diff < minDiff) {
-                minDiff = diff;
-                result = entry;
-            }
-        });
-        return result;
+        $scope.selection.week = Util.closest(lakeData.data.get($scope.selection.year), $scope.selection.week);
     }
 
 /*

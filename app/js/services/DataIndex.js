@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').factory('DataIndex', function($q, DATA_HOST, DateHelpers) {
+angular.module('lakeViewApp').service('DataIndex', function($q, DATA_HOST, DateHelpers) {
     var _index;
     var callbacks = [];
 
@@ -11,12 +11,12 @@ angular.module('lakeViewApp').factory('DataIndex', function($q, DATA_HOST, DateH
         console.error('Failed to load data index!', err);
     });
 
-    function index() {
+    this.index = function() {
         return _index;
     }
 
     // TODO: use $q instead?
-    function onReady(callback) {
+    this.onReady = function(callback) {
         if (_index) {
             callback();
         } else {
@@ -81,9 +81,4 @@ angular.module('lakeViewApp').factory('DataIndex', function($q, DATA_HOST, DateH
 
         return result;
     }
-
-    return {
-        index: index,
-        onReady: onReady
-    };
 });
