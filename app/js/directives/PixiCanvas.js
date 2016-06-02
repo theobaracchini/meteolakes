@@ -29,8 +29,8 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util) {
             var container = element[0];
 
             var bounds = L.latLngBounds(unproject(TOP_LEFT), unproject(BOTTOM_RIGHT));
-            var map = L.map(container, {crs: CRS});
-            var canvasLayer = L.canvasLayer();
+            var map = L.map(container, {crs: CRS, minZoom: -5});
+            var canvasLayer = L.canvasLayer({background: true});
 
             canvasLayer.addTo(map);
             L.control.showcoordinates({format: formatCoordinates}).addTo(map);

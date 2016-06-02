@@ -32,14 +32,13 @@ angular.module('lakeViewApp').directive('d3Chart', function($window) {
                     scope.$apply();
                 });
 
-            var margin = {top: 20, right: 20, bottom: 30, left: 50},
-                width = 1000,
-                height = 500 - margin.top - margin.bottom;
+            var margin = {top: 20, right: 20, bottom: 30, left: 50};
+            var width = 0;
+            var height = 0;
 
             var x = d3.time.scale();
 
-            var y = d3.scale.linear()
-                .range([height, 0]);
+            var y = d3.scale.linear();
 
             // x axis format: Show hours/minutes if nonzero, otherwise
             // show short month name and day of the month
@@ -62,15 +61,13 @@ angular.module('lakeViewApp').directive('d3Chart', function($window) {
                 .y(function(d) { return y(d.value); });
 
             var svg = content.append('svg')
-                .style('width', '100%')
-                .attr('height', height + margin.top + margin.bottom)
+                .style('width', '100%');
 
             var g = svg.append('g')
                 .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
             g.append('g')
-                .attr('class', 'chart-axis x')
-                .attr('transform', 'translate(0,' + height + ')');
+                .attr('class', 'chart-axis x');
 
             g.append('g')
                 .attr('class', 'chart-axis y')
@@ -89,9 +86,7 @@ angular.module('lakeViewApp').directive('d3Chart', function($window) {
                 .attr('class', 'chart-data');
 
             g.append('line')
-                .attr('class', 'chart-vertical-line')
-                .attr("x1", 10).attr("x2", 10)
-                .attr("y1", 0).attr("y2", height);
+                .attr('class', 'chart-vertical-line');
 
             scope.setHandler({handler: function(newStep) {
                 step = newStep;
@@ -125,13 +120,18 @@ angular.module('lakeViewApp').directive('d3Chart', function($window) {
 
             function render() {
                 if (data) {
-                    updateWidth();
+                    updateSize();
                     x.range([0, width]);
+                    y.range([height, 0]);
+
+                    svg.style('height', (height + margin.top + margin.bottom) + 'px');
 
                     var renderRoot = enableTransition ? svg.transition() : svg;
                     enableTransition = true;
 
-                    renderRoot.select('.chart-axis.x').call(xAxis);
+                    renderRoot.select('.chart-axis.x')
+                        .attr('transform', 'translate(0,' + height + ')')
+                        .call(xAxis);
                     renderRoot.select('.chart-axis.y').call(yAxis);
 
                     renderRoot.select('.chart-label')
@@ -144,16 +144,21 @@ angular.module('lakeViewApp').directive('d3Chart', function($window) {
                     var linePosition = x(data[step].date);
                     renderRoot.select('.chart-vertical-line')
                         .attr("x1", linePosition)
-                        .attr("x2", linePosition);
+                        .attr("x2", linePosition)
+                        .attr("y1", 0)
+                        .attr("y2", height);
                 }
             }
 
             function getContainerWidth() {
-                return container.offsetWidth;
+                return svg.node().getBoundingClientRect().width;
             }
 
-            function updateWidth() {
-                width = getContainerWidth() - (margin.left + margin.right);
+            function updateSize() {
+                var w = getContainerWidth();
+                width = w - (margin.left + margin.right);
+                // set height to 66% of width
+                height = w * 0.66 - (margin.top + margin.bottom);
             }
 
             function show() {

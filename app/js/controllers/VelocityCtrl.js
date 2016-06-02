@@ -31,7 +31,8 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, Time, 
         $scope.chartPoint = undefined;
     };
 
-    $scope.drawVelocityOverlay = function(size, data) {
+    $scope.drawVelocityOverlay = function(data, options) {
+        var size = options.size;
         var r = 30,
             bounds = new L.Bounds(
                 L.point([-r, -r]),

@@ -8,6 +8,8 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
 
     var indexReady = false;
     var dataReady = false;
+
+    $scope.isPlaying = false;
     $scope.selection = {};
 
     $scope.$watch('selection', function(selection) {
@@ -46,18 +48,8 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
 
     $scope.Time = Time;
 
-    // UI Logic to hide/show the sidebar time controls when scrolling
-    $('.sidebar').hide()
-    $(document).scroll(function() {
-        if (!isScrolledIntoView($('#timeControls'))) {
-            $('.sidebar').fadeIn();
-        } else {
-            $('.sidebar').fadeOut();
-        }
-    });
-
     $scope.play = function() {
-        $('#playButton span').toggleClass('glyphicon-play glyphicon-pause');
+        $scope.isPlaying = true;
 
         if (tickTimerId == null) {
             tickTimerId = $interval(tick, tickInterval);
@@ -67,6 +59,7 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
     };
 
     $scope.pause = function() {
+        $scope.isPlaying = false;
         $interval.cancel(tickTimerId);
         tickTimerId = null;
     };
@@ -96,9 +89,6 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
     };
 
     $scope.stop = function() {
-        if(tickTimerId != null)
-            $('#playButton span').toggleClass('glyphicon-play glyphicon-pause');
-
         $scope.pause();
         Time.tIndex = 0;
     };  
@@ -114,7 +104,8 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
     $scope.PrettyPrintWeek = function(week) {
         var firstDay = DateHelpers.firstDayOfWeek(week, $scope.selection.year);
         var lastDay = DateHelpers.lastDayOfWeek(week, $scope.selection.year);
-        return DateHelpers.yearMonthDay(firstDay) + ' - ' + DateHelpers.yearMonthDay(lastDay);
+        var dateRange = DateHelpers.yearMonthDay(firstDay) + ' - ' + DateHelpers.yearMonthDay(lastDay);
+        return "Week " + week + " (" + dateRange + ")";
     };
 
     $scope.ChangeWeek = function(week) {
@@ -164,15 +155,4 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
     function currentDate() {
         return steps[Time.tIndex];
     }
-
-    // TODO remove
-    function isScrolledIntoView(elem) {
-        var docViewTop = $(window).scrollTop();
-        var docViewBottom = docViewTop + $(window).height();
-
-        var elemTop = $(elem).offset().top;
-        var elemBottom = elemTop + $(elem).height();
-
-        return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
-    }    
 });

@@ -1,8 +1,6 @@
 angular.module('lakeViewApp').service('CanvasLayer', function() {
     L.CanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
-        initialize: function(data, options) {
-            this._data = data;
-            this._step = 0;
+        initialize: function(options) {
             this._dragging = false;
             L.setOptions(this, options);
         },
@@ -103,12 +101,21 @@ angular.module('lakeViewApp').service('CanvasLayer', function() {
         },
 
         _redraw: function() {
+            var self = this;
+
             for (var i = this._container.children.length - 1; i >= 0; i--) {
                 this._container.removeChild(this._container.children[i]);
             };
 
             if (this._data && this._drawFunction) {
-                this._container.addChild(this._drawFunction(this._map.getSize(), this._data));
+                var options = {
+                    size: this._map.getSize(),
+                    background: this.options.background,
+                    project: function(p) {
+                        return self._map.latLngToContainerPoint(p);
+                    }
+                };
+                this._container.addChild(this._drawFunction(this._data, options));
             }
 
             this._renderer.render(this._container);
@@ -125,19 +132,18 @@ angular.module('lakeViewApp').service('CanvasLayer', function() {
         },
 
         _animateZoom: function(e) {
-            var scale = this._map.getZoomScale(e.zoom),
-                offset = this._map._getCenterOffset(e.center)._multiplyBy(-scale).subtract(this._map._getMapPanePos());
+            var scale = this._map.getZoomScale(e.zoom);
+            var offset = this._map._getCenterOffset(e.center)._multiplyBy(-scale).subtract(this._map._getMapPanePos());
 
             if (L.DomUtil.setTransform) {
                 L.DomUtil.setTransform(this._canvas, offset, scale);
-
             } else {
                 this._canvas.style[L.DomUtil.TRANSFORM] = L.DomUtil.getTranslateString(offset) + ' scale(' + scale + ')';
             }
         }
     });
 
-    L.canvasLayer = function(data, options) {
-        return new L.CanvasLayer(data, options);
+    L.canvasLayer = function(options) {
+        return new L.CanvasLayer(options);
     };
 });

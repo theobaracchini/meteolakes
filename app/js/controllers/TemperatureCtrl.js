@@ -44,11 +44,22 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
         $scope.chartPoint = undefined;
     };
 
-    $scope.drawTemperatureOverlay = function(size, data) {
+    $scope.drawTemperatureOverlay = function(data, options) {
+        var size = options.size;
         var graphics = new PIXI.Graphics();
 
         if (!dataReady) {
             return graphics;
+        }
+
+        if (options.background) {
+            var origin = options.project([0, 0]);
+            graphics.beginFill(0x4682B4);
+            graphics.drawRect(0, 0, size.x, origin.y);
+            graphics.endFill();
+            graphics.beginFill(0x548b54);
+            graphics.drawRect(0, origin.y, size.x, size.y);
+            graphics.endFill();
         }
 
         var bounds = new L.Bounds(L.point([0, 0]), size);
