@@ -5,6 +5,7 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
         this.timeSteps = [];
         this.Data = [];
         this.ready = false;
+        this.available = true;
         this.valueAccessor = function(d) { return d; };
     }
 
@@ -33,8 +34,10 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
             // Read the data config
             d3.json(valuesFile + '.json', function(err, config) {
                 if(err) {
+                    me.available = false;
                     reject('File not found: ' + valuesFile);
                 } else {
+                    me.available = true;
                     me.parseConfig(config);
                     me.readArray(valuesFile, config).then(function() {
                         me.resetBounds();

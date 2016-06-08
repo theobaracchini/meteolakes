@@ -1,32 +1,29 @@
 angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q, Time, TemporalData, NearestNeighbor) {
-    var dataReady = false;
-    var colorFunction;
+    var colorFunctions;
     var nearestNeighbor;
     var animationHandlers = [];
 
     $scope.LEGEND_COLORS = ['purple', 'cyan', 'lime', 'red'];
 
     $scope.surfaceData = new TemporalData('temperature');
-    $scope.sliceDataXZ = new TemporalData('temperature', '_slice_xz');
-    $scope.sliceDataYZ = new TemporalData('temperature', '_slice_yz');
+    $scope.sliceXZData = new TemporalData('temperature', '_slice_xz');
+    $scope.sliceYZData = new TemporalData('temperature', '_slice_yz');
 
-    var dataSources = [$scope.surfaceData, $scope.sliceDataXZ, $scope.sliceDataYZ];
+    var dataSources = ['surface', 'sliceXZ', 'sliceYZ'];
 
     $scope.$on('updateTimeSelection', function(evt, timeSelection) {
-        dataReady = false;
+        colorFunctions = {};
 
-        var dataQueue = dataSources.map(function(source) {
-            return source.readData(timeSelection);
-        });
-
-        $q.all(dataQueue).then(function() {
-            dataReady = true;
-            var extent = globalExtent();
-            colorFunction = generateColorFunction(extent);
-            nearestNeighbor = NearestNeighbor($scope.surfaceData);
-            $scope.dataExtent = extent;
-            $scope.$emit('dataReady', $scope.surfaceData.timeSteps);
-            animate();
+        dataSources.forEach(function(source) {
+            var temporalData = $scope[source + 'Data'];
+            temporalData.readData(timeSelection).then(function() {
+                colorFunctions[source] = generateColorFunction(temporalData.valueExtent);
+                if (source == 'surface') {
+                    nearestNeighbor = NearestNeighbor($scope.surfaceData);
+                }
+                $scope[source + 'Extent'] = temporalData.valueExtent;
+                animate();
+            });
         });
 
         $scope.closeChart();
@@ -45,12 +42,10 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
     };
 
     $scope.drawTemperatureOverlay = function(data, options) {
+        var colorFunction = colorFunctions[options.dataSource];
+
         var size = options.size;
         var graphics = new PIXI.Graphics();
-
-        if (!dataReady) {
-            return graphics;
-        }
 
         if (options.background) {
             var origin = options.project([0, 0]);
@@ -105,21 +100,6 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
     $scope.mapClicked = function(point) {
         $scope.chartPoint = nearestNeighbor.query(point);
     };
-
-    /**
-      * find global min/max over all data sources
-      */
-    function globalExtent() {
-        var minValue = Number.MAX_VALUE;
-        var maxValue = Number.MIN_VALUE;
-
-        dataSources.forEach(function(source) {
-            minValue = Math.min(minValue, source.valueExtent[0]);
-            maxValue = Math.max(maxValue, source.valueExtent[1]);
-        });
-
-        return [minValue, maxValue];
-    }
 
     function generateColorFunction(extent) {
         var minValue = extent[0];

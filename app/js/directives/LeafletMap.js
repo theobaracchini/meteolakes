@@ -87,7 +87,7 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer, Show
 
             var bounds = BOUNDS;
             var map = initMapbox(container);
-            var canvasLayer = L.canvasLayer();
+            var canvasLayer = L.canvasLayer({dataSource: 'surface'});
             var markerLayer;
 
             canvasLayer.addTo(map);

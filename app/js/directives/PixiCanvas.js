@@ -22,15 +22,16 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util) {
         scope: {
             setHandler: '&',
             data: '=',
-            draw: '='
+            draw: '=',
+            source: '@'
         },
         link: function(scope, element, attrs) {
             element.addClass('lv-map');
             var container = element[0];
 
-            var bounds = L.latLngBounds(unproject(TOP_LEFT), unproject(BOTTOM_RIGHT));
+            var bounds;
             var map = L.map(container, {crs: CRS, minZoom: -5});
-            var canvasLayer = L.canvasLayer({background: true});
+            var canvasLayer = L.canvasLayer({background: true, dataSource: scope.source});
 
             canvasLayer.addTo(map);
             L.control.showcoordinates({format: formatCoordinates}).addTo(map);
@@ -44,12 +45,14 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util) {
             scope.$watch('data.ready', function() {
                 var data = scope.data;
 
+                var projectedData;
+
                 if (data && data.ready) {
                     var sliceLength = 0;
                     var prevI = 0;
                     var prevX;
                     var prevY;
-                    var projectedData = data.map(function(d, i, j) {
+                    projectedData = data.map(function(d, i, j) {
                         if (i != prevI) {
                             if (prevX) {
                                 sliceLength += Util.norm([d.x - prevX, d.y - prevY]);
@@ -71,7 +74,9 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util) {
                     var minBounds = unproject(L.point(0, data.zExtent[0]));
                     var maxBounds = unproject(L.point(sliceLength * HORIZONTAL_SCALE, data.zExtent[1]));
                     updateBounds(L.latLngBounds(minBounds, maxBounds));
+                }
 
+                if (bounds) {
                     canvasLayer.setData(projectedData);
                 }
             });

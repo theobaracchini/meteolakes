@@ -111,6 +111,7 @@ angular.module('lakeViewApp').service('CanvasLayer', function() {
                 var options = {
                     size: this._map.getSize(),
                     background: this.options.background,
+                    dataSource: this.options.dataSource,
                     project: function(p) {
                         return self._map.latLngToContainerPoint(p);
                     }

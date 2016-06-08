@@ -12,7 +12,8 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, Time, 
         $scope.surfaceData.readData(timeSelection).then(function() {
             colorFunction = generateColorFunction($scope.surfaceData.valueExtent);
             nearestNeighbor = NearestNeighbor($scope.surfaceData);
-            $scope.dataExtent = $scope.surfaceData.valueExtent;
+            $scope.surfaceExtent = $scope.surfaceData.valueExtent;
+            $scope.$emit('dataReady', $scope.surfaceData.timeSteps);
             animate();
         });
 
