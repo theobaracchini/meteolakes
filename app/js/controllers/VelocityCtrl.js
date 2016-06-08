@@ -1,21 +1,19 @@
-angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, Time, TemporalData, NearestNeighbor) {
+angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, Time, TemporalData, NearestNeighbor, Util) {
     var colorFunction;
-
     var nearestNeighbor;
-    var marker;
-    var chartPoint;
-
     var animationHandlers = [];
 
     $scope.LEGEND_COLORS = ['blue', 'lime', 'red'];
 
-    $scope.$on('updateTimeSelection', function(evt, timeSelection) {
-        if (!$scope.temporalData) {
-            $scope.temporalData = new TemporalData('velocity');
-        }
+    $scope.surfaceData = new TemporalData('velocity');
+    $scope.surfaceData.setValueAccessor(Util.norm);
 
-        $scope.temporalData.readData(timeSelection).then(function() {
-            dataReady();
+    $scope.$on('updateTimeSelection', function(evt, timeSelection) {
+        $scope.surfaceData.readData(timeSelection).then(function() {
+            colorFunction = generateColorFunction($scope.surfaceData.valueExtent);
+            nearestNeighbor = NearestNeighbor($scope.surfaceData);
+            $scope.surfaceExtent = $scope.surfaceData.valueExtent;
+            $scope.$emit('dataReady', $scope.surfaceData.timeSteps);
             animate();
         });
 
@@ -34,7 +32,8 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, Time, 
         $scope.chartPoint = undefined;
     };
 
-    $scope.drawVelocityOverlay = function(size, data) {
+    $scope.drawVelocityOverlay = function(data, options) {
+        var size = options.size;
         var r = 30,
             bounds = new L.Bounds(
                 L.point([-r, -r]),
@@ -119,31 +118,27 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, Time, 
         }
     }
 
-    function dataReady() {
-        var minValue = d3.min($scope.temporalData.flatArray, function(d) { return d3.min(d.values, norm) });
-        var maxValue = d3.max($scope.temporalData.flatArray, function(d) { return d3.max(d.values, norm) });
-
-        $scope.dataExtent = [minValue, maxValue];
+    function generateColorFunction(extent) {
+        var minValue = extent[0];
+        var maxValue = extent[1];
 
         var domain = $scope.LEGEND_COLORS.map(function(d, i) {
             return minValue + i / ($scope.LEGEND_COLORS.length - 1) * (maxValue - minValue);
         });
-        colorFunction = function(vec) {
+        return function(vec) {
             var fn = d3.scale.linear().domain(domain).range($scope.LEGEND_COLORS);
-            return fn(norm(vec));
+            return fn(Util.norm(vec));
         }
-
-        nearestNeighbor = NearestNeighbor($scope.temporalData);
     }
 
     function updateChart(point) {
         if (point) {
-            var data = $scope.temporalData.Data[point.i][point.j];
-            var values = data.values.map(norm);
+            var data = $scope.surfaceData.Data[point.i][point.j];
+            var values = data.values.map(Util.norm);
             $scope.chartData = {
                 x: data.x,
                 y: data.y,
-                data: $scope.temporalData.withTimeSteps(values)
+                data: $scope.surfaceData.withTimeSteps(values)
             };
         } else {
             $scope.chartData = undefined;
@@ -154,13 +149,5 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, Time, 
         animationHandlers.forEach(function(handler) {
             handler(Time.tIndex);
         });
-    }
-
-    /*
-     * Returns the norm of a vector.
-     * The vector is expected to be an array [x, y].
-     */
-    function norm(vec) {
-        return Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
     }
 });

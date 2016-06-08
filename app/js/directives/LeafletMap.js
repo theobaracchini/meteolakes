@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer) {
+angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer, ShowCoordinates) {
     // Definition of available swisstopo tiles (bounding box) and resolutions
     // Source: https://api3.geo.admin.ch/services/sdiservices.html#parameters
     var TOP_LEFT = L.point(420000, 350000);
@@ -12,13 +12,24 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer) {
         origin: [TOP_LEFT.x, TOP_LEFT.y]
     });
 
+    var BOUNDS = L.latLngBounds(unproject(TOP_LEFT), unproject(BOTTOM_RIGHT));
+
     function project(point) {
         return CRS.projection.project(point);
-    };
+    }
 
     function unproject(point) {
         return CRS.projection.unproject(point);
-    };
+    }
+
+    function formatCoordinates(latlng) {
+        if (BOUNDS.contains(latlng)) {
+            var p = project(latlng);
+            return Math.round(p.x) + ', ' + Math.round(p.y);
+        } else {
+            return '';
+        }
+    }
 
     function initMapbox(container) {
         var mbAttr = 'Map data &copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors, ' +
@@ -47,7 +58,7 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer) {
 
         var map = L.map(container, {
             crs: CRS,
-            maxBounds: L.latLngBounds(unproject(TOP_LEFT), unproject(BOTTOM_RIGHT)),
+            maxBounds: BOUNDS,
             scale: scale
         });
 
@@ -74,14 +85,13 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer) {
             element.addClass('lv-map');
             var container = element[0];
 
+            var bounds = BOUNDS;
             var map = initMapbox(container);
-            var canvasLayer = L.canvasLayer();
-            canvasLayer.addTo(map);
+            var canvasLayer = L.canvasLayer({dataSource: 'surface'});
             var markerLayer;
-            var bounds = L.latLngBounds(unproject(TOP_LEFT), unproject(BOTTOM_RIGHT));
 
-            // center on Switzerland
-            // map.fitBounds(bounds);
+            canvasLayer.addTo(map);
+            L.control.showcoordinates({format: formatCoordinates}).addTo(map);
 
             scope.setHandler({handler: function() {
                 canvasLayer.redraw();
@@ -112,13 +122,12 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer) {
                 }
             });
 
-            scope.$watch('data.Data', function() {
+            scope.$watch('data.ready', function() {
                 var data = scope.data;
 
-                // TODO better condition to check if data is ready
-                if (data && data.xMin) {
-                    var minBounds = unproject(L.point(data.xMin, data.yMin));
-                    var maxBounds = unproject(L.point(data.xMax, data.yMax));
+                if (data && data.ready) {
+                    var minBounds = unproject(L.point(data.xExtent[0], data.yExtent[0]));
+                    var maxBounds = unproject(L.point(data.xExtent[1], data.yExtent[1]));
                     updateBounds(L.latLngBounds(minBounds, maxBounds));
 
                     var projectedData = data.map(function(d) {

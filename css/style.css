@@ -1,9 +1,6 @@
 body {
+    padding-top: 120px;
     padding-bottom: 70px;
-}
-
-d3-chart {
-    display: block;
 }
 
 .chart-axis path,
@@ -24,27 +21,12 @@ d3-chart {
     stroke-width: 2px;
 }
 
-.timeLine {
-    stroke:blue;
-    stroke-width:2px;
-}
-
-.scrollable-menu {
-    height: auto;
-    max-height: 200px;
-    overflow-x: hidden;
-}
-
-.sidebar {
-    position:fixed;
-    top: 10px;
-    left: 10px;
-}
-
 .lv-map {
     display: block;
     width: 100%;
-    height: 600px;
+    height: 0;
+    /* padding-bottom 66% sets height to 66% of width, see http://stackoverflow.com/a/13625843/1805388 */
+    padding-bottom: 66%;
     margin-bottom: 10px;
 }
 
@@ -60,6 +42,7 @@ d3-chart {
     opacity: 0.9;
 }
 
-.leaflet-clickable, .leaflet-container {
+.leaflet-clickable,
+.leaflet-container {
     cursor: crosshair;
 }

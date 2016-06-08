@@ -1,8 +1,16 @@
 angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, DateHelpers) {
-    var TemporalData = function(fieldName) {
+    var TemporalData = function(fieldName, suffix) {
         this.fieldName = fieldName;
+        this.suffix = suffix ? suffix : '';
         this.timeSteps = [];
         this.Data = [];
+        this.ready = false;
+        this.available = true;
+        this.valueAccessor = function(d) { return d; };
+    }
+
+    TemporalData.prototype.setValueAccessor = function(valueAccessor) {
+        this.valueAccessor = valueAccessor;
     }
 
     TemporalData.prototype.map = function(fn) {
@@ -14,26 +22,42 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
     }
 
     TemporalData.prototype.readData = function(selection) {
+        this.ready = false;
+
         var me = this;
         var year = selection.year;
         var week = selection.week;
 
         return $q(function(resolve, reject) {
-            var valuesFile = DATA_HOST + selection.folder + '/' + year + '/' + me.fieldName + '/data_week' + week + '.csv'; 
+            var valuesFile = DATA_HOST + selection.folder + '/' + year + '/' + me.fieldName + '/data_week' + week + me.suffix + '.csv'; 
 
             // Read the data config
             d3.json(valuesFile + '.json', function(err, config) {
                 if(err) {
+                    me.available = false;
                     reject('File not found: ' + valuesFile);
                 } else {
+                    me.available = true;
+                    me.parseConfig(config);
                     me.readArray(valuesFile, config).then(function() {
                         me.resetBounds();
                         me.timeSteps = me.computeTimeSteps(selection);
+                        me.ready = true;
                         resolve();
                     });
                 }
             });
         });
+    }
+
+    TemporalData.prototype.parseConfig = function(config) {
+        if (!config.Version) {
+            config.Version = 1;
+        }
+        // Set default values for fields that have been added in newer config file versions
+        if (config.Version < 2) {
+            config.NumberOfCoordinates = 2;
+        }
     }
 
     TemporalData.prototype.readArray = function(file, config) {
@@ -60,7 +84,12 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
             for (var i = 0; i < config.GridHeight; i++) {
                 var x = +row[i];
                 var y = +row[config.GridHeight + i];
-                if (isNaN(x) || isNaN(y)) {
+                if (config.NumberOfCoordinates > 2) {
+                    var z = +row[2 * config.GridHeight + i];
+                } else {
+                    var z = 0;
+                }
+                if (isNaN(x) || isNaN(y) || isNaN(z)) {
                     // No data for this cell
                     parsedRow.push(null);
                 } else {
@@ -70,7 +99,7 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
                     for (var j = 0; j < config.Timesteps; j++) {
                         var value = [];
                         for (var k = 0; k < config.NumberOfValues; k++) {
-                            var v = +row[(2 + k * config.Timesteps + j) * config.GridHeight + i];
+                            var v = +row[(config.NumberOfCoordinates + k * config.Timesteps + j) * config.GridHeight + i];
                             if (isNaN(v)) {
                                 hasNaN = true;
                             }
@@ -88,6 +117,7 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
                         var entry = {
                             x: x,
                             y: y,
+                            z: z,
                             values: values
                         };
                         me.flatArray.push(entry);
@@ -100,11 +130,14 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
     }
 
     TemporalData.prototype.resetBounds = function() {
-        this.xMin = d3.min(this.flatArray, function(d) { return d.x });
-        this.xMax = d3.max(this.flatArray, function(d) { return d.x });
+        this.xExtent = d3.extent(this.flatArray, function(d) { return d.x });
+        this.yExtent = d3.extent(this.flatArray, function(d) { return d.y });
+        this.zExtent = d3.extent(this.flatArray, function(d) { return d.z });
 
-        this.yMin = d3.min(this.flatArray, function(d) { return d.y });
-        this.yMax = d3.max(this.flatArray, function(d) { return d.y });
+        var valueAccessor = this.valueAccessor;
+        var minValue = d3.min(this.flatArray, function(d) { return d3.min(d.values, valueAccessor) });
+        var maxValue = d3.max(this.flatArray, function(d) { return d3.max(d.values, valueAccessor) });
+        this.valueExtent = [minValue, maxValue];
     }
 
     TemporalData.prototype.computeTimeSteps = function(selection) {

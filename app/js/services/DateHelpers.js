@@ -1,32 +1,24 @@
 angular.module('lakeViewApp').service('DateHelpers', function() {
-    function firstDayOfWeek(week, year) {
+    this.firstDayOfWeek = function(week, year) {
         return moment().year(year).isoWeek(week).startOf('isoWeek');
-    }
+    };
 
-    function lastDayOfWeek(week, year) {
+    this.lastDayOfWeek = function(week, year) {
         return moment().year(year).isoWeek(week).endOf('isoWeek');
-    }
+    };
 
     /**
      * Returns the number of weeks in the given year
      */
-    function numberOfWeeks(year) {
+    this.numberOfWeeks = function(year) {
         return moment().year(year).isoWeeksInYear();
-    }
+    };
 
-    function yearMonthDay(date) {
+    this.yearMonthDay = function(date) {
         return date.format('YYYY-MM-DD');
-    }
+    };
 
-    function hoursMinutes(date) {
+    this.hoursMinutes = function(date) {
         return date.format('HH:mm');
-    }
-
-    return {
-        firstDayOfWeek: firstDayOfWeek,
-        lastDayOfWeek: lastDayOfWeek,
-        numberOfWeeks: numberOfWeeks,
-        yearMonthDay: yearMonthDay,
-        hoursMinutes: hoursMinutes
     };
 });
