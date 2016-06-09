@@ -175,11 +175,11 @@
                             <d3-chart set-handler="addAnimationHandler(handler)" data="chartData" label="Temperature (&deg;C)" on-close="closeChart()"></d3-chart>
                         </div>
                         <div class="tab-pane" ng-class="{active: tab == 'sliceXZ'}">
-                            <pixi-canvas active="tab == 'sliceXZ'" set-handler="addAnimationHandler(handler)" data="sliceXZData" draw="drawTemperatureOverlay" source="sliceXZ"></pixi-canvas>
+                            <pixi-canvas active="tab == 'sliceXZ'" set-handler="addAnimationHandler(handler)" data="sliceXZData" draw="drawTemperatureOverlay" source="sliceXZ" label-left="Genève" label-right="Villeneuve"></pixi-canvas>
                             <color-legend colors="LEGEND_COLORS" extent="sliceXZExtent" label="Temperature (&deg;C)"></color-legend>
                         </div>
                         <div class="tab-pane" ng-class="{active: tab == 'sliceYZ'}">
-                            <pixi-canvas active="tab == 'sliceYZ'" set-handler="addAnimationHandler(handler)" data="sliceYZData" draw="drawTemperatureOverlay" source="sliceYZ"></pixi-canvas>
+                            <pixi-canvas active="tab == 'sliceYZ'" set-handler="addAnimationHandler(handler)" data="sliceYZData" draw="drawTemperatureOverlay" source="sliceYZ" label-left="Lausanne" label-right="Évian"></pixi-canvas>
                             <color-legend colors="LEGEND_COLORS" extent="sliceYZExtent" label="Temperature (&deg;C)"></color-legend>
                         </div>
                     </div>

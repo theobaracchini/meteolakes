@@ -109,7 +109,7 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer, Show
                 if (scope.active) {
                     $timeout(function() {
                         map.invalidateSize(false);
-                        fitBounds(bounds);
+                        fitBounds();
                     });
                 }
             });
@@ -155,11 +155,11 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer, Show
             function updateBounds(newBounds) {
                 if (!newBounds.equals(bounds)) {
                     bounds = newBounds;
-                    fitBounds(bounds);
+                    fitBounds();
                 }
             }
 
-            function fitBounds(bounds) {
+            function fitBounds() {
                 if (bounds) {
                     // zoom map such that at least 90% of the area given by bounds is visible
                     map.fitBounds(bounds.pad(-0.05));

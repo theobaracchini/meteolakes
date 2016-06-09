@@ -24,13 +24,17 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
             setHandler: '&',
             data: '=',
             draw: '=',
-            source: '@'
+            source: '@',
+            labelLeft: '@',
+            labelRight: '@'
         },
         link: function(scope, element, attrs) {
             element.addClass('lv-map');
             var container = element[0];
 
             var bounds;
+            var markers;
+            var xMax;
             var map = L.map(container, {crs: CRS, minZoom: -5});
             var canvasLayer = L.canvasLayer({background: true, dataSource: scope.source});
 
@@ -49,6 +53,7 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
                         map.invalidateSize(false);
                         if (bounds) {
                             map.fitBounds(bounds);
+                            addLabels();
                         }
                     });
                 }
@@ -83,9 +88,12 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
                         }
                     });
 
+                    xMax = sliceLength * HORIZONTAL_SCALE;
+
                     var minBounds = unproject(L.point(0, data.zExtent[0]));
-                    var maxBounds = unproject(L.point(sliceLength * HORIZONTAL_SCALE, data.zExtent[1]));
+                    var maxBounds = unproject(L.point(xMax, data.zExtent[1]));
                     updateBounds(L.latLngBounds(minBounds, maxBounds));
+                    addLabels();
                 }
 
                 if (bounds) {
@@ -98,6 +106,22 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
                     bounds = newBounds;
                     map.fitBounds(bounds);
                 }
+            }
+
+            function addLabels() {
+                if (scope.active && xMax && !markers) {
+                    // map has to be visible and data has to be loaded for this to work correctly
+                    markers = {
+                        left: addPopup(L.point(0, 0), scope.labelLeft),
+                        right: addPopup(L.point(xMax, 0), scope.labelRight)
+                    }
+                }
+            }
+
+            function addPopup(point, label) {
+                return L.popup({closeButton: false, closeOnClick: false, autoPan: false})
+                    .setLatLng(unproject(point))
+                    .setContent(label).addTo(map);
             }
         }
     };
