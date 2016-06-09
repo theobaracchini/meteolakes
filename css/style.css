@@ -1,24 +1,41 @@
 body {
-    padding-top: 120px;
+    padding-top: 100px;
     padding-bottom: 70px;
 }
 
-.chart-axis path,
-.chart-axis line {
-    fill: none;
-    stroke: #000;
-    shape-rendering: crispEdges;
+.nav > li > a {
+    padding: 6px 12px;
 }
 
-.chart-data {
-    fill: none;
-    stroke: steelblue;
-    stroke-width: 1.5px;
+.lv-divider-vertical {
+    height: 50px;
+    margin: 0 9px;
+    border-right: 1px solid #777;
+    border-left: 1px solid #777;
 }
 
-.chart-vertical-line {
-    stroke: gray;
-    stroke-width: 2px;
+.lv-navbar-margin {
+    margin-right: 15px;
+}
+
+.lv-navbar-text-inline {
+    display: inline-block;
+}
+
+.lv-navbar-small-buttons {
+    margin-bottom: 8px;
+}
+
+.lv-timeslider {
+    overflow: auto;
+}
+
+.lv-timeslider input {
+    margin: 15px 0;
+}
+
+.lv-no-margin {
+    margin: 0;
 }
 
 .lv-map {
@@ -38,6 +55,10 @@ body {
     font-size: 20px;
 }
 
+.leaflet-tile-pane {
+    opacity: 0.5;
+}
+
 .leaflet-canvas-layer {
     opacity: 0.9;
 }
@@ -45,4 +66,22 @@ body {
 .leaflet-clickable,
 .leaflet-container {
     cursor: crosshair;
+}
+
+.chart-axis path,
+.chart-axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.chart-data {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
+
+.chart-vertical-line {
+    stroke: gray;
+    stroke-width: 2px;
 }

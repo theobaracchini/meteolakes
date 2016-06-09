@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer, ShowCoordinates) {
+angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer, ShowCoordinates, $timeout) {
     // Definition of available swisstopo tiles (bounding box) and resolutions
     // Source: https://api3.geo.admin.ch/services/sdiservices.html#parameters
     var TOP_LEFT = L.point(420000, 350000);
@@ -75,6 +75,7 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer, Show
     return {
         restrict: 'E',
         scope: {
+            active: '=',
             setHandler: '&',
             onClick: '&',
             marker: '=',
@@ -85,7 +86,7 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer, Show
             element.addClass('lv-map');
             var container = element[0];
 
-            var bounds = BOUNDS;
+            var bounds;
             var map = initMapbox(container);
             var canvasLayer = L.canvasLayer({dataSource: 'surface'});
             var markerLayer;
@@ -103,6 +104,15 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer, Show
             });
 
             canvasLayer.setDrawFunction(scope.draw);
+
+            scope.$watch('active', function() {
+                if (scope.active) {
+                    $timeout(function() {
+                        map.invalidateSize(false);
+                        fitBounds();
+                    });
+                }
+            });
 
             scope.$watch('marker', function(marker) {
                 if (marker) {
@@ -145,7 +155,14 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer, Show
             function updateBounds(newBounds) {
                 if (!newBounds.equals(bounds)) {
                     bounds = newBounds;
-                    map.fitBounds(bounds);
+                    fitBounds();
+                }
+            }
+
+            function fitBounds() {
+                if (bounds) {
+                    // zoom map such that at least 90% of the area given by bounds is visible
+                    map.fitBounds(bounds.pad(-0.05));
                 }
             }
         }

@@ -51,14 +51,14 @@
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
-                    <div class="visible-xs-block pull-right" style="margin-right: 15px">
-                        <div class="navbar-text" style="display: inline-block;"><span ng-bind="getDate()"></span>, <span ng-bind="getTime()"></span></div>
+                    <div class="visible-xs-block pull-right lv-navbar-margin">
+                        <div class="navbar-text lv-navbar-text-inline"><strong><span ng-bind="getDate()"></span>, <span ng-bind="getTime()"></span></strong></div>
                         <button type="button" class="btn btn-default navbar-btn" ng-click="play()"><span class="glyphicon" ng-class="{'glyphicon-play': !isPlaying, 'glyphicon-pause': isPlaying}"></span></button>
                     </div>
                     <a class="navbar-brand" href="#">Lake 3D Model</a>
                 </div>
 
-                <div class="visible-xs-block" style="margin-bottom: 8px">
+                <div class="visible-xs-block lv-navbar-small-buttons">
                     <div class="btn-group btn-group-justified">
                         <div class="btn-group btn-group-sm">
                             <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
@@ -131,7 +131,7 @@
                         </ul>
                     </div>
                     <div class="navbar-right">
-                        <div class="btn-group" style="margin-right: 15px">
+                        <div class="btn-group lv-navbar-margin">
                             <button type="button" class="btn btn-default navbar-btn lv-slower" ng-click="slower()"><span class="glyphicon glyphicon-backward"></span></button>
                             <button type="button" class="btn btn-default navbar-btn" ng-click="play()"><span class="glyphicon" ng-class="{'glyphicon-play': !isPlaying, 'glyphicon-pause': isPlaying}"></span></button>
                             <button type="button" class="btn btn-default navbar-btn lv-faster" ng-click="faster()"><span class="glyphicon glyphicon-forward"></span></button>
@@ -140,13 +140,13 @@
                     </div>
 
                     <div>
-                        <div class="btn-group pull-left" style="margin-right: 15px">
+                        <div class="btn-group pull-left lv-navbar-margin">
                             <button type="button" class="btn btn-default navbar-btn" ng-click="backward()"><span class="glyphicon glyphicon-step-backward"></span></button>
                             <button type="button" class="btn btn-default navbar-btn" ng-click="forward()"><span class="glyphicon glyphicon-step-forward"></span></button>
                         </div>
-                        <div class="navbar-right"><p class="navbar-text">Date: <span ng-bind="getDate()"></span> Time: <span ng-bind="getTime()"></span></p></div>
-                        <div style="overflow: auto">
-                            <input type="range" ng-model="Time.tIndex" min="0" max="{{ Time.nT - 1 }}" style="margin: 15px 0">
+                        <div class="navbar-right"><p class="navbar-text"><strong>Date: <span ng-bind="getDate()"></span><span class="lv-divider-vertical"></span>Time: <span ng-bind="getTime()"></span></strong></p></div>
+                        <div class="lv-timeslider">
+                            <input type="range" ng-model="Time.tIndex" min="0" max="{{ Time.nT - 1 }}">
                         </div>
                     </div>
                 </div>
@@ -154,76 +154,57 @@
         </nav>
         <div class="container">
             <div class="row">
-                <div class="col-sm-12">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="alert alert-info" role="alert">Satellite validation available <a href="http://aphyspc1.epfl.ch/validation/">here</a>.</div>
+                <div ng-controller="TemperatureCtrl" class="col-sm-12 col-lg-6">
+                    <div>
+                        <ol class="breadcrumb pull-right lv-no-margin">
+                            <li class="active"><a href="http://meteolakes.epfl.ch/validation/">Satellite validation</a></li>
+                        </ol>
+                        <h3>Temperature</h3>
+                    </div>
+
+                    <ul class="nav nav-tabs">
+                        <li ng-class="{active: tab == 'surface'}"><a href="#" ng-click="setTab('surface')">Surface</a></li>
+                        <li ng-class="{active: tab == 'sliceXZ', hidden: !sliceXZData.available}"><a href="#" ng-click="setTab('sliceXZ')">Transect 1</a></li>
+                        <li ng-class="{active: tab == 'sliceYZ', hidden: !sliceYZData.available}"><a href="#" ng-click="setTab('sliceYZ')">Transect 2</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane" ng-class="{active: tab == 'surface'}">
+                            <leaflet-map active="tab == 'surface'" set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="surfaceData" draw="drawTemperatureOverlay"></leaflet-map>
+                            <color-legend colors="LEGEND_COLORS" extent="surfaceExtent" label="Temperature (&deg;C)"></color-legend>
+                            <d3-chart set-handler="addAnimationHandler(handler)" data="chartData" label="Temperature (&deg;C)" on-close="closeChart()"></d3-chart>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div ng-controller="TemperatureCtrl">
-                    <div class="col-sm-12">
-                        <h3>Temperature <small>(1 meter below surface)</small></h3>
-                    </div>
-
-                    <div class="col-sm-12">
-                        <leaflet-map set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="surfaceData" draw="drawTemperatureOverlay"></leaflet-map>
-                    </div>
-                    <div class="col-sm-12">
-                        <color-legend colors="LEGEND_COLORS" extent="surfaceExtent" label="Temperature (&deg;C)"></color-legend>
-                    </div>
-
-                    <div class="col-sm-12">
-                        <d3-chart set-handler="addAnimationHandler(handler)" data="chartData" label="Temperature (&deg;C)" on-close="closeChart()"></d3-chart>
-                    </div>
-
-                    <div ng-class="{hidden: !sliceXZData.available}">
-                        <div class="col-sm-12">
-                            <pixi-canvas set-handler="addAnimationHandler(handler)" data="sliceXZData" draw="drawTemperatureOverlay" source="sliceXZ"></pixi-canvas>
-                        </div>
-                        <div class="col-sm-12">
+                        <div class="tab-pane" ng-class="{active: tab == 'sliceXZ'}">
+                            <pixi-canvas active="tab == 'sliceXZ'" set-handler="addAnimationHandler(handler)" data="sliceXZData" draw="drawTemperatureOverlay" source="sliceXZ" label-left="Genève" label-right="Villeneuve"></pixi-canvas>
                             <color-legend colors="LEGEND_COLORS" extent="sliceXZExtent" label="Temperature (&deg;C)"></color-legend>
                         </div>
-                    </div>
-
-                    <div ng-class="{hidden: !sliceYZData.available}">
-                        <div class="col-sm-12">
-                            <pixi-canvas set-handler="addAnimationHandler(handler)" data="sliceYZData" draw="drawTemperatureOverlay" source="sliceYZ"></pixi-canvas>
-                        </div>
-                        <div class="col-sm-12">
+                        <div class="tab-pane" ng-class="{active: tab == 'sliceYZ'}">
+                            <pixi-canvas active="tab == 'sliceYZ'" set-handler="addAnimationHandler(handler)" data="sliceYZData" draw="drawTemperatureOverlay" source="sliceYZ" label-left="Lausanne" label-right="Évian"></pixi-canvas>
                             <color-legend colors="LEGEND_COLORS" extent="sliceYZExtent" label="Temperature (&deg;C)"></color-legend>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <div ng-controller="VelocityCtrl">
-                    <div class="col-sm-12">
-                        <h3>Velocity <small>(1 meter below surface)</small></h3>
-                    </div>
+                <div ng-controller="VelocityCtrl" class="col-sm-12 col-lg-6">
+                    <h3>Velocity</h3>
 
-                    <div class="col-sm-12">
-                        <leaflet-map set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="surfaceData" draw="drawVelocityOverlay"></leaflet-map>
-                    </div>
-                    <div class="col-sm-12">
-                        <color-legend colors="LEGEND_COLORS" extent="surfaceExtent" label="Velocity (m/s)"></color-legend>
-                    </div>
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a>Surface</a></li>
+                    </ul>
 
-                    <div class="col-sm-12">
-                        <d3-chart set-handler="addAnimationHandler(handler)" data="chartData" label="Velocity (m/s)" on-close="closeChart()"></d3-chart>
-                    </div>
+                    <leaflet-map set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="surfaceData" draw="drawVelocityOverlay"></leaflet-map>
+                    <color-legend colors="LEGEND_COLORS" extent="surfaceExtent" label="Velocity (m/s)"></color-legend>
+                    <d3-chart set-handler="addAnimationHandler(handler)" data="chartData" label="Velocity (m/s)" on-close="closeChart()"></d3-chart>
                 </div>
             </div>
         </div>
+
         <nav class="navbar navbar-inverse navbar-fixed-bottom">
             <div class="container">
                 <p class="navbar-text">This is a development version, please contact <a href="mailto:theo.baracchini@epfl.ch">theo.baracchini@epfl.ch</a> for further information.</p>
             </div>
         </nav>
+
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

@@ -5,6 +5,8 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
 
     $scope.LEGEND_COLORS = ['purple', 'cyan', 'lime', 'red'];
 
+    $scope.tab = 'surface';
+
     $scope.surfaceData = new TemporalData('temperature');
     $scope.sliceXZData = new TemporalData('temperature', '_slice_xz');
     $scope.sliceYZData = new TemporalData('temperature', '_slice_yz');
@@ -23,6 +25,10 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
                 }
                 $scope[source + 'Extent'] = temporalData.valueExtent;
                 animate();
+            }, function(err) {
+                if ($scope.tab == source) {
+                    $scope.tab = 'surface';
+                }
             });
         });
 
@@ -46,6 +52,10 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
 
         var size = options.size;
         var graphics = new PIXI.Graphics();
+
+        if (!colorFunction || $scope.tab != options.dataSource) {
+            return graphics;
+        }
 
         if (options.background) {
             var origin = options.project([0, 0]);
@@ -100,6 +110,11 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
     $scope.mapClicked = function(point) {
         $scope.chartPoint = nearestNeighbor.query(point);
     };
+
+    $scope.setTab = function(tab) {
+        $scope.tab = tab;
+        animate();
+    }
 
     function generateColorFunction(extent) {
         var minValue = extent[0];

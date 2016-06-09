@@ -17,8 +17,10 @@ angular.module('lakeViewApp').directive('d3Chart', function($window) {
             var placeholder = d3.select(container).append('div');
 
             placeholder
-                .append('div')
-                .attr('class', 'alert alert-info')
+                .append('ol')
+                .attr('class', 'breadcrumb')
+                .append('li')
+                .attr('class', 'active')
                 .text('Click on the map to show a time series for that point.');
 
             var content = d3.select(container).append('div');
