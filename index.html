@@ -155,67 +155,47 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="alert alert-info" role="alert">Satellite validation available <a href="http://aphyspc1.epfl.ch/validation/">here</a>.</div>
-                        </div>
-                    </div>
+                    <div class="alert alert-info" role="alert">Satellite validation available <a href="http://aphyspc1.epfl.ch/validation/">here</a>.</div>
                 </div>
             </div>
 
             <div class="row">
-                <div ng-controller="TemperatureCtrl">
-                    <div class="col-sm-12">
-                        <h3>Temperature <small>(1 meter below surface)</small></h3>
-                    </div>
+                <div ng-controller="TemperatureCtrl" class="col-sm-12 col-lg-6">
+                    <h3>Temperature</h3>
 
-                    <div class="col-sm-12">
-                        <leaflet-map set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="surfaceData" draw="drawTemperatureOverlay"></leaflet-map>
-                    </div>
-                    <div class="col-sm-12">
-                        <color-legend colors="LEGEND_COLORS" extent="surfaceExtent" label="Temperature (&deg;C)"></color-legend>
-                    </div>
+                    <ul class="nav nav-tabs">
+                        <li ng-class="{active: tab == 'surface'}"><a href="#" ng-click="setTab('surface')">Surface</a></li>
+                        <li ng-class="{active: tab == 'sliceXZ', hidden: !sliceXZData.available}"><a href="#" ng-click="setTab('sliceXZ')">Transect 1</a></li>
+                        <li ng-class="{active: tab == 'sliceYZ', hidden: !sliceYZData.available}"><a href="#" ng-click="setTab('sliceYZ')">Transect 2</a></li>
+                    </ul>
 
-                    <div class="col-sm-12">
-                        <d3-chart set-handler="addAnimationHandler(handler)" data="chartData" label="Temperature (&deg;C)" on-close="closeChart()"></d3-chart>
-                    </div>
-
-                    <div ng-class="{hidden: !sliceXZData.available}">
-                        <div class="col-sm-12">
-                            <pixi-canvas set-handler="addAnimationHandler(handler)" data="sliceXZData" draw="drawTemperatureOverlay" source="sliceXZ"></pixi-canvas>
+                    <div class="tab-content">
+                        <div class="tab-pane" ng-class="{active: tab == 'surface'}">
+                            <leaflet-map active="tab == 'surface'" set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="surfaceData" draw="drawTemperatureOverlay"></leaflet-map>
+                            <color-legend colors="LEGEND_COLORS" extent="surfaceExtent" label="Temperature (&deg;C)"></color-legend>
+                            <d3-chart set-handler="addAnimationHandler(handler)" data="chartData" label="Temperature (&deg;C)" on-close="closeChart()"></d3-chart>
                         </div>
-                        <div class="col-sm-12">
+                        <div class="tab-pane" ng-class="{active: tab == 'sliceXZ'}">
+                            <pixi-canvas active="tab == 'sliceXZ'" set-handler="addAnimationHandler(handler)" data="sliceXZData" draw="drawTemperatureOverlay" source="sliceXZ"></pixi-canvas>
                             <color-legend colors="LEGEND_COLORS" extent="sliceXZExtent" label="Temperature (&deg;C)"></color-legend>
                         </div>
-                    </div>
-
-                    <div ng-class="{hidden: !sliceYZData.available}">
-                        <div class="col-sm-12">
-                            <pixi-canvas set-handler="addAnimationHandler(handler)" data="sliceYZData" draw="drawTemperatureOverlay" source="sliceYZ"></pixi-canvas>
-                        </div>
-                        <div class="col-sm-12">
+                        <div class="tab-pane" ng-class="{active: tab == 'sliceYZ'}">
+                            <pixi-canvas active="tab == 'sliceYZ'" set-handler="addAnimationHandler(handler)" data="sliceYZData" draw="drawTemperatureOverlay" source="sliceYZ"></pixi-canvas>
                             <color-legend colors="LEGEND_COLORS" extent="sliceYZExtent" label="Temperature (&deg;C)"></color-legend>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <div ng-controller="VelocityCtrl">
-                    <div class="col-sm-12">
-                        <h3>Velocity <small>(1 meter below surface)</small></h3>
-                    </div>
+                <div ng-controller="VelocityCtrl" class="col-sm-12 col-lg-6">
+                    <h3>Velocity</h3>
 
-                    <div class="col-sm-12">
-                        <leaflet-map set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="surfaceData" draw="drawVelocityOverlay"></leaflet-map>
-                    </div>
-                    <div class="col-sm-12">
-                        <color-legend colors="LEGEND_COLORS" extent="surfaceExtent" label="Velocity (m/s)"></color-legend>
-                    </div>
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a>Surface</a></li>
+                    </ul>
 
-                    <div class="col-sm-12">
-                        <d3-chart set-handler="addAnimationHandler(handler)" data="chartData" label="Velocity (m/s)" on-close="closeChart()"></d3-chart>
-                    </div>
+                    <leaflet-map set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="surfaceData" draw="drawVelocityOverlay"></leaflet-map>
+                    <color-legend colors="LEGEND_COLORS" extent="surfaceExtent" label="Velocity (m/s)"></color-legend>
+                    <d3-chart set-handler="addAnimationHandler(handler)" data="chartData" label="Velocity (m/s)" on-close="closeChart()"></d3-chart>
                 </div>
             </div>
         </div>

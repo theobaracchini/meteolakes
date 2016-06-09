@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').directive('pixiCanvas', function(Util) {
+angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
     var TOP_LEFT = L.point(0, 0);
     var BOTTOM_RIGHT = L.point(1e6, 1e6);
     var HORIZONTAL_SCALE = 0.02;
@@ -20,6 +20,7 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util) {
     return {
         restrict: 'E',
         scope: {
+            active: '=',
             setHandler: '&',
             data: '=',
             draw: '=',
@@ -41,6 +42,17 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util) {
             }});
 
             canvasLayer.setDrawFunction(scope.draw);
+
+            scope.$watch('active', function() {
+                if (scope.active) {
+                    $timeout(function() {
+                        map.invalidateSize(false);
+                        if (bounds) {
+                            map.fitBounds(bounds);
+                        }
+                    });
+                }
+            });
 
             scope.$watch('data.ready', function() {
                 var data = scope.data;
