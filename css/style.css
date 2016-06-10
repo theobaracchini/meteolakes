@@ -7,6 +7,39 @@ body {
     padding: 6px 12px;
 }
 
+.lv-container-dynamic {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+@media (min-width: 768px) {
+    .lv-container-dynamic {
+        width: 750px;
+    }
+}   
+
+@media (min-width: 992px) {
+    .lv-container-dynamic {
+        width: 970px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .lv-container-dynamic {
+        width: auto;
+        padding-right: 30px;
+        padding-left: 30px;
+    }
+}
+
+.lv-scrollable-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+}
+
 .lv-divider-vertical {
     height: 50px;
     margin: 0 9px;

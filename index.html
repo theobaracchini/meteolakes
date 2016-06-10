@@ -65,7 +65,7 @@
                                 {{ index[selection.lake].name }}
                                 <span class="caret"></span>
                             </button>
-                            <ul class="dropdown-menu scrollable-menu">
+                            <ul class="dropdown-menu lv-scrollable-menu">
                                 <li ng-repeat="lake in index">
                                     <a href="#" ng-click="ChangeLake($index)">{{ lake.name }}</a>
                                 </li>
@@ -76,7 +76,7 @@
                                 {{ "Year " + selection.year }}
                                 <span class="caret"></span>
                             </button>
-                            <ul class="dropdown-menu scrollable-menu" role="menu">
+                            <ul class="dropdown-menu lv-scrollable-menu" role="menu">
                                 <li ng-repeat="year in index[selection.lake].years">
                                     <a href="#" ng-click="ChangeYear(year)">{{ year }}</a>
                                 </li>
@@ -87,7 +87,7 @@
                                 {{ "Week " + selection.week }}
                                 <span class="caret"></span>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-right scrollable-menu" role="menu">
+                            <ul class="dropdown-menu dropdown-menu-right lv-scrollable-menu" role="menu">
                                 <li ng-repeat="week in index[selection.lake].data.get(selection.year)">
                                     <a href="#" ng-click="ChangeWeek(week)">{{ PrettyPrintWeek(week) }}</a>
                                 </li>
@@ -102,7 +102,7 @@
                             {{ index[selection.lake].name }}
                             <span class="caret"></span>
                         </button>
-                        <ul class="dropdown-menu scrollable-menu">
+                        <ul class="dropdown-menu lv-scrollable-menu">
                             <li ng-repeat="lake in index">
                                 <a href="#" ng-click="ChangeLake($index)">{{ lake.name }}</a>
                             </li>
@@ -113,7 +113,7 @@
                             {{ "Year " + selection.year }}
                             <span class="caret"></span>
                         </button>
-                        <ul class="dropdown-menu scrollable-menu" role="menu">
+                        <ul class="dropdown-menu lv-scrollable-menu" role="menu">
                             <li ng-repeat="year in index[selection.lake].years">
                                 <a href="#" ng-click="ChangeYear(year)">{{ year }}</a>
                             </li>
@@ -124,7 +124,7 @@
                             {{ "Week " + selection.week }}
                             <span class="caret"></span>
                         </button>
-                        <ul class="dropdown-menu scrollable-menu" role="menu">
+                        <ul class="dropdown-menu lv-scrollable-menu" role="menu">
                             <li ng-repeat="week in index[selection.lake].data.get(selection.year)">
                                 <a href="#" ng-click="ChangeWeek(week)">{{ PrettyPrintWeek(week) }}</a>
                             </li>
@@ -152,7 +152,7 @@
                 </div>
             </div>
         </nav>
-        <div class="container">
+        <div class="lv-container-dynamic">
             <div class="row">
                 <div ng-controller="TemperatureCtrl" class="col-sm-12 col-lg-6">
                     <div>

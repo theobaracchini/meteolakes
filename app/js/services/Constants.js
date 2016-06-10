@@ -1,1 +1,1 @@
-angular.module('lakeViewApp').constant('DATA_HOST', 'http://aphyspc1.epfl.ch/meteolac/');
+angular.module('lakeViewApp').constant('DATA_HOST', 'http://meteolakes.epfl.ch/meteolac/');
