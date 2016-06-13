@@ -29,8 +29,13 @@ body {
 @media (min-width: 1200px) {
     .lv-container-dynamic {
         width: auto;
-        padding-right: 100px;
-        padding-left: 100px;
+        padding-right: 80px;
+        padding-left: 80px;
+    }
+
+    .lv-extra-padding {
+        padding-right: 35px;
+        padding-left: 35px;
     }
 }
 
