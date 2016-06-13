@@ -125,6 +125,8 @@ angular.module('lakeViewApp').directive('d3Chart', function($window) {
                     updateSize();
                     x.range([0, width]);
                     y.range([height, 0]);
+                    xAxis.ticks(width / 80);
+                    yAxis.ticks(height / 50);
 
                     svg.style('height', (height + margin.top + margin.bottom) + 'px');
 
