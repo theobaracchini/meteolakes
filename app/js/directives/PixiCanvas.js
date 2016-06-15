@@ -1,6 +1,4 @@
 angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
-    var TOP_LEFT = L.point(0, 0);
-    var BOTTOM_RIGHT = L.point(1e6, 1e6);
     var HORIZONTAL_SCALE = 0.02;
     var CRS = L.CRS.Simple;
 
@@ -12,9 +10,50 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
         return CRS.projection.unproject(point);
     }
 
-    function formatCoordinates(latlng) {
-        var p = project(latlng);
-        return Math.round(p.x / HORIZONTAL_SCALE) + ', ' + Math.round(p.y);
+    function initScale(map) {
+        var margin = {top: 10, right: 60, bottom: 20, left: 60};
+
+        var svg = d3.select(map.getPanes().overlayPane)
+            .append('svg')
+            .attr('class', 'lv-scale');
+
+        var g = svg.append('g');
+
+        var scale = g.append('g').attr('class', 'chart-axis');
+
+        var y = d3.scale.linear();
+        var axis = d3.svg.axis()
+            .scale(y)
+            .orient('right')
+            .tickFormat(function(d) { return d + ' m'; });
+
+        map.on('move', resetScale);
+        map.on('viewreset', resetScale);
+
+        function resetScale() {
+            var topLeft = map.containerPointToLayerPoint([0, 0]);
+            L.DomUtil.setPosition(svg.node(), topLeft);
+
+            var size = map.getSize();
+            var topPixel = 0;
+            var topDepth = map.containerPointToLatLng([0, margin.top]).lat;
+            if (topDepth > 0) {
+                topDepth = 0;
+                topPixel = map.latLngToContainerPoint([0, 0]).y - margin.top;
+            }
+            var bottomPixel = size.y - margin.top - margin.bottom;
+            var bottomDepth = map.containerPointToLatLng([0, margin.top + bottomPixel]).lat;
+
+            var height = bottomPixel - topPixel;
+
+            g.attr('transform', 'translate(' + (size.x - margin.right) + ',' + margin.top + ')')
+                .style('visibility', height > 0 ? 'visible' : 'hidden');
+
+            y.range([topPixel, bottomPixel]);
+            y.domain([topDepth, bottomDepth]);
+            axis.ticks(height / 50);
+            scale.call(axis);
+        }
     }
 
     return {
@@ -22,30 +61,60 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
         scope: {
             active: '=',
             setHandler: '&',
+            onClick: '&',
+            marker: '=',
             data: '=',
             draw: '=',
             source: '@',
             labelLeft: '@',
-            labelRight: '@'
+            labelRight: '@',
+            mapImgSrc: '@'
         },
         link: function(scope, element, attrs) {
             element.addClass('lv-map');
             var container = element[0];
 
+            var mapImg = $('<img/>', {
+                class: 'lv-img-overlay',
+                src: scope.mapImgSrc
+            });
+            element.prepend(mapImg);
+
             var bounds;
             var markers;
             var xMax;
-            var map = L.map(container, {crs: CRS, minZoom: -5});
+            var map = L.map(container, {crs: CRS, minZoom: -5, attributionControl: false});
             var canvasLayer = L.canvasLayer({background: true, dataSource: scope.source});
+            var markerLayer;
+
+            var attributionText = '© <a href="https://www.mapbox.com/about/maps/"">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+            L.control.attribution().addAttribution(attributionText).addTo(map);
+
+            var gridHorizontal;
+            var gridVertical;
 
             canvasLayer.addTo(map);
-            L.control.showcoordinates({format: formatCoordinates}).addTo(map);
 
             scope.setHandler({handler: function() {
                 canvasLayer.redraw();
             }});
 
+            map.on('click', function(e) {
+                if (gridHorizontal) {
+                    var p = project(e.latlng);
+                    p.x /= HORIZONTAL_SCALE;
+                    var i = Util.closest(gridHorizontal, p.x, true);
+                    var j = Util.closest(gridVertical, p.y, true);
+                    if (scope.data.Data[i][j]) {
+                        scope.onClick({point: {i: i, j: j}});
+                        scope.$apply();
+                    }
+                }
+            });
+
             canvasLayer.setDrawFunction(scope.draw);
+
+            initScale(map);
 
             scope.$watch('active', function() {
                 if (scope.active) {
@@ -59,21 +128,46 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
                 }
             });
 
+            scope.$watch('marker', function(marker) {
+                if (scope.active && marker) {
+                    // Update marker
+                    var dataPoint = scope.data.Data[marker.i][marker.j];
+                    var x = gridHorizontal[marker.i] * HORIZONTAL_SCALE;
+                    var y = dataPoint.z;
+                    var latlng = unproject(L.point(x, y));
+                    if (markerLayer) {
+                        markerLayer.setLatLng(latlng);
+                    } else {
+                        markerLayer = L.marker(latlng).addTo(map);
+                    }
+                } else {
+                    // Remove marker
+                    if (markerLayer) {
+                        map.removeLayer(markerLayer);
+                        markerLayer = null;
+                    }
+                }
+            });
+
             scope.$watch('data.ready', function() {
                 var data = scope.data;
 
                 var projectedData;
 
                 if (data && data.ready) {
+                    gridHorizontal = [];
+                    gridVertical = [];
                     var sliceLength = 0;
                     var prevI = 0;
                     var prevX;
                     var prevY;
                     projectedData = data.map(function(d, i, j) {
+                        gridVertical[j] = d.z;
                         if (i != prevI) {
                             if (prevX) {
                                 sliceLength += Util.norm([d.x - prevX, d.y - prevY]);
                             }
+                            gridHorizontal[i] = sliceLength;
                             prevI = i;
                             prevX = d.x;
                             prevY = d.y;

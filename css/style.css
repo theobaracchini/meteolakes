@@ -29,8 +29,13 @@ body {
 @media (min-width: 1200px) {
     .lv-container-dynamic {
         width: auto;
-        padding-right: 100px;
-        padding-left: 100px;
+        padding-right: 80px;
+        padding-left: 80px;
+    }
+
+    .lv-extra-padding {
+        padding-right: 35px;
+        padding-left: 35px;
     }
 }
 
@@ -80,12 +85,26 @@ body {
     margin-bottom: 10px;
 }
 
+.lv-img-overlay {
+    width: 20%;
+    position: absolute;
+    z-index: 1;
+    bottom: 0;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+}
+
 .lv-plot {
     margin-bottom: 10px;
 }
 
 .lv-larger-font {
     font-size: 20px;
+}
+
+.lv-scale {
+    width: 100%;
+    height: 100%;
+    z-index: 1;
 }
 
 .leaflet-tile-pane {

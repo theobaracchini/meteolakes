@@ -6,6 +6,7 @@
         <title>Forecasting Hydrodynamic Lake Model</title>
 
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="description" content="3D forecasting hydrodynamic models for real-time lakes monitoring using Delft3D / Modélisations hydrodynamiques en 3D et temps réel pour suivre et prédire l'état des lacs.">
 
         <!-- Integrity hashes generated using https://www.srihash.org/ -->
         <link rel="stylesheet"
@@ -154,7 +155,7 @@
         </nav>
         <div class="lv-container-dynamic">
             <div class="row">
-                <div ng-controller="TemperatureCtrl" class="col-sm-12 col-lg-6">
+                <div ng-controller="TemperatureCtrl" class="col-sm-12 col-lg-6 lv-extra-padding">
                     <div>
                         <ol class="breadcrumb pull-right lv-no-margin">
                             <li class="active"><a href="http://meteolakes.epfl.ch/validation/">Satellite validation</a></li>
@@ -172,20 +173,21 @@
                         <div class="tab-pane" ng-class="{active: tab == 'surface'}">
                             <leaflet-map active="tab == 'surface'" set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="surfaceData" draw="drawTemperatureOverlay"></leaflet-map>
                             <color-legend colors="LEGEND_COLORS" extent="surfaceExtent" label="Temperature (&deg;C)"></color-legend>
-                            <d3-chart set-handler="addAnimationHandler(handler)" data="chartData" label="Temperature (&deg;C)" on-close="closeChart()"></d3-chart>
                         </div>
                         <div class="tab-pane" ng-class="{active: tab == 'sliceXZ'}">
-                            <pixi-canvas active="tab == 'sliceXZ'" set-handler="addAnimationHandler(handler)" data="sliceXZData" draw="drawTemperatureOverlay" source="sliceXZ" label-left="Genève" label-right="Villeneuve"></pixi-canvas>
+                            <pixi-canvas active="tab == 'sliceXZ'" set-handler="addAnimationHandler(handler)" on-click="sliceClicked(point)" marker="chartPoint" data="sliceXZData" draw="drawTemperatureOverlay" source="sliceXZ" label-left="Genève" label-right="Villeneuve" map-img-src="img/slice1.png"></pixi-canvas>
                             <color-legend colors="LEGEND_COLORS" extent="sliceXZExtent" label="Temperature (&deg;C)"></color-legend>
                         </div>
                         <div class="tab-pane" ng-class="{active: tab == 'sliceYZ'}">
-                            <pixi-canvas active="tab == 'sliceYZ'" set-handler="addAnimationHandler(handler)" data="sliceYZData" draw="drawTemperatureOverlay" source="sliceYZ" label-left="Lausanne" label-right="Évian"></pixi-canvas>
+                            <pixi-canvas active="tab == 'sliceYZ'" set-handler="addAnimationHandler(handler)" on-click="sliceClicked(point)" marker="chartPoint" data="sliceYZData" draw="drawTemperatureOverlay" source="sliceYZ" label-left="Évian" label-right="Lausanne" map-img-src="img/slice2.png"></pixi-canvas>
                             <color-legend colors="LEGEND_COLORS" extent="sliceYZExtent" label="Temperature (&deg;C)"></color-legend>
                         </div>
                     </div>
+
+                    <d3-chart set-handler="addAnimationHandler(handler)" data="chartData" label="Temperature (&deg;C)" on-close="closeChart()"></d3-chart>
                 </div>
 
-                <div ng-controller="VelocityCtrl" class="col-sm-12 col-lg-6">
+                <div ng-controller="VelocityCtrl" class="col-sm-12 col-lg-6 lv-extra-padding">
                     <h3>Velocity</h3>
 
                     <ul class="nav nav-tabs">
