@@ -1,6 +1,4 @@
 angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
-    var TOP_LEFT = L.point(0, 0);
-    var BOTTOM_RIGHT = L.point(1e6, 1e6);
     var HORIZONTAL_SCALE = 0.02;
     var CRS = L.CRS.Simple;
 
@@ -15,6 +13,52 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
     function formatCoordinates(latlng) {
         var p = project(latlng);
         return Math.round(p.x / HORIZONTAL_SCALE) + ', ' + Math.round(p.y);
+    }
+
+    function initScale(map) {
+        var margin = {top: 10, right: 60, bottom: 20, left: 60};
+
+        var svg = d3.select(map.getPanes().overlayPane)
+            .append('svg')
+            .attr('class', 'lv-scale');
+
+        var g = svg.append('g');
+
+        var scale = g.append('g').attr('class', 'chart-axis');
+
+        var y = d3.scale.linear();
+        var axis = d3.svg.axis()
+            .scale(y)
+            .orient('right')
+            .tickFormat(function(d) { return d + ' m'; });
+
+        map.on('move', resetScale);
+        map.on('viewreset', resetScale);
+
+        function resetScale() {
+            var topLeft = map.containerPointToLayerPoint([0, 0]);
+            L.DomUtil.setPosition(svg.node(), topLeft);
+
+            var size = map.getSize();
+            var topPixel = 0;
+            var topDepth = map.containerPointToLatLng([0, margin.top]).lat;
+            if (topDepth > 0) {
+                topDepth = 0;
+                topPixel = map.latLngToContainerPoint([0, 0]).y - margin.top;
+            }
+            var bottomPixel = size.y - margin.top - margin.bottom;
+            var bottomDepth = map.containerPointToLatLng([0, margin.top + bottomPixel]).lat;
+
+            var height = bottomPixel - topPixel;
+
+            g.attr('transform', 'translate(' + (size.x - margin.right) + ',' + margin.top + ')')
+                .style('visibility', height > 0 ? 'visible' : 'hidden');
+
+            y.range([topPixel, bottomPixel]);
+            y.domain([topDepth, bottomDepth]);
+            axis.ticks(height / 50);
+            scale.call(axis);
+        }
     }
 
     return {
@@ -46,6 +90,8 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
             }});
 
             canvasLayer.setDrawFunction(scope.draw);
+
+            initScale(map);
 
             scope.$watch('active', function() {
                 if (scope.active) {
