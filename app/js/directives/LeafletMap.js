@@ -115,7 +115,7 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer, Show
             });
 
             scope.$watch('marker', function(marker) {
-                if (marker) {
+                if (scope.active && marker) {
                     // Update marker
                     var latlng = unproject(marker);
                     if (markerLayer) {
@@ -127,7 +127,7 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer, Show
                     // Remove marker
                     if (markerLayer) {
                         map.removeLayer(markerLayer);
-                        markerLayer = undefined;
+                        markerLayer = null;
                     }
                 }
             });

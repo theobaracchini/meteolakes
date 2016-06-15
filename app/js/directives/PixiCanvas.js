@@ -66,6 +66,8 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
         scope: {
             active: '=',
             setHandler: '&',
+            onClick: '&',
+            marker: '=',
             data: '=',
             draw: '=',
             source: '@',
@@ -81,6 +83,10 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
             var xMax;
             var map = L.map(container, {crs: CRS, minZoom: -5});
             var canvasLayer = L.canvasLayer({background: true, dataSource: scope.source});
+            var markerLayer;
+
+            var gridHorizontal;
+            var gridVertical;
 
             canvasLayer.addTo(map);
             L.control.showcoordinates({format: formatCoordinates}).addTo(map);
@@ -88,6 +94,19 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
             scope.setHandler({handler: function() {
                 canvasLayer.redraw();
             }});
+
+            map.on('click', function(e) {
+                if (gridHorizontal) {
+                    var p = project(e.latlng);
+                    p.x /= HORIZONTAL_SCALE;
+                    var i = Util.closest(gridHorizontal, p.x, true);
+                    var j = Util.closest(gridVertical, p.y, true);
+                    if (scope.data.Data[i][j]) {
+                        scope.onClick({point: {i: i, j: j}});
+                        scope.$apply();
+                    }
+                }
+            });
 
             canvasLayer.setDrawFunction(scope.draw);
 
@@ -105,21 +124,46 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
                 }
             });
 
+            scope.$watch('marker', function(marker) {
+                if (scope.active && marker) {
+                    // Update marker
+                    var dataPoint = scope.data.Data[marker.i][marker.j];
+                    var x = gridHorizontal[marker.i] * HORIZONTAL_SCALE;
+                    var y = dataPoint.z;
+                    var latlng = unproject(L.point(x, y));
+                    if (markerLayer) {
+                        markerLayer.setLatLng(latlng);
+                    } else {
+                        markerLayer = L.marker(latlng).addTo(map);
+                    }
+                } else {
+                    // Remove marker
+                    if (markerLayer) {
+                        map.removeLayer(markerLayer);
+                        markerLayer = null;
+                    }
+                }
+            });
+
             scope.$watch('data.ready', function() {
                 var data = scope.data;
 
                 var projectedData;
 
                 if (data && data.ready) {
+                    gridHorizontal = [];
+                    gridVertical = [];
                     var sliceLength = 0;
                     var prevI = 0;
                     var prevX;
                     var prevY;
                     projectedData = data.map(function(d, i, j) {
+                        gridVertical[j] = d.z;
                         if (i != prevI) {
                             if (prevX) {
                                 sliceLength += Util.norm([d.x - prevX, d.y - prevY]);
                             }
+                            gridHorizontal[i] = sliceLength;
                             prevI = i;
                             prevX = d.x;
                             prevY = d.y;

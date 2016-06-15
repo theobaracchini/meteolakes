@@ -44,7 +44,7 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
     };
 
     $scope.closeChart = function() {
-        $scope.chartPoint = undefined;
+        $scope.chartPoint = null;
     };
 
     $scope.drawTemperatureOverlay = function(data, options) {
@@ -111,10 +111,15 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
         $scope.chartPoint = nearestNeighbor.query(point);
     };
 
+    $scope.sliceClicked = function(point) {
+        $scope.chartPoint = point;
+    };
+
     $scope.setTab = function(tab) {
+        $scope.closeChart();
         $scope.tab = tab;
         animate();
-    }
+    };
 
     function generateColorFunction(extent) {
         var minValue = extent[0];
@@ -128,14 +133,16 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
 
     function updateChart(point) {
         if (point) {
-            var data = $scope.surfaceData.Data[point.i][point.j];
+            var temporalData = $scope[$scope.tab + 'Data'];
+            var data = temporalData.Data[point.i][point.j];
             $scope.chartData = {
                 x: data.x,
                 y: data.y,
-                data: $scope.surfaceData.withTimeSteps(data.values)
+                z: data.z,
+                data: temporalData.withTimeSteps(data.values)
             };
         } else {
-            $scope.chartData = undefined;
+            $scope.chartData = null;
         }
     }
 

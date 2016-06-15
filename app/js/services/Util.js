@@ -2,17 +2,23 @@ angular.module('lakeViewApp').service('Util', function() {
     /**
       * finds the entry closest to <query> in <collection>
       */
-    this.closest = function(collection, query) {
+    this.closest = function(collection, query, returnIndex) {
         var minDiff = Number.MAX_VALUE;
         var result;
-        collection.forEach(function(entry) {
+        var resultIndex;
+        collection.forEach(function(entry, i) {
             var diff = Math.abs(entry - query);
             if(diff < minDiff) {
                 minDiff = diff;
                 result = entry;
+                resultIndex = i;
             }
         });
-        return result;
+        if (returnIndex) {
+            return resultIndex;
+        } else {
+            return result;
+        }
     }
 
     /**

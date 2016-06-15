@@ -29,7 +29,7 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, Time, 
     };
 
     $scope.closeChart = function() {
-        $scope.chartPoint = undefined;
+        $scope.chartPoint = null;
     };
 
     $scope.drawVelocityOverlay = function(data, options) {
@@ -141,7 +141,7 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, Time, 
                 data: $scope.surfaceData.withTimeSteps(values)
             };
         } else {
-            $scope.chartData = undefined;
+            $scope.chartData = null;
         }
     }
 

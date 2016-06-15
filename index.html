@@ -173,17 +173,18 @@
                         <div class="tab-pane" ng-class="{active: tab == 'surface'}">
                             <leaflet-map active="tab == 'surface'" set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="surfaceData" draw="drawTemperatureOverlay"></leaflet-map>
                             <color-legend colors="LEGEND_COLORS" extent="surfaceExtent" label="Temperature (&deg;C)"></color-legend>
-                            <d3-chart set-handler="addAnimationHandler(handler)" data="chartData" label="Temperature (&deg;C)" on-close="closeChart()"></d3-chart>
                         </div>
                         <div class="tab-pane" ng-class="{active: tab == 'sliceXZ'}">
-                            <pixi-canvas active="tab == 'sliceXZ'" set-handler="addAnimationHandler(handler)" data="sliceXZData" draw="drawTemperatureOverlay" source="sliceXZ" label-left="Genève" label-right="Villeneuve"></pixi-canvas>
+                            <pixi-canvas active="tab == 'sliceXZ'" set-handler="addAnimationHandler(handler)" on-click="sliceClicked(point)" marker="chartPoint" data="sliceXZData" draw="drawTemperatureOverlay" source="sliceXZ" label-left="Genève" label-right="Villeneuve"></pixi-canvas>
                             <color-legend colors="LEGEND_COLORS" extent="sliceXZExtent" label="Temperature (&deg;C)"></color-legend>
                         </div>
                         <div class="tab-pane" ng-class="{active: tab == 'sliceYZ'}">
-                            <pixi-canvas active="tab == 'sliceYZ'" set-handler="addAnimationHandler(handler)" data="sliceYZData" draw="drawTemperatureOverlay" source="sliceYZ" label-left="Évian" label-right="Lausanne"></pixi-canvas>
+                            <pixi-canvas active="tab == 'sliceYZ'" set-handler="addAnimationHandler(handler)" on-click="sliceClicked(point)" marker="chartPoint" data="sliceYZData" draw="drawTemperatureOverlay" source="sliceYZ" label-left="Évian" label-right="Lausanne"></pixi-canvas>
                             <color-legend colors="LEGEND_COLORS" extent="sliceYZExtent" label="Temperature (&deg;C)"></color-legend>
                         </div>
                     </div>
+
+                    <d3-chart set-handler="addAnimationHandler(handler)" data="chartData" label="Temperature (&deg;C)" on-close="closeChart()"></d3-chart>
                 </div>
 
                 <div ng-controller="VelocityCtrl" class="col-sm-12 col-lg-6 lv-extra-padding">
