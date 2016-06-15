@@ -10,11 +10,6 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
         return CRS.projection.unproject(point);
     }
 
-    function formatCoordinates(latlng) {
-        var p = project(latlng);
-        return Math.round(p.x / HORIZONTAL_SCALE) + ', ' + Math.round(p.y);
-    }
-
     function initScale(map) {
         var margin = {top: 10, right: 60, bottom: 20, left: 60};
 
@@ -72,24 +67,33 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
             draw: '=',
             source: '@',
             labelLeft: '@',
-            labelRight: '@'
+            labelRight: '@',
+            mapImgSrc: '@'
         },
         link: function(scope, element, attrs) {
             element.addClass('lv-map');
             var container = element[0];
 
+            var mapImg = $('<img/>', {
+                class: 'lv-img-overlay',
+                src: scope.mapImgSrc
+            });
+            element.prepend(mapImg);
+
             var bounds;
             var markers;
             var xMax;
-            var map = L.map(container, {crs: CRS, minZoom: -5});
+            var map = L.map(container, {crs: CRS, minZoom: -5, attributionControl: false});
             var canvasLayer = L.canvasLayer({background: true, dataSource: scope.source});
             var markerLayer;
+
+            var attributionText = '© <a href="https://www.mapbox.com/about/maps/"">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+            L.control.attribution().addAttribution(attributionText).addTo(map);
 
             var gridHorizontal;
             var gridVertical;
 
             canvasLayer.addTo(map);
-            L.control.showcoordinates({format: formatCoordinates}).addTo(map);
 
             scope.setHandler({handler: function() {
                 canvasLayer.redraw();

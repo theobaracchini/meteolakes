@@ -85,6 +85,14 @@ body {
     margin-bottom: 10px;
 }
 
+.lv-img-overlay {
+    width: 20%;
+    position: absolute;
+    z-index: 1;
+    bottom: 0;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+}
+
 .lv-plot {
     margin-bottom: 10px;
 }
