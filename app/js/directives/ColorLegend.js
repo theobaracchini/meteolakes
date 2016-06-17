@@ -15,15 +15,18 @@ angular.module('lakeViewApp').directive('colorLegend', function() {
             count++;
             var gradientId = 'color-legend-gradient-' + count;
 
-            var w = 300;
+            var w = 250;
             var h = 80;
-            var key = d3.select(container)
+            var margin = {top: 10, right: 20, bottom: 10, left: 10};
+            var width = w - margin.left - margin.right;
+            var height = h - margin.top - margin.bottom;
+
+            var svg = d3.select(container)
                 .append('svg')
-                .attr('id', 'key')
                 .attr('width', w)
                 .attr('height', h);
 
-            var gradient = key
+            var gradient = svg
                 .append('defs')
                 .append('linearGradient')
                 .attr('id', gradientId)
@@ -32,6 +35,9 @@ angular.module('lakeViewApp').directive('colorLegend', function() {
                 .attr('x2', '100%')
                 .attr('y2', '100%')
                 .attr('spreadMethod', 'pad');
+
+            var g = svg.append('g')
+                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
             scope.colors.forEach(function(color, i) {
                 var offset = i * 100 / (scope.colors.length - 1);
@@ -42,20 +48,20 @@ angular.module('lakeViewApp').directive('colorLegend', function() {
                     .attr('stop-opacity', 1);
             });
 
-            key
+            g
                 .append('rect')
-                .attr('width', w - 100)
-                .attr('height', h - 60)
+                .attr('width', width)
+                .attr('height', 20)
                 .style('fill', 'url(#' + gradientId + ')');
 
-            var legend = key
+            var legend = g
                 .append('g')
                 .attr('class', 'chart-axis x')
                 .attr('transform', 'translate(0, 22)');
 
             legend
                 .append('text')
-                .attr('y', 42)
+                .attr('y', 40)
                 .attr('dx', '.71em')
                 .style('text-anchor', 'start')
                 .text(scope.label);
@@ -63,7 +69,7 @@ angular.module('lakeViewApp').directive('colorLegend', function() {
             scope.$watch('extent', function(extent) {
                 if (extent) {
                     var x = d3.scale.linear()
-                        .range([0, 200])
+                        .range([0, width])
                         .domain(extent);
 
                     var xAxis = d3.svg.axis()
