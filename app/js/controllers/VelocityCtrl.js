@@ -138,6 +138,7 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, Time, 
             $scope.chartData = {
                 x: data.x,
                 y: data.y,
+                z: data.z,                
                 data: $scope.surfaceData.withTimeSteps(values)
             };
         } else {
