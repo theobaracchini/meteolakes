@@ -110,7 +110,7 @@ angular.module('lakeViewApp').directive('d3Chart', function($window) {
                         enableTransition = false;
                     }
                     data = values.data;
-                    label = 'Location: ' + values.x + ' / ' + values.y;
+                    label = 'Location: ' + values.x + ' / ' + values.y + ' / ' + values.z + ' m ';
                     x.domain(d3.extent(data, function(d) { return d.date; }));
                     y.domain(d3.extent(data, function(d) { return d.value; }));
                     show();

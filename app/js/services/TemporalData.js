@@ -87,7 +87,7 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
                 if (config.NumberOfCoordinates > 2) {
                     var z = +row[2 * config.GridHeight + i];
                 } else {
-                    var z = 0;
+                    var z = -0.5;
                 }
                 if (isNaN(x) || isNaN(y) || isNaN(z)) {
                     // No data for this cell
