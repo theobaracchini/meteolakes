@@ -10,39 +10,39 @@
 
         <!-- Integrity hashes generated using https://www.srihash.org/ -->
         <link rel="stylesheet"
-              href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css"
-              integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+              href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
+              integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
               crossorigin="anonymous">
         <link rel="stylesheet"
-              href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css"
-              integrity="sha384-99ZJFcuBCh9c/V/+8YwDX/TUGG8JWMG+gKFJWzk0BZP3IoDMN+pLGd3/H0yjg4oa"
+              href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.1/leaflet.css"
+              integrity="sha384-jbhYDFfm+l6mA6jJUD5X/yv7LoRqVSoV/P77fNwITqMNlHHVIdSwj3SexyasxFL/"
               crossorigin="anonymous">
         <link rel="stylesheet" href="css/style.css">
         <link rel="apple-touch-icon" href="favicon-152.png">
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"
-                integrity="sha384-8C+3bW/ArbXinsJduAjm9O7WNnuOcO+Bok/VScRYikawtvz4ZPrpXtGfKIewM9dK"
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"
+                integrity="sha384-3ceskX3iaEnIogmQchP8opvBy3Mi7Ce34nWjpBIwVTHfGYWQS9jwHDVRnpKKHJg7"
                 crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0/angular.min.js"
-                integrity="sha384-BPMnzv7+uWH6t3p3zaT3Qj/ckYZnlZepRTJeBRHfBGRBrHhQ2CX19al1HozjDv7r"
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular.min.js"
+                integrity="sha384-V6/dyDFv85/V/Ktq3ez5B80/c9ZY7jV9c/319rqwNOz3h9CIPdd2Eve0UQBYMMr/"
                 crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.min.js"
                 integrity="sha384-niXt6LHz3/5ICmM9SeKzwJ/Q+a+7097SlA8uRtZSe0ISV5OpJZEVngjobdrYk8UZ"
+                crossorigin="anonymous"></script><!-- D3 v4.2.6 doesn't work without changes -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.0.3/pixi.min.js"
+                integrity="sha384-l81Oviy56vaxUxI/cKDw9EHRakP0AOgBUqIhi+O436s3HuHprPtS0uBNO+ntcMH4"
                 crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/3.0.10/pixi.min.js"
-                integrity="sha384-hwATRINVJeAKm4yd1+IoEScwjlu5Id1G61Zlk2uZ+3SIqCnF3AGAoUDc9xuVTfrO"
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"
+                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
                 crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"
-                integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.1/leaflet.js"
+                integrity="sha384-xIDZe7Rjf3zto7vxSiATvetbjxGp5h2blkw/D3E6xEAZNWn+FVroKGwI/156TkSs"
                 crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"
-                integrity="sha384-Lh7SNUss9JoImCvc96eCUnLX3HvY4kb0UZCWZbYWvceJ+o5CJeOJqqNoheaGkNHT"
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.15/proj4.js"
+                integrity="sha384-ZAL5WXJ2KrnElgEB6zIkYibJOI6IbT/NAtVIbw+sDGkTg5kIO5tg2Ntfp/kY3Ijz"
                 crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.12/proj4.js"
-                integrity="sha384-g71Vd1BhAzR1AWGvw5hCQvG8P8DqJCCPUvoTqnSxsXOecKi7SayxNDUqZ06bHeEb"
-                crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"
-                integrity="sha384-YArKvVMcKCuBUlxmMEAE42BQa4x1hG0HqJPYVMdND/0qv4E+HbCK724R+NqCKBDM"
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"
+                integrity="sha384-7pfELK0arQ3VANqV4kiPWPh5wOsrfitjFGF/NdyHXUJ3JJPy/rNhasPtdkaNKhul"
                 crossorigin="anonymous"></script>
 
         <script src="dist/js/bundle.min.js"></script>
