@@ -8,10 +8,15 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
         this.ready = false;
         this.available = true;
         this.valueAccessor = function(d) { return d; };
+        this.cropPercentile = 0; // Percentile of data to limit color scale to
     }
 
     TemporalData.prototype.setValueAccessor = function(valueAccessor) {
         this.valueAccessor = valueAccessor;
+    }
+    
+    TemporalData.prototype.setCropPercentile = function(cropPercentile) {
+        this.cropPercentile = cropPercentile;
     }
 
     TemporalData.prototype.map = function(fn) {
@@ -139,8 +144,13 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
         var minValue = d3.min(this.flatArray, function(d) { return d3.min(d.values, valueAccessor) });
         var maxValue = d3.max(this.flatArray, function(d) { return d3.max(d.values, valueAccessor) });
         this.valueExtent = [minValue, maxValue];
-        var flatArr = [].concat.apply([], this.flatArray.map(function(d){ return d.values.map(valueAccessor) })); // Create a 2D array with only the values at each position, then flatten that array
-        this.scaleExtent = [stats.percentile(flatArr, 0.05), stats.percentile(flatArr, 0.95)];
+        
+        if(this.cropPercentile > 0){
+            var flatArr = [].concat.apply([], this.flatArray.map(function(d){ return d.values.map(valueAccessor) })); // Create a 2D array with only the values at each position, then flatten that array
+            this.scaleExtent = [stats.percentile(flatArr, this.cropPercentile), stats.percentile(flatArr, 1-this.cropPercentile)];
+        } else {
+            this.scaleExtent = this.valueExtent;
+        }
     }
 
     TemporalData.prototype.computeTimeSteps = function(selection) {
