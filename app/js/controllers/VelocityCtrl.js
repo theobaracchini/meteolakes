@@ -12,7 +12,7 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, Time, 
         $scope.surfaceData.readData(timeSelection).then(function() {
             colorFunction = generateColorFunction($scope.surfaceData.scaleExtent);
             nearestNeighbor = NearestNeighbor($scope.surfaceData);
-            $scope.surfaceExtent = $scope.surfaceData.valueExtent;
+            $scope.surfaceExtent = $scope.surfaceData.scaleExtent; // used for the color legend
             $scope.$emit('dataReady', $scope.surfaceData.timeSteps);
             animate();
         });

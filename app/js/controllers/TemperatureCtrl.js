@@ -23,7 +23,7 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
                 if (source == 'surface') {
                     nearestNeighbor = NearestNeighbor($scope.surfaceData);
                 }
-                $scope[source + 'Extent'] = temporalData.valueExtent;
+                $scope[source + 'Extent'] = temporalData.scaleExtent; // This one is used for the color legend
                 animate();
             }, function(err) {
                 if ($scope.tab == source) {
