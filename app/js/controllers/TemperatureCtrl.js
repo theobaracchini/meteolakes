@@ -3,7 +3,7 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
     var nearestNeighbor;
     var animationHandlers = [];
 
-    $scope.LEGEND_COLORS = ['purple', 'cyan', 'lime', 'red'];
+    $scope.LEGEND_COLORS = ['blue','cyan','lime','yellow','red'];
 
     $scope.tab = 'surface';
 
@@ -19,7 +19,7 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
         dataSources.forEach(function(source) {
             var temporalData = $scope[source + 'Data'];
             temporalData.readData(timeSelection).then(function() {
-                colorFunctions[source] = generateColorFunction(temporalData.valueExtent);
+                colorFunctions[source] = generateColorFunction(temporalData.scaleExtent);
                 if (source == 'surface') {
                     nearestNeighbor = NearestNeighbor($scope.surfaceData);
                 }
