@@ -10,7 +10,7 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, Time, 
 
     $scope.$on('updateTimeSelection', function(evt, timeSelection) {
         $scope.surfaceData.readData(timeSelection).then(function() {
-            colorFunction = generateColorFunction($scope.surfaceData.valueExtent);
+            colorFunction = generateColorFunction($scope.surfaceData.scaleExtent);
             nearestNeighbor = NearestNeighbor($scope.surfaceData);
             $scope.surfaceExtent = $scope.surfaceData.valueExtent;
             $scope.$emit('dataReady', $scope.surfaceData.timeSteps);

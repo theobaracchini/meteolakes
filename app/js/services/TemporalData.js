@@ -1,4 +1,5 @@
-angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, DateHelpers) {
+angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, DateHelpers, stats) {
+    
     var TemporalData = function(fieldName, suffix) {
         this.fieldName = fieldName;
         this.suffix = suffix ? suffix : '';
@@ -134,10 +135,12 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
         this.yExtent = d3.extent(this.flatArray, function(d) { return d.y });
         this.zExtent = d3.extent(this.flatArray, function(d) { return d.z });
 
-        var valueAccessor = this.valueAccessor;
+        var valueAccessor = this.valueAccessor; // Value accessor: Returns absolute value, e.g. the norm in case of velocity vectors
         var minValue = d3.min(this.flatArray, function(d) { return d3.min(d.values, valueAccessor) });
         var maxValue = d3.max(this.flatArray, function(d) { return d3.max(d.values, valueAccessor) });
         this.valueExtent = [minValue, maxValue];
+        var flatArr = [].concat.apply([], this.flatArray.map(function(d){ return d.values.map(valueAccessor) })); // Create a 2D array with only the values at each position, then flatten that array
+        this.scaleExtent = [stats.percentile(flatArr, 0.05), stats.percentile(flatArr, 0.95)];
     }
 
     TemporalData.prototype.computeTimeSteps = function(selection) {
