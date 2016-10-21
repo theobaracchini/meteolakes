@@ -1,7 +1,6 @@
 'use strict';
 
 var gulp = require('gulp');
-var gutil = require('gulp-util');
 
 var concat = require('gulp-concat');
 var connect = require('gulp-connect');
@@ -14,16 +13,16 @@ var sources = ['app/js/app.js', 'app/js/**/*.js', 'app/vendor/js/rbush/module.js
 gulp.task('build-dev', function () {
     gulp.src(sources)
         .pipe(sourcemaps.init())
+        .pipe(ngAnnotate())
         .pipe(concat('bundle.min.js'))
-        .pipe(ngAnnotate()).on('error', gutil.log) // In case of parse error, comment out this line temporarily, then bundle.min.js is written and can be debugged
         .pipe(sourcemaps.write())
         .pipe(gulp.dest('./dist/js/'));
 });
 
 gulp.task('build-prod', function () {
     gulp.src(sources)
+        .pipe(ngAnnotate())
         .pipe(concat('bundle.min.js'))
-        .pipe(ngAnnotate()).on('error', gutil.log)
         .pipe(uglify())
         .pipe(gulp.dest('./dist/js/'));
 });
