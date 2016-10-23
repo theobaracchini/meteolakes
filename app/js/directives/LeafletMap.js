@@ -88,18 +88,18 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer, Show
 
             var bounds;
             var map = initMapbox(container);
-            var canvasLayer = L.canvasLayer({dataSource: 'surface'});
+            var canvasLayer = L.canvasLayer({ dataSource: 'surface' });
             var markerLayer;
 
             canvasLayer.addTo(map);
-            L.control.showcoordinates({format: formatCoordinates}).addTo(map);
+            L.control.showcoordinates({ format: formatCoordinates }).addTo(map);
 
-            scope.setHandler({handler: function() {
+            scope.setHandler({ handler: function() {
                 canvasLayer.redraw();
-            }});
+            } });
 
             map.on('click', function(e) {
-                scope.onClick({point: project(e.latlng)});
+                scope.onClick({ point: project(e.latlng) });
                 scope.$apply();
             });
 
@@ -146,7 +146,7 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer, Show
                             lat: latlng.lat,
                             lng: latlng.lng,
                             values: d.values
-                        }
+                        };
                     });
                     canvasLayer.setData(projectedData);
                 }

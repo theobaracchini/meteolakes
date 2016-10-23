@@ -41,7 +41,15 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, Time, 
 
             cellSize = r / 2,
             grid = [],
-            i, len, d, p, cell, x, y, j, len2;
+            i,
+            len,
+            d,
+            p,
+            cell,
+            x,
+            y,
+            j,
+            len2;
 
         for (i = 0, len = data.length; i < len; i++) {
             var row = data[i];
@@ -79,8 +87,8 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, Time, 
                     if (cell) {
                         var x = cell[0] / cell[4];
                         var y = cell[1] / cell[4];
-                        var dx = cell[2] / cell[4]
-                        var dy = cell[3] / cell[4]
+                        var dx = cell[2] / cell[4];
+                        var dy = cell[3] / cell[4];
                         var color = colorFunction([dx, dy]);
 
                         // TODO use max velocity to determine scale factor
@@ -128,7 +136,7 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, Time, 
         return function(vec) {
             var fn = d3.scale.linear().domain(domain).range($scope.LEGEND_COLORS);
             return fn(Util.norm(vec));
-        }
+        };
     }
 
     function updateChart(point) {
@@ -138,7 +146,7 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, Time, 
             $scope.chartData = {
                 x: data.x,
                 y: data.y,
-                z: data.z,                
+                z: data.z,
                 data: $scope.surfaceData.withTimeSteps(values)
             };
         } else {

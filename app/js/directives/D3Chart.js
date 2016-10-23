@@ -34,7 +34,7 @@ angular.module('lakeViewApp').directive('d3Chart', function($window) {
                     scope.$apply();
                 });
 
-            var margin = {top: 20, right: 20, bottom: 30, left: 50};
+            var margin = { top: 20, right: 20, bottom: 30, left: 50 };
             var width = 0;
             var height = 0;
 
@@ -45,8 +45,8 @@ angular.module('lakeViewApp').directive('d3Chart', function($window) {
             // x axis format: Show hours/minutes if nonzero, otherwise
             // show short month name and day of the month
             var format = d3.time.format.multi([
-                ["%H:%M", function(d) { return d.getHours() || d.getMinutes(); }],
-                ["%b %d", function() { return true; }]
+                ['%H:%M', function(d) { return d.getHours() || d.getMinutes(); }],
+                ['%b %d', function() { return true; }]
             ]);
 
             var xAxis = d3.svg.axis()
@@ -90,10 +90,10 @@ angular.module('lakeViewApp').directive('d3Chart', function($window) {
             g.append('line')
                 .attr('class', 'chart-vertical-line');
 
-            scope.setHandler({handler: function(newStep) {
+            scope.setHandler({ handler: function(newStep) {
                 step = newStep;
                 render();
-            }});
+            } });
 
             // Run digest on window resize; this is required to detect container size changes
             angular.element($window).bind('resize', function() {
@@ -147,10 +147,10 @@ angular.module('lakeViewApp').directive('d3Chart', function($window) {
 
                     var linePosition = x(data[step].date);
                     renderRoot.select('.chart-vertical-line')
-                        .attr("x1", linePosition)
-                        .attr("x2", linePosition)
-                        .attr("y1", 0)
-                        .attr("y2", height);
+                        .attr('x1', linePosition)
+                        .attr('x2', linePosition)
+                        .attr('y1', 0)
+                        .attr('y2', height);
                 }
             }
 

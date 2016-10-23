@@ -1,5 +1,4 @@
 angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, DateHelpers, stats) {
-    
     var TemporalData = function(fieldName, suffix) {
         this.fieldName = fieldName;
         this.suffix = suffix ? suffix : '';
@@ -9,15 +8,15 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
         this.available = true;
         this.valueAccessor = function(d) { return d; };
         this.cropPercentile = 0; // Percentile of data to limit color scale to
-    }
+    };
 
     TemporalData.prototype.setValueAccessor = function(valueAccessor) {
         this.valueAccessor = valueAccessor;
-    }
+    };
     
     TemporalData.prototype.setCropPercentile = function(cropPercentile) {
         this.cropPercentile = cropPercentile;
-    }
+    };
 
     TemporalData.prototype.map = function(fn) {
         return this.Data.map(function(d, i) {
@@ -25,7 +24,7 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
                 return d0 ? fn(d0, i, j) : null;
             });
         });
-    }
+    };
 
     TemporalData.prototype.readData = function(selection) {
         this.ready = false;
@@ -35,11 +34,11 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
         var week = selection.week;
 
         return $q(function(resolve, reject) {
-            var valuesFile = DATA_HOST + selection.folder + '/' + year + '/' + me.fieldName + '/data_week' + week + me.suffix + '.csv'; 
+            var valuesFile = DATA_HOST + selection.folder + '/' + year + '/' + me.fieldName + '/data_week' + week + me.suffix + '.csv';
 
             // Read the data config
             d3.json(valuesFile + '.json', function(err, config) {
-                if(err) {
+                if (err) {
                     me.available = false;
                     reject('File not found: ' + valuesFile);
                 } else {
@@ -54,7 +53,7 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
                 }
             });
         });
-    }
+    };
 
     TemporalData.prototype.parseConfig = function(config) {
         if (!config.Version) {
@@ -64,14 +63,14 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
         if (config.Version < 2) {
             config.NumberOfCoordinates = 2;
         }
-    }
+    };
 
     TemporalData.prototype.readArray = function(file, config) {
         var me = this;
 
         return $q(function(resolve, reject) {
             d3.text(file, function(err, data) {
-                if(err) {
+                if (err) {
                     reject('File not found: ' + file);
                 } else {
                     me.parseCSV(config, data);
@@ -79,7 +78,7 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
                 }
             });
         });
-    }
+    };
 
     TemporalData.prototype.parseCSV = function(config, data) {
         var me = this;
@@ -133,17 +132,18 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
             }
             return parsedRow;
         });
-    }
+    };
 
     TemporalData.prototype.resetBounds = function() {
-        this.xExtent = d3.extent(this.flatArray, function(d) { return d.x });
-        this.yExtent = d3.extent(this.flatArray, function(d) { return d.y });
-        this.zExtent = d3.extent(this.flatArray, function(d) { return d.z });
+        this.xExtent = d3.extent(this.flatArray, function(d) { return d.x; });
+        this.yExtent = d3.extent(this.flatArray, function(d) { return d.y; });
+        this.zExtent = d3.extent(this.flatArray, function(d) { return d.z; });
 
         var valueAccessor = this.valueAccessor; // Value accessor: Returns absolute value, e.g. the norm in case of velocity vectors
-        var minValue = d3.min(this.flatArray, function(d) { return d3.min(d.values, valueAccessor) });
-        var maxValue = d3.max(this.flatArray, function(d) { return d3.max(d.values, valueAccessor) });
+        var minValue = d3.min(this.flatArray, function(d) { return d3.min(d.values, valueAccessor); });
+        var maxValue = d3.max(this.flatArray, function(d) { return d3.max(d.values, valueAccessor); });
         this.valueExtent = [minValue, maxValue];
+<<<<<<< HEAD
         
         if(this.cropPercentile > 0){
             var flatArr = [].concat.apply([], this.flatArray.map(function(d){ return d.values.map(valueAccessor) })); // Create a 2D array with only the values at each position, then flatten that array
@@ -152,6 +152,11 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
             this.scaleExtent = this.valueExtent;
         }
     }
+=======
+        var flatArr = [].concat.apply([], this.flatArray.map(function(d) { return d.values.map(valueAccessor); })); // Create a 2D array with only the values at each position, then flatten that array
+        this.scaleExtent = [stats.percentile(flatArr, 0.05), stats.percentile(flatArr, 0.95)];
+    };
+>>>>>>> Fix lint errors automatically using `gulp lint-fix`
 
     TemporalData.prototype.computeTimeSteps = function(selection) {
         var result = [];
@@ -162,7 +167,7 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
             result.push(step);
         }
         return result;
-    }
+    };
 
     TemporalData.prototype.withTimeSteps = function(values) {
         var resultLength = Math.min(values.length, this.timeSteps.length);
@@ -174,7 +179,7 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
             });
         }
         return result;
-    }
+    };
 
     return TemporalData;
 });

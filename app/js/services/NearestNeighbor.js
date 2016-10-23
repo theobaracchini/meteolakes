@@ -17,6 +17,6 @@ angular.module('lakeViewApp').factory('NearestNeighbor', function(rbush, knn) {
             query: function(point) {
                 return knn(knnTree, [point.x, point.y], 1)[0];
             }
-        }
-    }
+        };
+    };
 });

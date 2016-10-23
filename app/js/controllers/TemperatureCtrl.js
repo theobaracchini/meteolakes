@@ -3,7 +3,7 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
     var nearestNeighbor;
     var animationHandlers = [];
 
-    $scope.LEGEND_COLORS = ['blue','cyan','lime','yellow','red'];
+    $scope.LEGEND_COLORS = ['blue', 'cyan', 'lime', 'yellow', 'red'];
 
     $scope.tab = 'surface';
 
@@ -84,7 +84,6 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
 
                 // Check if all points are defined
                 if (points.every(function(p) { return p; })) {
-
                     // Check if any point is within bounds
                     if (points.some(function(p) { return bounds.contains(p.p); })) {
                         var color = colorFunction(row[j].values[Time.tIndex]);

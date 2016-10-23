@@ -31,7 +31,7 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
         $scope.selection = {
             year: now.year(),
             week: now.isoWeek()
-        }
+        };
 
         $scope.ChangeLake(0);
         indexReady = true;
@@ -91,7 +91,7 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
     $scope.stop = function() {
         $scope.pause();
         Time.tIndex = 0;
-    };  
+    };
 
     $scope.getDate = function() {
         return dataReady ? DateHelpers.yearMonthDay(currentDate()) : '';
@@ -105,7 +105,7 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
         var firstDay = DateHelpers.firstDayOfWeek(week, $scope.selection.year);
         var lastDay = DateHelpers.lastDayOfWeek(week, $scope.selection.year);
         var dateRange = DateHelpers.yearMonthDay(firstDay) + ' - ' + DateHelpers.yearMonthDay(lastDay);
-        return "Week " + week + " (" + dateRange + ")";
+        return 'Week ' + week + ' (' + dateRange + ')';
     };
 
     $scope.ChangeWeek = function(week) {

@@ -66,7 +66,7 @@ angular.module('lakeViewApp').service('CanvasLayer', function() {
             var size = this._map.getSize();
 
             this._container = new PIXI.Container();
-            this._renderer = PIXI.autoDetectRenderer(size.x, size.y, {transparent: true, antialias: true});
+            this._renderer = PIXI.autoDetectRenderer(size.x, size.y, { transparent: true, antialias: true });
             this._canvas = this._renderer.view;
 
             var animated = this._map.options.zoomAnimation && L.Browser.any3d;
@@ -105,7 +105,7 @@ angular.module('lakeViewApp').service('CanvasLayer', function() {
 
             for (var i = this._container.children.length - 1; i >= 0; i--) {
                 this._container.removeChild(this._container.children[i]);
-            };
+            }
 
             if (this._data && this._drawFunction) {
                 var options = {

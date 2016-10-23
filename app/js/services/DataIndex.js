@@ -1,7 +1,7 @@
 angular.module('lakeViewApp').service('DataIndex', function($q, DATA_HOST, DateHelpers) {
     this.load = function() {
         return loadIndex().then(parseLakes);
-    }
+    };
 
     function loadIndex() {
         return $q(function(resolve, reject) {
@@ -52,7 +52,7 @@ angular.module('lakeViewApp').service('DataIndex', function($q, DATA_HOST, DateH
             return;
         }
         var result = d3.map();
-        for(var yearString in data) {
+        for (var yearString in data) {
             // yearString is a 4 digit year number prefixed with Y, e.g. Y2000
             var year = +yearString.substring(1);
             result.set(year, data[yearString]);
