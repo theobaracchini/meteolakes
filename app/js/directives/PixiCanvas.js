@@ -14,8 +14,7 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
         var margin = {top: 10, right: 60, bottom: 20, left: 60};
 
         var svg = d3.select(map.getPanes().overlayPane)
-            .append('svg')
-            .attr('class', 'lv-scale');
+            .append('svg');
 
         var g = svg.append('g');
 
@@ -45,6 +44,10 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
             var bottomDepth = map.containerPointToLatLng([0, margin.top + bottomPixel]).lat;
 
             var height = bottomPixel - topPixel;
+
+            svg
+                .style('width', size.x)
+                .style('height', size.y);
 
             g.attr('transform', 'translate(' + (size.x - margin.right) + ',' + margin.top + ')')
                 .style('visibility', height > 0 ? 'visible' : 'hidden');

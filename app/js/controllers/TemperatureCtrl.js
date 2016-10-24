@@ -18,6 +18,7 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
 
         dataSources.forEach(function(source) {
             var temporalData = $scope[source + 'Data'];
+            temporalData.setCropPercentile(0.03);
             temporalData.readData(timeSelection).then(function() {
                 colorFunctions[source] = generateColorFunction(temporalData.scaleExtent);
                 if (source == 'surface') {
