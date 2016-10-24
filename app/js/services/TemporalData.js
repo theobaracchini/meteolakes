@@ -143,7 +143,6 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
         var minValue = d3.min(this.flatArray, function(d) { return d3.min(d.values, valueAccessor); });
         var maxValue = d3.max(this.flatArray, function(d) { return d3.max(d.values, valueAccessor); });
         this.valueExtent = [minValue, maxValue];
-<<<<<<< HEAD
         
         if(this.cropPercentile > 0){
             var flatArr = [].concat.apply([], this.flatArray.map(function(d){ return d.values.map(valueAccessor) })); // Create a 2D array with only the values at each position, then flatten that array
@@ -151,12 +150,7 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
         } else {
             this.scaleExtent = this.valueExtent;
         }
-    }
-=======
-        var flatArr = [].concat.apply([], this.flatArray.map(function(d) { return d.values.map(valueAccessor); })); // Create a 2D array with only the values at each position, then flatten that array
-        this.scaleExtent = [stats.percentile(flatArr, 0.05), stats.percentile(flatArr, 0.95)];
     };
->>>>>>> Fix lint errors automatically using `gulp lint-fix`
 
     TemporalData.prototype.computeTimeSteps = function(selection) {
         var result = [];
