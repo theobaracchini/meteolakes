@@ -46,8 +46,8 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
             var height = bottomPixel - topPixel;
 
             svg
-                .style('width', size.x)
-                .style('height', size.y);
+                .attr('width', size.x)
+                .attr('height', size.y);
 
             g.attr('transform', 'translate(' + (size.x - margin.right) + ',' + margin.top + ')')
                 .style('visibility', height > 0 ? 'visible' : 'hidden');
