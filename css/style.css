@@ -106,6 +106,7 @@ body {
 
 .leaflet-canvas-layer {
     opacity: 0.9;
+    transform-origin: 50% 50%;
 }
 
 .leaflet-clickable,
