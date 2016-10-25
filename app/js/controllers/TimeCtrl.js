@@ -26,7 +26,8 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
     DataIndex.load().then(function(index) {
         $scope.index = index;
 
-        // Initialize with current year/week, closest existing data for selected lake will be determined later
+        // Initialize with current year/week, closest existing
+        // data for selected lake will be determined later
         var now = moment();
         $scope.selection = {
             year: now.year(),
@@ -133,7 +134,8 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
 
     function selectClosestWeek() {
         var lakeData = $scope.index[$scope.selection.lake];
-        $scope.selection.week = Util.closest(lakeData.data.get($scope.selection.year), $scope.selection.week);
+        $scope.selection.week = Util.closest(lakeData.data.get($scope.selection.year),
+                                $scope.selection.week);
     }
 
     function resetTimer() {
@@ -144,8 +146,8 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
     }
 
     function updateSpeedButtons() {
-        $('.lv-faster').prop('disabled', tickInterval == TICK_INTERVAL_MIN);
-        $('.lv-slower').prop('disabled', tickInterval == TICK_INTERVAL_MAX);
+        $('.lv-faster').prop('disabled', tickInterval === TICK_INTERVAL_MIN);
+        $('.lv-slower').prop('disabled', tickInterval === TICK_INTERVAL_MAX);
     }
 
     function tick() {

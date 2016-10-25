@@ -3,14 +3,17 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer, Show
     // Source: https://api3.geo.admin.ch/services/sdiservices.html#parameters
     var TOP_LEFT = L.point(420000, 350000);
     var BOTTOM_RIGHT = L.point(900000, 30000);
-    var RESOLUTIONS = [4000, 3750, 3500, 3250, 3000, 2750, 2500, 2250, 2000, 1750, 1500, 1250, 1000, 750, 650, 500, 250, 100, 50, 20, 10, 5, 2.5];
+    var RESOLUTIONS = [4000, 3750, 3500, 3250, 3000, 2750, 2500, 2250, 2000,
+                      1750, 1500, 1250, 1000, 750, 650, 500, 250, 100, 50, 20, 10, 5, 2.5];
 
     // Definition for projected coordinate system CH1903 / LV03
     // Source: https://epsg.io/21781.js
-    var CRS = new L.Proj.CRS('EPSG:21781', '+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=600000 +y_0=200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs', {
-        resolutions: RESOLUTIONS,
-        origin: [TOP_LEFT.x, TOP_LEFT.y]
-    });
+    var CRS = new L.Proj.CRS('EPSG:21781',
+        '+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=600000 +y_0=200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs',
+        {
+            resolutions: RESOLUTIONS,
+            origin: [TOP_LEFT.x, TOP_LEFT.y]
+        });
 
     var BOUNDS = L.latLngBounds(unproject(TOP_LEFT), unproject(BOTTOM_RIGHT));
 
@@ -26,9 +29,8 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer, Show
         if (BOUNDS.contains(latlng)) {
             var p = project(latlng);
             return Math.round(p.x) + ', ' + Math.round(p.y);
-        } else {
-            return '';
         }
+        return '';
     }
 
     function initMapbox(container) {
@@ -46,27 +48,6 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer, Show
             id: 'mapbox.streets',
             access_token: 'pk.eyJ1IjoiYXBoeXMiLCJhIjoiY2ltM2g1MzUwMDBwOXZtbTVzdnQ1ZHZpYiJ9.Cm1TVUsbCQLOhUbblOrHfw'
             // lake-view token for user aphys obtained from mapbox.com
-        }).addTo(map);
-
-        return map;
-    }
-
-    function initSwisstopo(container) {
-        var scale = function(zoom) {
-            return 1 / RESOLUTIONS[zoom];
-        };
-
-        var map = L.map(container, {
-            crs: CRS,
-            maxBounds: BOUNDS,
-            scale: scale
-        });
-
-        L.tileLayer('https://wmts{s}.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/21781/{z}/{y}/{x}.jpeg', {
-            subdomains: ['', '5', '6', '7', '8', '9'],
-            maxZoom: RESOLUTIONS.length - 1,
-            minZoom: 15,
-            attribution: 'Map data &copy; swisstopo'
         }).addTo(map);
 
         return map;
@@ -123,12 +104,10 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer, Show
                     } else {
                         markerLayer = L.marker(latlng).addTo(map);
                     }
-                } else {
+                } else if (markerLayer) {
                     // Remove marker
-                    if (markerLayer) {
-                        map.removeLayer(markerLayer);
-                        markerLayer = null;
-                    }
+                    map.removeLayer(markerLayer);
+                    markerLayer = null;
                 }
             });
 

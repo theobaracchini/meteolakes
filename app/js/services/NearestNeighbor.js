@@ -2,6 +2,8 @@ angular.module('lakeViewApp').factory('NearestNeighbor', function(rbush, knn) {
     return function(data) {
         // Initialize nearest neighbor data structure
         var knnData = [];
+
+        // eslint-disable-next-line array-callback-return
         data.map(function(d, i, j) {
             knnData.push({
                 x: d.x,

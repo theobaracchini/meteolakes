@@ -1,7 +1,7 @@
 angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, DateHelpers, stats) {
     var TemporalData = function(fieldName, suffix) {
         this.fieldName = fieldName;
-        this.suffix = suffix ? suffix : '';
+        this.suffix = suffix || '';
         this.timeSteps = [];
         this.Data = [];
         this.ready = false;
@@ -13,7 +13,7 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
     TemporalData.prototype.setValueAccessor = function(valueAccessor) {
         this.valueAccessor = valueAccessor;
     };
-    
+
     TemporalData.prototype.setCropPercentile = function(cropPercentile) {
         this.cropPercentile = cropPercentile;
     };
@@ -82,6 +82,7 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
 
     TemporalData.prototype.parseCSV = function(config, data) {
         var me = this;
+        var z;
 
         this.flatArray = [];
         this.Data = d3.csv.parseRows(data, function(row) {
@@ -90,9 +91,9 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
                 var x = +row[i];
                 var y = +row[config.GridHeight + i];
                 if (config.NumberOfCoordinates > 2) {
-                    var z = +row[2 * config.GridHeight + i];
+                    z = +row[2 * config.GridHeight + i];
                 } else {
-                    var z = -0.5;
+                    z = -0.5;
                 }
                 if (isNaN(x) || isNaN(y) || isNaN(z)) {
                     // No data for this cell
@@ -104,13 +105,14 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
                     for (var j = 0; j < config.Timesteps; j++) {
                         var value = [];
                         for (var k = 0; k < config.NumberOfValues; k++) {
-                            var v = +row[(config.NumberOfCoordinates + k * config.Timesteps + j) * config.GridHeight + i];
+                            var v = +row[(config.NumberOfCoordinates
+                                + k * config.Timesteps + j) * config.GridHeight + i];
                             if (isNaN(v)) {
                                 hasNaN = true;
                             }
                             value.push(v);
                         }
-                        if (config.NumberOfValues == 1) {
+                        if (config.NumberOfValues === 1) {
                             value = value[0];
                         }
                         values.push(value);
@@ -139,14 +141,20 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
         this.yExtent = d3.extent(this.flatArray, function(d) { return d.y; });
         this.zExtent = d3.extent(this.flatArray, function(d) { return d.z; });
 
-        var valueAccessor = this.valueAccessor; // Value accessor: Returns absolute value, e.g. the norm in case of velocity vectors
-        var minValue = d3.min(this.flatArray, function(d) { return d3.min(d.values, valueAccessor); });
-        var maxValue = d3.max(this.flatArray, function(d) { return d3.max(d.values, valueAccessor); });
+        // Value accessor: Returns absolute value, e.g. the norm in case of velocity vectors
+        var valueAccessor = this.valueAccessor;
+        var minValue = d3.min(this.flatArray,
+            function(d) { return d3.min(d.values, valueAccessor); });
+        var maxValue = d3.max(this.flatArray,
+            function(d) { return d3.max(d.values, valueAccessor); });
         this.valueExtent = [minValue, maxValue];
-        
-        if(this.cropPercentile > 0){
-            var flatArr = [].concat.apply([], this.flatArray.map(function(d){ return d.values.map(valueAccessor) })); // Create a 2D array with only the values at each position, then flatten that array
-            this.scaleExtent = [stats.percentile(flatArr, this.cropPercentile), stats.percentile(flatArr, 1-this.cropPercentile)];
+
+        if (this.cropPercentile > 0) {
+            // Create a 2D array with only the values at each position, then flatten that array
+            var flatArr = [].concat.apply([],
+                this.flatArray.map(function(d) { return d.values.map(valueAccessor); }));
+            this.scaleExtent = [stats.percentile(flatArr, this.cropPercentile),
+                stats.percentile(flatArr, 1 - this.cropPercentile)];
         } else {
             this.scaleExtent = this.valueExtent;
         }

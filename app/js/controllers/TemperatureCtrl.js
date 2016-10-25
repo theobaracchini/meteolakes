@@ -21,13 +21,13 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
             temporalData.setCropPercentile(0.03);
             temporalData.readData(timeSelection).then(function() {
                 colorFunctions[source] = generateColorFunction(temporalData.scaleExtent);
-                if (source == 'surface') {
+                if (source === 'surface') {
                     nearestNeighbor = NearestNeighbor($scope.surfaceData);
                 }
                 $scope[source + 'Extent'] = temporalData.scaleExtent; // This one is used for the color legend
                 animate();
             }, function(err) {
-                if ($scope.tab == source) {
+                if ($scope.tab === source) {
                     $scope.tab = 'surface';
                 }
             });
@@ -54,7 +54,7 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
         var size = options.size;
         var graphics = new PIXI.Graphics();
 
-        if (!colorFunction || $scope.tab != options.dataSource) {
+        if (!colorFunction || $scope.tab !== options.dataSource) {
             return graphics;
         }
 

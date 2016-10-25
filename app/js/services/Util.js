@@ -16,9 +16,8 @@ angular.module('lakeViewApp').service('Util', function() {
         });
         if (returnIndex) {
             return resultIndex;
-        } else {
-            return result;
         }
+        return result;
     };
 
     /**

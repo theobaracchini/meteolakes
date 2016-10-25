@@ -34,26 +34,22 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, Time, 
 
     $scope.drawVelocityOverlay = function(data, options) {
         var size = options.size;
-        var r = 30,
-            bounds = new L.Bounds(
-                L.point([-r, -r]),
-                size.add([r, r])),
-
-            cellSize = r / 2,
-            grid = [],
-            i,
-            len,
-            d,
-            p,
-            cell,
-            x,
-            y,
-            j,
-            len2;
+        var r = 30;
+        var bounds = new L.Bounds(L.point([-r, -r]), size.add([r, r]));
+        var cell;
+        var cellSize = r / 2;
+        var grid = [];
+        var len;
+        var len2;
+        var d;
+        var i;
+        var j;
+        var x;
+        var y;
 
         for (i = 0, len = data.length; i < len; i++) {
             var row = data[i];
-            for (var j = 0; j < row.length; j++) {
+            for (j = 0; j < row.length; j++) {
                 d = row[j];
                 if (d) {
                     if (bounds.contains(d.p)) {
@@ -85,8 +81,8 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, Time, 
                 for (j = 0, len2 = grid[i].length; j < len2; j++) {
                     cell = grid[i][j];
                     if (cell) {
-                        var x = cell[0] / cell[4];
-                        var y = cell[1] / cell[4];
+                        x = cell[0] / cell[4];
+                        y = cell[1] / cell[4];
                         var dx = cell[2] / cell[4];
                         var dy = cell[3] / cell[4];
                         var color = colorFunction([dx, dy]);
@@ -120,9 +116,11 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, Time, 
             graphics.lineStyle(1 + 5 * extent, +color.replace('#', '0x'));
             graphics.moveTo(fromx, fromy);
             graphics.lineTo(tox, toy);
-            graphics.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+            graphics.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6),
+                toy - headlen * Math.sin(angle - Math.PI / 6));
             graphics.moveTo(tox, toy);
-            graphics.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+            graphics.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6),
+                toy - headlen * Math.sin(angle + Math.PI / 6));
         }
     }
 

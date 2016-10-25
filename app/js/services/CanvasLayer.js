@@ -66,7 +66,8 @@ angular.module('lakeViewApp').service('CanvasLayer', function() {
             var size = this._map.getSize();
 
             this._container = new PIXI.Container();
-            this._renderer = PIXI.autoDetectRenderer(size.x, size.y, { transparent: true, antialias: true });
+            this._renderer = PIXI.autoDetectRenderer(size.x,
+                size.y, { transparent: true, antialias: true });
             this._canvas = this._renderer.view;
 
             var animated = this._map.options.zoomAnimation && L.Browser.any3d;
@@ -134,7 +135,8 @@ angular.module('lakeViewApp').service('CanvasLayer', function() {
 
         _animateZoom: function(e) {
             var scale = this._map.getZoomScale(e.zoom);
-            var offset = this._map._getCenterOffset(e.center)._multiplyBy(-scale).subtract(this._map._getMapPanePos());
+            var offset = this._map._getCenterOffset(e.center)
+                ._multiplyBy(-scale).subtract(this._map._getMapPanePos());
 
             if (L.DomUtil.setTransform) {
                 L.DomUtil.setTransform(this._canvas, offset, scale);

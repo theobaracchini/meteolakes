@@ -106,7 +106,8 @@ angular.module('lakeViewApp').directive('d3Chart', function($window) {
             scope.$watch('data', function(values, oldValues) {
                 if (values) {
                     if (!oldValues) {
-                        // Disable transition when rendering the first time after chart has been hidden
+                        // Disable transition when rendering the first
+                        // time after chart has been hidden
                         enableTransition = false;
                     }
                     data = values.data;

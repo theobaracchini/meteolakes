@@ -143,18 +143,15 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
                     } else {
                         markerLayer = L.marker(latlng).addTo(map);
                     }
-                } else {
+                } else if (markerLayer) {
                     // Remove marker
-                    if (markerLayer) {
-                        map.removeLayer(markerLayer);
-                        markerLayer = null;
-                    }
+                    map.removeLayer(markerLayer);
+                    markerLayer = null;
                 }
             });
 
             scope.$watch('data.ready', function() {
                 var data = scope.data;
-
                 var projectedData;
 
                 if (data && data.ready) {
@@ -166,7 +163,7 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
                     var prevY;
                     projectedData = data.map(function(d, i, j) {
                         gridVertical[j] = d.z;
-                        if (i != prevI) {
+                        if (i !== prevI) {
                             if (prevX) {
                                 sliceLength += Util.norm([d.x - prevX, d.y - prevY]);
                             }

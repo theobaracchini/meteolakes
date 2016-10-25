@@ -7,10 +7,12 @@ angular.module('lakeViewApp').factory('Time', function() {
         increase: function(loop) {
             if (loop) {
                 this.tIndex ++;
-                if (this.tIndex >= this.nT)
-                    { this.tIndex = 0; }
-            } else
-                { this.tIndex = Math.min(this.nT - 1, this.tIndex + 1); }
+                if (this.tIndex >= this.nT) {
+                    this.tIndex = 0;
+                }
+            } else {
+                this.tIndex = Math.min(this.nT - 1, this.tIndex + 1);
+            }
         },
         decrease: function() {
             this.tIndex = Math.max(0, this.tIndex - 1);
