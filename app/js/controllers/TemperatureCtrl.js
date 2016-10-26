@@ -6,34 +6,27 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
     $scope.LEGEND_COLORS = ['blue', 'cyan', 'lime', 'yellow', 'red'];
 
     $scope.tab = 'surface';
+    $scope.timeSelection = null;
 
-    $scope.surfaceData = new TemporalData('temperature');
-    $scope.sliceXZData = new TemporalData('temperature', '_slice_xz');
-    $scope.sliceYZData = new TemporalData('temperature', '_slice_yz');
-
+    $scope.surfaceData = new TemporalData('temperature', 0.03);
+    $scope.sliceXZData = new TemporalData('temperature', 0.03, '_slice_xz');
+    $scope.sliceYZData = new TemporalData('temperature', 0.03, '_slice_yz');
     var dataSources = ['surface', 'sliceXZ', 'sliceYZ'];
 
     $scope.$on('updateTimeSelection', function(evt, timeSelection) {
         colorFunctions = {};
+        $scope.timeSelection = timeSelection;
+        $scope.closeChart();
 
+        // Load metadata of all tabs to update tab availabilities
         dataSources.forEach(function(source) {
-            var temporalData = $scope[source + 'Data'];
-            temporalData.setCropPercentile(0.03);
-            temporalData.readData(timeSelection).then(function() {
-                colorFunctions[source] = generateColorFunction(temporalData.scaleExtent);
-                if (source === 'surface') {
-                    nearestNeighbor = NearestNeighbor($scope.surfaceData);
-                }
-                $scope[source + 'Extent'] = temporalData.scaleExtent; // This one is used for the color legend
-                animate();
-            }, function(err) {
-                if ($scope.tab === source) {
-                    $scope.tab = 'surface';
+            $scope[source + 'Data'].setTimeSelection(timeSelection).then(function() {
+                if (source === $scope.tab) {
+                    // Start reading data of current tab once metadata are ready
+                    loadCurrentData();
                 }
             });
         });
-
-        $scope.closeChart();
     });
 
     $scope.$on('tick', animate);
@@ -118,8 +111,29 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
     $scope.setTab = function(tab) {
         $scope.closeChart();
         $scope.tab = tab;
-        animate();
+        loadCurrentData();
     };
+
+    function loadCurrentData() {
+        var source = $scope.tab;
+        var temporalData = $scope[source + 'Data'];
+        if (temporalData.ready) {
+            animate();
+        } else {
+            temporalData.readData().then(function() {
+                colorFunctions[source] = generateColorFunction(temporalData.scaleExtent);
+                if (source === 'surface') {
+                    nearestNeighbor = NearestNeighbor($scope.surfaceData);
+                }
+                $scope[source + 'Extent'] = temporalData.scaleExtent; // This one is used for the color legend
+                animate();
+            }, function(err) {
+                if ($scope.tab === source) {
+                    $scope.tab = 'surface';
+                }
+            });
+        }
+    }
 
     function generateColorFunction(extent) {
         var minValue = extent[0];

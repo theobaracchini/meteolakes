@@ -9,12 +9,14 @@ angular.module('lakeViewApp').controller('VelocityCtrl', function($scope, Time, 
     $scope.surfaceData.setValueAccessor(Util.norm);
 
     $scope.$on('updateTimeSelection', function(evt, timeSelection) {
-        $scope.surfaceData.readData(timeSelection).then(function() {
-            colorFunction = generateColorFunction($scope.surfaceData.scaleExtent);
-            nearestNeighbor = NearestNeighbor($scope.surfaceData);
-            $scope.surfaceExtent = $scope.surfaceData.scaleExtent; // used for the color legend
-            $scope.$emit('dataReady', $scope.surfaceData.timeSteps);
-            animate();
+        $scope.surfaceData.setTimeSelection(timeSelection).then(function() {
+            $scope.surfaceData.readData().then(function() {
+                colorFunction = generateColorFunction($scope.surfaceData.scaleExtent);
+                nearestNeighbor = NearestNeighbor($scope.surfaceData);
+                $scope.surfaceExtent = $scope.surfaceData.scaleExtent; // used for the color legend
+                $scope.$emit('dataReady', $scope.surfaceData.timeSteps);
+                animate();
+            });
         });
 
         $scope.closeChart();
