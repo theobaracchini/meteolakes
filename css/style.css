@@ -18,7 +18,7 @@ body {
     .lv-container-dynamic {
         width: 750px;
     }
-}   
+}
 
 @media (min-width: 992px) {
     .lv-container-dynamic {
@@ -56,10 +56,6 @@ body {
     margin-right: 15px;
 }
 
-.lv-navbar-text-inline {
-    display: inline-block;
-}
-
 .lv-navbar-small-buttons {
     margin-bottom: 8px;
 }
@@ -90,14 +86,6 @@ body {
     z-index: 401;
     bottom: 0;
     border: 2px solid rgba(0, 0, 0, 0.2);
-}
-
-.lv-plot {
-    margin-bottom: 10px;
-}
-
-.lv-larger-font {
-    font-size: 20px;
 }
 
 .leaflet-tile-pane {
