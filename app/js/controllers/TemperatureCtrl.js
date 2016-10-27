@@ -9,8 +9,8 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
     $scope.timeSelection = null;
 
     $scope.surfaceData = new TemporalData('temperature', 0.03);
-    $scope.sliceXZData = new TemporalData('temperature', 0.03, '_slice_xz');
-    $scope.sliceYZData = new TemporalData('temperature', 0.03, '_slice_yz');
+    $scope.sliceXZData = new TemporalData('temperature', 0, '_slice_xz');
+    $scope.sliceYZData = new TemporalData('temperature', 0, '_slice_yz');
     var dataSources = ['surface', 'sliceXZ', 'sliceYZ'];
 
     $scope.$on('updateTimeSelection', function(evt, timeSelection) {
