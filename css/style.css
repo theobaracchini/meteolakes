@@ -56,6 +56,10 @@ body {
     margin-right: 15px;
 }
 
+.lv-navbar-text-inline {
+    display: inline-block;
+}
+
 .lv-navbar-small-buttons {
     margin-bottom: 8px;
 }

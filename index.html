@@ -53,6 +53,10 @@
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
+                    <div class="visible-xs-block pull-right lv-navbar-margin">
+                        <div class="navbar-text lv-navbar-text-inline"><strong><span ng-bind="getDate()"></span>, <span ng-bind="getTime()"></span></strong></div>
+                        <button type="button" class="btn btn-default navbar-btn" ng-click="play()"><span class="glyphicon" ng-class="{'glyphicon-play': !isPlaying, 'glyphicon-pause': isPlaying}"></span></button>
+                    </div>
                     <a class="navbar-brand" href="#">Lake 3D Model</a>
                 </div>
 
