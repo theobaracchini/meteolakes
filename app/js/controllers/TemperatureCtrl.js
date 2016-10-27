@@ -3,37 +3,30 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
     var nearestNeighbor;
     var animationHandlers = [];
 
-    $scope.LEGEND_COLORS = ['blue','cyan','lime','yellow','red'];
+    $scope.LEGEND_COLORS = ['blue', 'cyan', 'lime', 'yellow', 'red'];
 
     $scope.tab = 'surface';
+    $scope.timeSelection = null;
 
-    $scope.surfaceData = new TemporalData('temperature');
-    $scope.sliceXZData = new TemporalData('temperature', '_slice_xz');
-    $scope.sliceYZData = new TemporalData('temperature', '_slice_yz');
-
+    $scope.surfaceData = new TemporalData('temperature', 0.03);
+    $scope.sliceXZData = new TemporalData('temperature', 0, '_slice_xz');
+    $scope.sliceYZData = new TemporalData('temperature', 0, '_slice_yz');
     var dataSources = ['surface', 'sliceXZ', 'sliceYZ'];
 
     $scope.$on('updateTimeSelection', function(evt, timeSelection) {
         colorFunctions = {};
+        $scope.timeSelection = timeSelection;
+        $scope.closeChart();
 
+        // Load metadata of all tabs to update tab availabilities
         dataSources.forEach(function(source) {
-            var temporalData = $scope[source + 'Data'];
-            temporalData.setCropPercentile(0.03);
-            temporalData.readData(timeSelection).then(function() {
-                colorFunctions[source] = generateColorFunction(temporalData.scaleExtent);
-                if (source == 'surface') {
-                    nearestNeighbor = NearestNeighbor($scope.surfaceData);
-                }
-                $scope[source + 'Extent'] = temporalData.scaleExtent; // This one is used for the color legend
-                animate();
-            }, function(err) {
-                if ($scope.tab == source) {
-                    $scope.tab = 'surface';
+            $scope[source + 'Data'].setTimeSelection(timeSelection).then(function() {
+                if (source === $scope.tab) {
+                    // Start reading data of current tab once metadata are ready
+                    loadCurrentData();
                 }
             });
         });
-
-        $scope.closeChart();
     });
 
     $scope.$on('tick', animate);
@@ -54,7 +47,7 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
         var size = options.size;
         var graphics = new PIXI.Graphics();
 
-        if (!colorFunction || $scope.tab != options.dataSource) {
+        if (!colorFunction || $scope.tab !== options.dataSource) {
             return graphics;
         }
 
@@ -63,7 +56,7 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
             graphics.beginFill(0x4682B4);
             graphics.drawRect(0, 0, size.x, origin.y);
             graphics.endFill();
-            graphics.beginFill(0x548b54);
+            graphics.beginFill(0x896E53);
             graphics.drawRect(0, origin.y, size.x, size.y);
             graphics.endFill();
         }
@@ -84,7 +77,6 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
 
                 // Check if all points are defined
                 if (points.every(function(p) { return p; })) {
-
                     // Check if any point is within bounds
                     if (points.some(function(p) { return bounds.contains(p.p); })) {
                         var color = colorFunction(row[j].values[Time.tIndex]);
@@ -119,8 +111,28 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
     $scope.setTab = function(tab) {
         $scope.closeChart();
         $scope.tab = tab;
-        animate();
+        $scope.$emit('tTabChanged');
+        loadCurrentData();
     };
+
+    function loadCurrentData() {
+        var source = $scope.tab;
+        var temporalData = $scope[source + 'Data'];
+        if (!temporalData.available && source !== 'surface') {
+            $scope.setTab('surface');
+        } else if (temporalData.ready) {
+            $scope.$emit('tDataReady');
+        } else {
+            temporalData.readData().then(function() {
+                colorFunctions[source] = generateColorFunction(temporalData.scaleExtent);
+                if (source === 'surface') {
+                    nearestNeighbor = NearestNeighbor($scope.surfaceData);
+                }
+                $scope[source + 'Extent'] = temporalData.scaleExtent; // This one is used for the color legend
+                $scope.$emit('tDataReady');
+            });
+        }
+    }
 
     function generateColorFunction(extent) {
         var minValue = extent[0];

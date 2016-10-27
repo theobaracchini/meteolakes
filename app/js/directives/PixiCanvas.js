@@ -11,7 +11,7 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
     }
 
     function initScale(map) {
-        var margin = {top: 10, right: 60, bottom: 20, left: 60};
+        var margin = { top: 10, right: 60, bottom: 20, left: 60 };
 
         var svg = d3.select(map.getPanes().overlayPane)
             .append('svg');
@@ -86,8 +86,8 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
             var bounds;
             var markers;
             var xMax;
-            var map = L.map(container, {crs: CRS, minZoom: -5, attributionControl: false});
-            var canvasLayer = L.canvasLayer({background: true, dataSource: scope.source});
+            var map = L.map(container, { crs: CRS, minZoom: -5, attributionControl: false });
+            var canvasLayer = L.canvasLayer({ background: true, dataSource: scope.source });
             var markerLayer;
 
             var attributionText = '© <a href="https://www.mapbox.com/about/maps/"">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>';
@@ -98,9 +98,9 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
 
             canvasLayer.addTo(map);
 
-            scope.setHandler({handler: function() {
+            scope.setHandler({ handler: function() {
                 canvasLayer.redraw();
-            }});
+            } });
 
             map.on('click', function(e) {
                 if (gridHorizontal) {
@@ -109,7 +109,7 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
                     var i = Util.closest(gridHorizontal, p.x, true);
                     var j = Util.closest(gridVertical, p.y, true);
                     if (scope.data.Data[i][j]) {
-                        scope.onClick({point: {i: i, j: j}});
+                        scope.onClick({ point: { i: i, j: j } });
                         scope.$apply();
                     }
                 }
@@ -143,18 +143,15 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
                     } else {
                         markerLayer = L.marker(latlng).addTo(map);
                     }
-                } else {
+                } else if (markerLayer) {
                     // Remove marker
-                    if (markerLayer) {
-                        map.removeLayer(markerLayer);
-                        markerLayer = null;
-                    }
+                    map.removeLayer(markerLayer);
+                    markerLayer = null;
                 }
             });
 
             scope.$watch('data.ready', function() {
                 var data = scope.data;
-
                 var projectedData;
 
                 if (data && data.ready) {
@@ -166,7 +163,7 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
                     var prevY;
                     projectedData = data.map(function(d, i, j) {
                         gridVertical[j] = d.z;
-                        if (i != prevI) {
+                        if (i !== prevI) {
                             if (prevX) {
                                 sliceLength += Util.norm([d.x - prevX, d.y - prevY]);
                             }
@@ -182,7 +179,7 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
                             lat: latlng.lat,
                             lng: latlng.lng,
                             values: d.values
-                        }
+                        };
                     });
 
                     xMax = sliceLength * HORIZONTAL_SCALE;
@@ -211,12 +208,12 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
                     markers = {
                         left: addPopup(L.point(0, 0), scope.labelLeft),
                         right: addPopup(L.point(xMax, 0), scope.labelRight)
-                    }
+                    };
                 }
             }
 
             function addPopup(point, label) {
-                return L.popup({closeButton: false, closeOnClick: false, autoPan: false})
+                return L.popup({ closeButton: false, closeOnClick: false, autoPan: false })
                     .setLatLng(unproject(point))
                     .setContent(label).addTo(map);
             }

@@ -18,7 +18,7 @@ body {
     .lv-container-dynamic {
         width: 750px;
     }
-}   
+}
 
 @media (min-width: 992px) {
     .lv-container-dynamic {
@@ -92,20 +92,13 @@ body {
     border: 2px solid rgba(0, 0, 0, 0.2);
 }
 
-.lv-plot {
-    margin-bottom: 10px;
-}
-
-.lv-larger-font {
-    font-size: 20px;
-}
-
 .leaflet-tile-pane {
     opacity: 0.5;
 }
 
 .leaflet-canvas-layer {
     opacity: 0.9;
+    transform-origin: 50% 50%;
 }
 
 .leaflet-clickable,

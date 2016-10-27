@@ -8,7 +8,7 @@ angular.module('lakeViewApp').service('Util', function() {
         var resultIndex;
         collection.forEach(function(entry, i) {
             var diff = Math.abs(entry - query);
-            if(diff < minDiff) {
+            if (diff < minDiff) {
                 minDiff = diff;
                 result = entry;
                 resultIndex = i;
@@ -16,10 +16,9 @@ angular.module('lakeViewApp').service('Util', function() {
         });
         if (returnIndex) {
             return resultIndex;
-        } else {
-            return result;
         }
-    }
+        return result;
+    };
 
     /**
       * Returns the norm of a vector.
@@ -27,5 +26,5 @@ angular.module('lakeViewApp').service('Util', function() {
       */
     this.norm = function(vec) {
         return Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
-    }
+    };
 });

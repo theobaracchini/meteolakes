@@ -24,7 +24,7 @@ angular.module('lakeViewApp').service('ShowCoordinates', function() {
             if (latlng) {
                 this._container.innerHTML = this.options.format(latlng);
             }
-        },
+        }
     });
 
     L.control.showcoordinates = function(options) {

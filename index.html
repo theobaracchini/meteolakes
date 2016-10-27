@@ -18,6 +18,7 @@
               integrity="sha384-jbhYDFfm+l6mA6jJUD5X/yv7LoRqVSoV/P77fNwITqMNlHHVIdSwj3SexyasxFL/"
               crossorigin="anonymous">
         <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/loading-animation.css">
         <link rel="apple-touch-icon" href="favicon-152.png">
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"
@@ -48,7 +49,7 @@
         <script src="dist/js/bundle.min.js"></script>
     </head>
 
-    <body ng-controller="TimeCtrl" onload="angular.element('body').scope().play();">
+    <body ng-controller="TimeCtrl">
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
@@ -71,7 +72,7 @@
                                     <a href="#" ng-click="ChangeLake($index)">{{ lake.name }}</a>
                                 </li>
                             </ul>
-                        </div>                            
+                        </div>
                         <div class="btn-group btn-group-sm">
                             <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
                                 {{ "Year " + selection.year }}
@@ -82,7 +83,7 @@
                                     <a href="#" ng-click="ChangeYear(year)">{{ year }}</a>
                                 </li>
                             </ul>
-                        </div>                            
+                        </div>
                         <div class="btn-group btn-group-sm">
                             <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
                                 {{ "Week " + selection.week }}
@@ -108,7 +109,7 @@
                                 <a href="#" ng-click="ChangeLake($index)">{{ lake.name }}</a>
                             </li>
                         </ul>
-                    </div>                            
+                    </div>
                     <div class="btn-group navbar-btn">
                         <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
                             {{ "Year " + selection.year }}
@@ -119,7 +120,7 @@
                                 <a href="#" ng-click="ChangeYear(year)">{{ year }}</a>
                             </li>
                         </ul>
-                    </div>                            
+                    </div>
                     <div class="btn-group navbar-btn">
                         <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
                             {{ "Week " + selection.week }}
@@ -147,7 +148,7 @@
                         </div>
                         <div class="navbar-right"><p class="navbar-text"><strong>Date: <span ng-bind="getDate()"></span><span class="lv-divider-vertical"></span>Time: <span ng-bind="getTime()"></span></strong></p></div>
                         <div class="lv-timeslider">
-                            <input type="range" ng-model="Time.tIndex" min="0" max="{{ Time.nT - 1 }}">
+                            <input type="range" ng-model="Time.tIndex" min="0" max="{{ Time.nSteps - 1 }}">
                         </div>
                     </div>
                 </div>
@@ -171,15 +172,24 @@
 
                     <div class="tab-content">
                         <div class="tab-pane" ng-class="{active: tab == 'surface'}">
-                            <leaflet-map active="tab == 'surface'" set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="surfaceData" draw="drawTemperatureOverlay"></leaflet-map>
+                            <leaflet-map active="tab == 'surface'" set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="surfaceData" draw="drawTemperatureOverlay">
+                                <loading ng-hide="tDataReady">
+                                </loading>
+                            </leaflet-map>
                             <color-legend colors="LEGEND_COLORS" extent="surfaceExtent" label="Temperature (&deg;C)"></color-legend>
                         </div>
                         <div class="tab-pane" ng-class="{active: tab == 'sliceXZ'}">
-                            <pixi-canvas active="tab == 'sliceXZ'" set-handler="addAnimationHandler(handler)" on-click="sliceClicked(point)" marker="chartPoint" data="sliceXZData" draw="drawTemperatureOverlay" source="sliceXZ" label-left="Geneva" label-right="Villeneuve" map-img-src="img/slice1.png"></pixi-canvas>
+                            <pixi-canvas active="tab == 'sliceXZ'" set-handler="addAnimationHandler(handler)" on-click="sliceClicked(point)" marker="chartPoint" data="sliceXZData" draw="drawTemperatureOverlay" source="sliceXZ" label-left="Geneva" label-right="Villeneuve" map-img-src="img/slice1.png">
+                                <loading ng-hide="tDataReady">
+                                </loading>
+                            </pixi-canvas>
                             <color-legend colors="LEGEND_COLORS" extent="sliceXZExtent" label="Temperature (&deg;C)"></color-legend>
                         </div>
                         <div class="tab-pane" ng-class="{active: tab == 'sliceYZ'}">
-                            <pixi-canvas active="tab == 'sliceYZ'" set-handler="addAnimationHandler(handler)" on-click="sliceClicked(point)" marker="chartPoint" data="sliceYZData" draw="drawTemperatureOverlay" source="sliceYZ" label-left="Evian" label-right="Lausanne" map-img-src="img/slice2.png"></pixi-canvas>
+                            <pixi-canvas active="tab == 'sliceYZ'" set-handler="addAnimationHandler(handler)" on-click="sliceClicked(point)" marker="chartPoint" data="sliceYZData" draw="drawTemperatureOverlay" source="sliceYZ" label-left="Evian" label-right="Lausanne" map-img-src="img/slice2.png">
+                                <loading ng-hide="tDataReady">
+                                </loading>
+                            </pixi-canvas>
                             <color-legend colors="LEGEND_COLORS" extent="sliceYZExtent" label="Temperature (&deg;C)"></color-legend>
                         </div>
                     </div>
@@ -194,7 +204,10 @@
                         <li class="active"><a>Surface</a></li>
                     </ul>
 
-                    <leaflet-map active="true" set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="surfaceData" draw="drawVelocityOverlay"></leaflet-map>
+                    <leaflet-map active="true" set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="surfaceData" draw="drawVelocityOverlay">
+                        <loading ng-hide="vDataReady">
+                        </loading>
+                    </leaflet-map>
                     <color-legend colors="LEGEND_COLORS" extent="surfaceExtent" label="Velocity (m/s)"></color-legend>
                     <d3-chart set-handler="addAnimationHandler(handler)" data="chartData" label="Velocity (m/s)" on-close="closeChart()"></d3-chart>
                 </div>
@@ -203,7 +216,7 @@
 
         <nav class="navbar navbar-inverse navbar-fixed-bottom">
             <div class="container">
-                <p class="navbar-text">This is a development version, please contact <a href="mailto:theo.baracchini@epfl.ch">theo.baracchini@epfl.ch</a> for further information.</p>
+                <p class="navbar-text">This is a development version running <a href="http://oss.deltares.nl/web/delft3d">Delft3D</a> in real-time. Please contact <a href="mailto:theo.baracchini@epfl.ch">theo.baracchini@epfl.ch</a> for further information.</p>
             </div>
         </nav>
 

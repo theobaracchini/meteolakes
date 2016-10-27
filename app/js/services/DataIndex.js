@@ -1,7 +1,7 @@
 angular.module('lakeViewApp').service('DataIndex', function($q, DATA_HOST, DateHelpers) {
     this.load = function() {
         return loadIndex().then(parseLakes);
-    }
+    };
 
     function loadIndex() {
         return $q(function(resolve, reject) {
@@ -20,26 +20,26 @@ angular.module('lakeViewApp').service('DataIndex', function($q, DATA_HOST, DateH
             var parsedData = data.map(function(lakeData) {
                 var name = lakeData.name;
                 if (typeof name !== 'string') {
-                    reject('invalid name'); return;
+                    reject('invalid name'); return null;
                 }
                 var folder = lakeData.folder;
                 if (typeof folder !== 'string') {
-                    reject('invalid folder'); return;
+                    reject('invalid folder'); return null;
                 }
                 var interval = lakeData.interval;
                 if (isNaN(interval)) {
-                    reject('invalid interval'); return;
+                    reject('invalid interval'); return null;
                 }
-                var data = parseData(lakeData.data);
-                if (!data) {
-                    reject('invalid data'); return;
+                var pdata = parseData(lakeData.data);
+                if (!pdata) {
+                    reject('invalid data'); return null;
                 }
-                var years = data.keys().sort();
+                var years = pdata.keys().sort();
                 return {
                     name: name,
                     folder: folder,
                     interval: interval,
-                    data: data,
+                    data: pdata,
                     years: years
                 };
             });
@@ -49,14 +49,14 @@ angular.module('lakeViewApp').service('DataIndex', function($q, DATA_HOST, DateH
 
     function parseData(data) {
         if (!data) {
-            return;
+            return null;
         }
         var result = d3.map();
-        for(var yearString in data) {
+        Object.keys(data).forEach(function(yearString) {
             // yearString is a 4 digit year number prefixed with Y, e.g. Y2000
             var year = +yearString.substring(1);
             result.set(year, data[yearString]);
-        }
+        });
 
         return result;
     }

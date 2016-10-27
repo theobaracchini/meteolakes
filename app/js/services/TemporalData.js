@@ -1,23 +1,20 @@
 angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, DateHelpers, stats) {
-    
-    var TemporalData = function(fieldName, suffix) {
+    var TemporalData = function(fieldName, cropPercentile, suffix) {
         this.fieldName = fieldName;
-        this.suffix = suffix ? suffix : '';
+        this.suffix = suffix || '';
         this.timeSteps = [];
         this.Data = [];
         this.ready = false;
-        this.available = true;
+        this.available = false;
         this.valueAccessor = function(d) { return d; };
-        this.cropPercentile = 0; // Percentile of data to limit color scale to
-    }
+        this.cropPercentile = cropPercentile || 0; // Percentile of data to limit color scale to
+        this.config = null;
+        this.timeSelection = null;
+    };
 
     TemporalData.prototype.setValueAccessor = function(valueAccessor) {
         this.valueAccessor = valueAccessor;
-    }
-    
-    TemporalData.prototype.setCropPercentile = function(cropPercentile) {
-        this.cropPercentile = cropPercentile;
-    }
+    };
 
     TemporalData.prototype.map = function(fn) {
         return this.Data.map(function(d, i) {
@@ -25,36 +22,52 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
                 return d0 ? fn(d0, i, j) : null;
             });
         });
-    }
+    };
 
-    TemporalData.prototype.readData = function(selection) {
-        this.ready = false;
-
+    TemporalData.prototype.setTimeSelection = function(selection) {
         var me = this;
-        var year = selection.year;
-        var week = selection.week;
+        me.timeSelection = selection;
+        var file = me.getValuesFile();
+        me.ready = false;
 
-        return $q(function(resolve, reject) {
-            var valuesFile = DATA_HOST + selection.folder + '/' + year + '/' + me.fieldName + '/data_week' + week + me.suffix + '.csv'; 
-
+        return $q(function(resolve) {
             // Read the data config
-            d3.json(valuesFile + '.json', function(err, config) {
-                if(err) {
+            d3.json(file + '.json', function(err, config) {
+                if (err) {
+                    me.config = null;
                     me.available = false;
-                    reject('File not found: ' + valuesFile);
                 } else {
-                    me.available = true;
                     me.parseConfig(config);
-                    me.readArray(valuesFile, config).then(function() {
-                        me.resetBounds();
-                        me.timeSteps = me.computeTimeSteps(selection);
-                        me.ready = true;
-                        resolve();
-                    });
+                    me.available = true;
                 }
+                resolve();
             });
         });
-    }
+    };
+
+    TemporalData.prototype.readData = function() {
+        var me = this;
+        me.ready = false;
+
+        return $q(function(resolve, reject) {
+            if (!me.available) {
+                reject('No data available');
+            } else {
+                var file = me.getValuesFile();
+                d3.text(file, function(err, data) {
+                    if (err) {
+                        reject('File not found: ' + file);
+                    } else {
+                        me.parseCSV(data);
+                        me.resetBounds();
+                        me.timeSteps = me.computeTimeSteps();
+                        me.ready = true;
+                        resolve();
+                    }
+                });
+            }
+        });
+    };
 
     TemporalData.prototype.parseConfig = function(config) {
         if (!config.Version) {
@@ -64,36 +77,24 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
         if (config.Version < 2) {
             config.NumberOfCoordinates = 2;
         }
-    }
 
-    TemporalData.prototype.readArray = function(file, config) {
+        this.config = config;
+    };
+
+    TemporalData.prototype.parseCSV = function(data) {
         var me = this;
-
-        return $q(function(resolve, reject) {
-            d3.text(file, function(err, data) {
-                if(err) {
-                    reject('File not found: ' + file);
-                } else {
-                    me.parseCSV(config, data);
-                    resolve();
-                }
-            });
-        });
-    }
-
-    TemporalData.prototype.parseCSV = function(config, data) {
-        var me = this;
+        var z;
 
         this.flatArray = [];
         this.Data = d3.csv.parseRows(data, function(row) {
             var parsedRow = [];
-            for (var i = 0; i < config.GridHeight; i++) {
+            for (var i = 0; i < me.config.GridHeight; i++) {
                 var x = +row[i];
-                var y = +row[config.GridHeight + i];
-                if (config.NumberOfCoordinates > 2) {
-                    var z = +row[2 * config.GridHeight + i];
+                var y = +row[me.config.GridHeight + i];
+                if (me.config.NumberOfCoordinates > 2) {
+                    z = +row[2 * me.config.GridHeight + i];
                 } else {
-                    var z = -0.5;
+                    z = -0.5;
                 }
                 if (isNaN(x) || isNaN(y) || isNaN(z)) {
                     // No data for this cell
@@ -102,16 +103,17 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
                     var values = [];
                     var hasNaN = false;
                     // Get values for all time steps
-                    for (var j = 0; j < config.Timesteps; j++) {
+                    for (var j = 0; j < me.config.Timesteps; j++) {
                         var value = [];
-                        for (var k = 0; k < config.NumberOfValues; k++) {
-                            var v = +row[(config.NumberOfCoordinates + k * config.Timesteps + j) * config.GridHeight + i];
+                        for (var k = 0; k < me.config.NumberOfValues; k++) {
+                            var v = +row[(me.config.NumberOfCoordinates
+                                + k * me.config.Timesteps + j) * me.config.GridHeight + i];
                             if (isNaN(v)) {
                                 hasNaN = true;
                             }
                             value.push(v);
                         }
-                        if (config.NumberOfValues == 1) {
+                        if (me.config.NumberOfValues === 1) {
                             value = value[0];
                         }
                         values.push(value);
@@ -133,36 +135,43 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
             }
             return parsedRow;
         });
-    }
+    };
 
     TemporalData.prototype.resetBounds = function() {
-        this.xExtent = d3.extent(this.flatArray, function(d) { return d.x });
-        this.yExtent = d3.extent(this.flatArray, function(d) { return d.y });
-        this.zExtent = d3.extent(this.flatArray, function(d) { return d.z });
+        this.xExtent = d3.extent(this.flatArray, function(d) { return d.x; });
+        this.yExtent = d3.extent(this.flatArray, function(d) { return d.y; });
+        this.zExtent = d3.extent(this.flatArray, function(d) { return d.z; });
 
-        var valueAccessor = this.valueAccessor; // Value accessor: Returns absolute value, e.g. the norm in case of velocity vectors
-        var minValue = d3.min(this.flatArray, function(d) { return d3.min(d.values, valueAccessor) });
-        var maxValue = d3.max(this.flatArray, function(d) { return d3.max(d.values, valueAccessor) });
+        // Value accessor: Returns absolute value, e.g. the norm in case of velocity vectors
+        var valueAccessor = this.valueAccessor;
+        var minValue = d3.min(this.flatArray,
+            function(d) { return d3.min(d.values, valueAccessor); });
+        var maxValue = d3.max(this.flatArray,
+            function(d) { return d3.max(d.values, valueAccessor); });
         this.valueExtent = [minValue, maxValue];
-        
-        if(this.cropPercentile > 0){
-            var flatArr = [].concat.apply([], this.flatArray.map(function(d){ return d.values.map(valueAccessor) })); // Create a 2D array with only the values at each position, then flatten that array
-            this.scaleExtent = [stats.percentile(flatArr, this.cropPercentile), stats.percentile(flatArr, 1-this.cropPercentile)];
+
+        if (this.cropPercentile > 0) {
+            // Create a 2D array with only the values at each position, then flatten that array
+            var flatArr = [].concat.apply([],
+                this.flatArray.map(function(d) { return d.values.map(valueAccessor); }));
+            this.scaleExtent = [stats.percentile(flatArr, this.cropPercentile),
+                stats.percentile(flatArr, 1 - this.cropPercentile)];
         } else {
             this.scaleExtent = this.valueExtent;
         }
-    }
+    };
 
-    TemporalData.prototype.computeTimeSteps = function(selection) {
+    TemporalData.prototype.computeTimeSteps = function() {
         var result = [];
         var noValues = this.flatArray[0].values.length;
+        var selection = this.timeSelection;
         var start = DateHelpers.firstDayOfWeek(selection.week, selection.year);
         for (var i = 0; i < noValues; i++) {
             var step = moment(start).add(i * selection.interval, 'minutes');
             result.push(step);
         }
         return result;
-    }
+    };
 
     TemporalData.prototype.withTimeSteps = function(values) {
         var resultLength = Math.min(values.length, this.timeSteps.length);
@@ -174,7 +183,13 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
             });
         }
         return result;
-    }
+    };
+
+    TemporalData.prototype.getValuesFile = function() {
+        var sel = this.timeSelection;
+        if (sel === null) return '';
+        return DATA_HOST + sel.folder + '/' + sel.year + '/' + this.fieldName + '/data_week' + sel.week + this.suffix + '.csv';
+    };
 
     return TemporalData;
 });

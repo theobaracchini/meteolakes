@@ -17,9 +17,8 @@ angular.module('lakeViewApp').directive('colorLegend', function() {
 
             var w = 250;
             var h = 80;
-            var margin = {top: 10, right: 20, bottom: 10, left: 10};
+            var margin = { top: 10, right: 20, bottom: 10, left: 10 };
             var width = w - margin.left - margin.right;
-            var height = h - margin.top - margin.bottom;
 
             var svg = d3.select(container)
                 .append('svg')
