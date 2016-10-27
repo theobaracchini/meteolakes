@@ -3,15 +3,15 @@
 angular.module('lakeViewApp').factory('Time', function() {
     return {
         tIndex: 0,
-        nT: 7 * 24 * 60, // number of time steps in a week
+        nSteps: 7 * 24 * 60, // number of time steps in a week
         increase: function(loop) {
             if (loop) {
                 this.tIndex ++;
-                if (this.tIndex >= this.nT) {
+                if (this.tIndex >= this.nSteps) {
                     this.tIndex = 0;
                 }
             } else {
-                this.tIndex = Math.min(this.nT - 1, this.tIndex + 1);
+                this.tIndex = Math.min(this.nSteps - 1, this.tIndex + 1);
             }
         },
         decrease: function() {

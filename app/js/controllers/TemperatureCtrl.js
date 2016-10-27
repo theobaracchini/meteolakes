@@ -111,14 +111,17 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
     $scope.setTab = function(tab) {
         $scope.closeChart();
         $scope.tab = tab;
+        $scope.$emit('tTabChanged');
         loadCurrentData();
     };
 
     function loadCurrentData() {
         var source = $scope.tab;
         var temporalData = $scope[source + 'Data'];
-        if (temporalData.ready) {
-            animate();
+        if (!temporalData.available && source !== 'surface') {
+            $scope.setTab('surface');
+        } else if (temporalData.ready) {
+            $scope.$emit('tDataReady');
         } else {
             temporalData.readData().then(function() {
                 colorFunctions[source] = generateColorFunction(temporalData.scaleExtent);
@@ -126,11 +129,7 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
                     nearestNeighbor = NearestNeighbor($scope.surfaceData);
                 }
                 $scope[source + 'Extent'] = temporalData.scaleExtent; // This one is used for the color legend
-                animate();
-            }, function(err) {
-                if ($scope.tab === source) {
-                    $scope.tab = 'surface';
-                }
+                $scope.$emit('tDataReady');
             });
         }
     }

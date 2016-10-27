@@ -30,18 +30,17 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
         var file = me.getValuesFile();
         me.ready = false;
 
-        return $q(function(resolve, reject) {
+        return $q(function(resolve) {
             // Read the data config
             d3.json(file + '.json', function(err, config) {
                 if (err) {
                     me.config = null;
                     me.available = false;
-                    reject('File not found: ' + file);
                 } else {
                     me.parseConfig(config);
                     me.available = true;
-                    resolve();
                 }
+                resolve();
             });
         });
     };

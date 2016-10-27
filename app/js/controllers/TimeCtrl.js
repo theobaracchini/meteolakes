@@ -7,20 +7,31 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
     var steps = [];
 
     var indexReady = false;
-    var dataReady = false;
+    $scope.vDataReady = false;
+    $scope.tDataReady = false;
+    var wasPlaying = true; // Initialize as "true" to autoplay on page load
 
     $scope.isPlaying = false;
     $scope.selection = {};
 
     $scope.$watch('selection', function(selection) {
         if (indexReady) {
+            wasPlaying = $scope.isPlaying || wasPlaying;
             $scope.stop();
+            $scope.vDataReady = false;
+            $scope.tDataReady = false;
             $scope.$broadcast('updateTimeSelection', selection);
         }
     }, true);
 
     $scope.$watch('Time.tIndex', function() {
         $scope.$broadcast('tick');
+    });
+
+    $scope.$on('tTabChanged', function() {
+        wasPlaying = $scope.isPlaying || wasPlaying;
+        $scope.pause();
+        $scope.tDataReady = false;
     });
 
     DataIndex.load().then(function(index) {
@@ -40,11 +51,16 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
         console.error('Failed to load data index!', err);
     });
 
-    $scope.$on('dataReady', function(evt, timeSteps) {
-        // TODO refactor
-        Time.nT = timeSteps.length;
+    $scope.$on('vDataReady', function(evt, timeSteps) {
         steps = timeSteps;
-        dataReady = true;
+        Time.nSteps = steps.length;
+        $scope.vDataReady = true;
+        resumeIfReady();
+    });
+
+    $scope.$on('tDataReady', function() {
+        $scope.tDataReady = true;
+        resumeIfReady();
     });
 
     $scope.Time = Time;
@@ -70,7 +86,7 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
     };
 
     $scope.forward = function() {
-        Time.increase(true);
+        Time.increase(false);
     };
 
     $scope.slower = function() {
@@ -95,11 +111,11 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
     };
 
     $scope.getDate = function() {
-        return dataReady ? DateHelpers.yearMonthDay(currentDate()) : '';
+        return $scope.vDataReady ? DateHelpers.yearMonthDay(currentDate()) : '';
     };
 
     $scope.getTime = function() {
-        return dataReady ? DateHelpers.hoursMinutes(currentDate()) : '';
+        return $scope.vDataReady ? DateHelpers.hoursMinutes(currentDate()) : '';
     };
 
     $scope.PrettyPrintWeek = function(week) {
@@ -156,5 +172,14 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
 
     function currentDate() {
         return steps[Time.tIndex];
+    }
+
+    function resumeIfReady() {
+        if ($scope.vDataReady && $scope.tDataReady) {
+            if (wasPlaying && !$scope.isPlaying) {
+                wasPlaying = false;
+                $scope.play();
+            }
+        }
     }
 });
