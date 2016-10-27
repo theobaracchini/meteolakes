@@ -56,7 +56,7 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
             graphics.beginFill(0x4682B4);
             graphics.drawRect(0, 0, size.x, origin.y);
             graphics.endFill();
-            graphics.beginFill(0x548b54);
+            graphics.beginFill(0x896E53);
             graphics.drawRect(0, origin.y, size.x, size.y);
             graphics.endFill();
         }
