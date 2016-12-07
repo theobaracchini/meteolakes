@@ -61,6 +61,7 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer, Show
             onClick: '&',
             marker: '=',
             data: '=',
+            init: '=',
             draw: '='
         },
         link: function(scope, element, attrs) {
@@ -71,6 +72,10 @@ angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer, Show
             var map = initMapbox(container);
             var canvasLayer = L.canvasLayer({ dataSource: 'surface' });
             var markerLayer;
+
+            if (typeof scope.init === 'function') {
+                scope.init(map);
+            }
 
             canvasLayer.addTo(map);
             L.control.showcoordinates({ format: formatCoordinates }).addTo(map);
