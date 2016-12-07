@@ -160,7 +160,7 @@
                     <div>
                         <ol class="breadcrumb pull-right">
                             <li><a href="http://meteolakes.epfl.ch/validation/">Satellite validation</a></li>
-                            <li><a href="http://meteolakes.epfl.ch/meteograph/beta/">In-situ validation (beta)</a></li>
+                            <li><a href="{{ BUCHILLON_URL }}">In-situ validation (beta)</a></li>
                         </ol>
                         <h3>Temperature</h3>
                     </div>
@@ -173,7 +173,7 @@
 
                     <div class="tab-content">
                         <div class="tab-pane" ng-class="{active: tab == 'surface'}">
-                            <leaflet-map active="tab == 'surface'" set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="surfaceData" draw="drawTemperatureOverlay">
+                            <leaflet-map active="tab == 'surface'" set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="surfaceData" init="initMap" draw="drawTemperatureOverlay">
                                 <loading ng-hide="tDataReady">
                                 </loading>
                             </leaflet-map>
