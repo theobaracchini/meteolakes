@@ -13,6 +13,7 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
 
     $scope.isPlaying = false;
     $scope.selection = {};
+    $scope.BUCHILLON_URL = 'http://meteolakes.epfl.ch/graph-view/beta/';
 
     $scope.$watch('selection', function(selection) {
         if (indexReady) {
