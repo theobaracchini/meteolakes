@@ -52,15 +52,16 @@
     <body ng-controller="TimeCtrl">
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">
-                <div class="navbar-header">
-                    <div class="visible-xs-block pull-right lv-navbar-margin">
-                        <div class="navbar-text lv-navbar-text-inline"><strong><span ng-bind="getDate()"></span>, <span ng-bind="getTime()"></span></strong></div>
-                        <button type="button" class="btn btn-default navbar-btn" ng-click="play()"><span class="glyphicon" ng-class="{'glyphicon-play': !isPlaying, 'glyphicon-pause': isPlaying}"></span></button>
-                    </div>
-                    <a class="navbar-brand" href="#">Lake 3D Model</a>
-                </div>
 
                 <div class="visible-xs-block lv-navbar-small-buttons">
+                    <div class="pull-left">
+                        <img src="img/coresim.png" style="width:35px;height:41px;margin:10px">
+                        <h4 style="display:inline">Lake 3D Model</h4>
+                    </div>
+                    <div class="pull-right lv-controls-xs">
+                        <div class="navbar-text"><strong><div style="font-size:60%" ng-bind="getDate()"></div><div style="font-size:130%" ng-bind="getTime()"></div></strong></div>
+                        <button type="button" class="btn btn-default navbar-btn" ng-click="play()"><span class="glyphicon" ng-class="{'glyphicon-play': !isPlaying, 'glyphicon-pause': isPlaying}"></span></button>
+                    </div>
                     <div class="btn-group btn-group-justified">
                         <div class="btn-group btn-group-sm">
                             <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
@@ -99,6 +100,10 @@
                 </div>
 
                 <div class="hidden-xs">
+                    <div class="pull-left">
+                        <img src="img/coresim.png" class="lv-navbar-logo">
+                    </div>
+                    <a class="navbar-brand" href="#">Lake 3D Model</a>
                     <div class="btn-group navbar-btn">
                         <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
                             {{ index[selection.lake].name }}
@@ -160,7 +165,7 @@
                     <div>
                         <ol class="breadcrumb pull-right">
                             <li><a href="http://meteolakes.epfl.ch/validation/">Satellite validation</a></li>
-                            <li><a href="{{ BUCHILLON_URL }}">In-situ validation (beta)</a></li>
+                            <li><a href="{{ BUCHILLON_URL }}">In-situ measurements (Beta)</a></li>
                         </ol>
                         <h3>Temperature</h3>
                     </div>
@@ -217,7 +222,22 @@
 
         <nav class="navbar navbar-inverse navbar-fixed-bottom">
             <div class="container">
-                <p class="navbar-text">This is a development version running <a href="http://oss.deltares.nl/web/delft3d">Delft3D</a> in real-time. Please contact <a href="mailto:theo.baracchini@epfl.ch">theo.baracchini@epfl.ch</a> for further information.</p>
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bottomNav" style="float:left;margin-left:15px" >
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <!--<a class="navbar-brand" href="#">Lake 3D Model</a>-->
+                </div>
+                <div class="collapse navbar-collapse" id="bottomNav">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#">Model</a></li>
+                        <li><a href="#">Remote Sensing</a></li>
+                        <li><a href="{{ BUCHILLON_URL }}">In-situ Measurements</a></li>
+                        <li><a href="about.html">About</a></li>
+                    </ul>
+                </div>
             </div>
         </nav>
 

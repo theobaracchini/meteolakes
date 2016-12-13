@@ -4,7 +4,6 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
     var animationHandlers = [];
 
     $scope.LEGEND_COLORS = ['blue', 'cyan', 'lime', 'yellow', 'red'];
-    $scope.BUCHILLON_URL = 'http://meteolakes.epfl.ch/graph-view/beta/';
 
     $scope.tab = 'surface';
     $scope.timeSelection = null;
@@ -50,7 +49,7 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
             iconAnchor: [0, 24], // point of the icon which will correspond to marker's location
             popupAnchor: [12, -27] // point from which the popup should open rel. to iconAnchor
         });
-        L.marker({ lat: 46.45839177832672, lng: 6.399359513724266 }, { icon: stationIcon }).addTo(map).bindPopup('<a href="' + $scope.BUCHILLON_URL + '">Buchillon measuring station (Beta)</a>');
+        L.marker({ lat: 46.45839177832672, lng: 6.399359513724266 }, { icon: stationIcon }).addTo(map).bindPopup('<a href="' + $scope.BUCHILLON_URL + '">Buchillon field station (Beta)</a>');
     };
 
     $scope.drawTemperatureOverlay = function(data, options) {

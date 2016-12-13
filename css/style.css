@@ -3,9 +3,6 @@ body {
     padding-bottom: 70px;
 }
 
-.nav > li > a {
-    padding: 6px 12px;
-}
 
 .lv-container-dynamic {
     padding-right: 15px;
@@ -52,12 +49,28 @@ body {
     border-left: 1px solid #777;
 }
 
+.lv-navbar-logo {
+    width: 60px;
+    height: 71px;
+    margin: 15px 20px 5px 5px;
+}
+
 .lv-navbar-margin {
     margin-right: 15px;
 }
 
-.lv-navbar-text-inline {
+.lv-controls-xs {
+    margin-top: 10px;
+}
+
+.lv-controls-xs > div {
     display: inline-block;
+    vertical-align: middle;
+    margin: 5px;
+}
+
+.lv-controls-xs > button {
+    vertical-align: middle;
 }
 
 .lv-navbar-small-buttons {
