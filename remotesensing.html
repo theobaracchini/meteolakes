@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+
+        <title>Forecasting Hydrodynamic Lake Model</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="description" content="3D forecasting hydrodynamic models for real-time lakes monitoring using Delft3D / Modélisations hydrodynamiques en 3D et temps réel pour suivre et prédire l'état des lacs.">
+
+        <!-- Integrity hashes generated using https://www.srihash.org/ -->
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
+              integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+              crossorigin="anonymous">
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.1/leaflet.css"
+              integrity="sha384-jbhYDFfm+l6mA6jJUD5X/yv7LoRqVSoV/P77fNwITqMNlHHVIdSwj3SexyasxFL/"
+              crossorigin="anonymous">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/loading-animation.css">
+        <link rel="apple-touch-icon" href="favicon-152.png">
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"
+                integrity="sha384-3ceskX3iaEnIogmQchP8opvBy3Mi7Ce34nWjpBIwVTHfGYWQS9jwHDVRnpKKHJg7"
+                crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"
+                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+                crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"
+                integrity="sha384-7pfELK0arQ3VANqV4kiPWPh5wOsrfitjFGF/NdyHXUJ3JJPy/rNhasPtdkaNKhul"
+                crossorigin="anonymous"></script>
+    </head>
+
+    <body>
+        <div class="lv-container-dynamic">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3>Model Validation by Remote Sensing</h3>
+                    <iframe src="http://meteolakes.epfl.ch/validation" class="iframe-scale-70"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <nav class="navbar navbar-inverse navbar-fixed-bottom">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bottomNav" style="float:left;margin-left:15px" >
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <!--<a class="navbar-brand" href="#">Lake 3D Model</a>-->
+                </div>
+                <div class="collapse navbar-collapse" id="bottomNav">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/">Model</a></li>
+                        <li class="active"><a href="#">Remote Sensing</a></li>
+                        <li><a href="http://meteolakes.epfl.ch/graph-view/beta/">In-situ Measurements</a></li>
+                        <li><a href="about.html">About</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </body>
+</html>

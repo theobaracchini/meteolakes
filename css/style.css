@@ -136,3 +136,28 @@ body {
     stroke: gray;
     stroke-width: 2px;
 }
+
+.thumbnail.with-caption {
+  display: inline-block;
+  background: #f5f5f5;
+}
+.thumbnail.with-caption p {
+  margin: 0;
+  padding-top: 0.5em;
+}
+.iframe-scale-70 {
+    width:1900px;
+    height:1000px;
+    -webkit-transform:scale(0.7);
+    -moz-transform:scale(0.7);
+    transform:scale(0.7);
+    -moz-transform-origin: top left;
+    -webkit-transform-origin: top left;
+    -o-transform-origin: top left;
+    -ms-transform-origin: top left;
+    transform-origin: top left;
+    background: #f5f5f5;
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
