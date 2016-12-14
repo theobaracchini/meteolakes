@@ -1,8 +1,10 @@
 body {
-    padding-top: 100px;
     padding-bottom: 70px;
 }
 
+.lv-main-content {
+    padding-top: 100px;
+}
 
 .lv-container-dynamic {
     padding-right: 15px;
