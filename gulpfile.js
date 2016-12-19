@@ -32,7 +32,8 @@ gulp.task('build-prod', function() {
 
 gulp.task('connect', function() {
     connect.server({
-        root: './'
+        root: './',
+	port: 8081
     });
 });
 

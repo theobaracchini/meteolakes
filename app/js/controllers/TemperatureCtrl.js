@@ -49,7 +49,14 @@ angular.module('lakeViewApp').controller('TemperatureCtrl', function($scope, $q,
             iconAnchor: [0, 24], // point of the icon which will correspond to marker's location
             popupAnchor: [12, -27] // point from which the popup should open rel. to iconAnchor
         });
+        var satIcon = L.icon({
+            iconUrl: 'img/satellite.png',
+            iconSize: [50, 50], // size of the icon
+            iconAnchor: [25, 25], // point of the icon which will correspond to marker's location
+            popupAnchor: [5, -24] // point from which the popup should open rel. to iconAnchor
+        });
         L.marker({ lat: 46.45839177832672, lng: 6.399359513724266 }, { icon: stationIcon }).addTo(map).bindPopup('<a href="' + $scope.BUCHILLON_URL + '">Buchillon field station (Beta)</a>');
+        L.marker({ lat: 46.26181, lng: 6.61576 }, { icon: satIcon }).addTo(map).bindPopup('<a href="remotesensing.html">Validation by Remote Sensing</a>');
     };
 
     $scope.drawTemperatureOverlay = function(data, options) {
