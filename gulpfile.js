@@ -9,9 +9,9 @@ var ngAnnotate = require('gulp-ng-annotate');
 var sourcemaps = require('gulp-sourcemaps');
 var uglify = require('gulp-uglify');
 
-var sources = ['app/js/app.js', 'app/js/**/*.js', 'app/vendor/js/rbush/module.js', 'app/vendor/js/stats-lite/module.js', 'app/vendor/js/**/*.js'];
+var sources = ['app/**/*.module.js', 'app/**/module.js', 'app/**/*.js'];
 
-var lintSources = ['gulpfile.js', 'app/js/**/*.js'];
+var lintSources = ['gulpfile.js', 'app/**/*.js'];
 
 gulp.task('build-dev', function() {
     gulp.src(sources)
