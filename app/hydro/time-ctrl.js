@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval, Time, DATA_HOST, DateHelpers, DataIndex, Util) {
+angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval, Time, DATA_HOST, DateHelpers, HydroDataIndex, Util) {
     var TICK_INTERVAL_MIN = 50;
     var TICK_INTERVAL_MAX = 800;
 
@@ -35,7 +35,7 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
         $scope.tDataReady = false;
     });
 
-    DataIndex.load().then(function(index) {
+    HydroDataIndex.load().then(function(index) {
         $scope.index = index;
 
         // Initialize with current year/week, closest existing
