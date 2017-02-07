@@ -2,8 +2,12 @@ body {
     padding-bottom: 70px;
 }
 
+div#tab-insitu {
+    padding-top: 70px;
+}
+
 .lv-main-content {
-    padding-top: 100px;
+    padding-top: 100px; /* *** */
 }
 
 .lv-container-dynamic {
@@ -59,6 +63,10 @@ body {
 
 .lv-navbar-margin {
     margin-right: 15px;
+}
+
+.lv-navbar-text-inline {
+    display: inline-block;
 }
 
 .lv-controls-xs {
@@ -133,6 +141,30 @@ body {
     stroke: steelblue;
     stroke-width: 1.5px;
 }
+.chart-line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
+
+.chart-legend {
+    font-size: 100%;
+    font-weight: bold;
+}
+.navtext {
+    padding: 6px 4px;
+    white-space: nowrap;
+}
+.navtext-mob {
+    padding: 5px 4px;
+    white-space: nowrap;
+    font-size: 90%;
+}
+
+.chart-circle {
+    stroke-width: 5px;
+	stroke-linecap: round;
+}
 
 .chart-vertical-line {
     stroke: gray;
@@ -163,3 +195,22 @@ body {
     padding: 0;
     margin: 0;
 }
+
+
+/* Manual smaller sizes for mobile */
+/*@media (max-width: 768px) {
+    h1 { font-size:27px; }
+    .h2, h2 { font-size:23px; }
+    .h3, h3 { font-size:18px; }
+    .h4, h4 { font-size:14px; }
+    .h5, h5 { font-size:11px; }
+    .h6, h6 {font-size:9px; }
+    .chart-legend, .chart-axis { font-size: 80%; }
+    .chart-line { stroke-width: 1px; }
+    .chart-circle { stroke-width: 3px; }
+}*/
+
+/* Larger top padding if navbar takes up two lines */
+/*@media (max-width: 440px) {
+    body { padding-top: 140px; }
+}*/
