@@ -19,7 +19,7 @@
                        </button>
                        <ul class="dropdown-menu lv-scrollable-menu">
                            <li ng-repeat="lake in index">
-                               <a href="#" ng-click="ChangeLake($index)">{{ lake.name }}</a>
+                               <a ng-click="ChangeLake($index)">{{ lake.name }}</a>
                            </li>
                        </ul>
                    </div>
@@ -30,7 +30,7 @@
                        </button>
                        <ul class="dropdown-menu lv-scrollable-menu" role="menu">
                            <li ng-repeat="year in index[selection.lake].years">
-                               <a href="#" ng-click="ChangeYear(year)">{{ year }}</a>
+                               <a ng-click="ChangeYear(year)">{{ year }}</a>
                            </li>
                        </ul>
                    </div>
@@ -41,7 +41,7 @@
                        </button>
                        <ul class="dropdown-menu dropdown-menu-right lv-scrollable-menu" role="menu">
                            <li ng-repeat="week in index[selection.lake].data.get(selection.year)">
-                               <a href="#" ng-click="ChangeWeek(week)">{{ PrettyPrintWeek(week) }}</a>
+                               <a ng-click="ChangeWeek(week)">{{ PrettyPrintWeek(week) }}</a>
                            </li>
                        </ul>
                    </div>
@@ -52,7 +52,7 @@
                <div class="pull-left">
                    <img src="img/coresim.png" class="lv-navbar-logo">
                </div>
-               <div class="btn-group"><a class="navbar-brand" href="#">Lake 3D Model</a></div>
+               <div class="btn-group"><a class="navbar-brand" href="#!hydro">Lake 3D Model</a></div>
                <div class="btn-group navbar-btn">
                    <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
                        {{ index[selection.lake].name }}
@@ -60,7 +60,7 @@
                    </button>
                    <ul class="dropdown-menu lv-scrollable-menu">
                        <li ng-repeat="lake in index">
-                           <a href="#" ng-click="ChangeLake($index)">{{ lake.name }}</a>
+                           <a ng-click="ChangeLake($index)">{{ lake.name }}</a>
                        </li>
                    </ul>
                </div>
@@ -71,7 +71,7 @@
                    </button>
                    <ul class="dropdown-menu lv-scrollable-menu" role="menu">
                        <li ng-repeat="year in index[selection.lake].years">
-                           <a href="#" ng-click="ChangeYear(year)">{{ year }}</a>
+                           <a ng-click="ChangeYear(year)">{{ year }}</a>
                        </li>
                    </ul>
                </div>
@@ -82,7 +82,7 @@
                    </button>
                    <ul class="dropdown-menu lv-scrollable-menu" role="menu">
                        <li ng-repeat="week in index[selection.lake].data.get(selection.year)">
-                           <a href="#" ng-click="ChangeWeek(week)">{{ PrettyPrintWeek(week) }}</a>
+                           <a ng-click="ChangeWeek(week)">{{ PrettyPrintWeek(week) }}</a>
                        </li>
                    </ul>
                </div>
@@ -117,9 +117,9 @@
                    </div>
 
                    <ul class="nav nav-tabs">
-                       <li ng-class="{active: tab == 'surface'}"><a href="#" ng-click="setTab('surface')">Surface</a></li>
-                       <li ng-class="{active: tab == 'sliceXZ', hidden: !sliceXZData.available}"><a href="#" ng-click="setTab('sliceXZ')">Transect 1</a></li>
-                       <li ng-class="{active: tab == 'sliceYZ', hidden: !sliceYZData.available}"><a href="#" ng-click="setTab('sliceYZ')">Transect 2</a></li>
+                       <li ng-class="{active: tab == 'surface'}"><a ng-click="setTab('surface')">Surface</a></li>
+                       <li ng-class="{active: tab == 'sliceXZ', hidden: !sliceXZData.available}"><a ng-click="setTab('sliceXZ')">Transect 1</a></li>
+                       <li ng-class="{active: tab == 'sliceYZ', hidden: !sliceYZData.available}"><a ng-click="setTab('sliceYZ')">Transect 2</a></li>
                    </ul>
 
                    <div class="tab-content">
@@ -153,7 +153,7 @@
                    <h3>Water Velocity</h3>
 
                    <ul class="nav nav-tabs">
-                       <li class="active"><a>Surface</a></li>
+                       <li class="active"><a>Depth average</a></li>
                    </ul>
 
                    <leaflet-map active="true" set-handler="addAnimationHandler(handler)" on-click="mapClicked(point)" marker="chartPoint" data="surfaceData" draw="drawVelocityOverlay">

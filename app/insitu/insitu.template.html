@@ -11,7 +11,7 @@
                 </button>
                 <ul class="dropdown-menu lv-scrollable-menu" role="menu">
                     <li ng-repeat="period in [1, 2, 3, 5, 7, 14, 30, 90]">
-                        <a href="#!insitu" ng-click="ChangePeriod(period)">{{ AlphaPeriod(period) }}</a>
+                        <a ng-click="ChangePeriod(period)">{{ AlphaPeriod(period) }}</a>
                     </li>
                 </ul>
             </div>
@@ -26,7 +26,7 @@
                     </button>
                     <ul class="dropdown-menu lv-scrollable-menu" role="menu">
                         <li ng-repeat="month in months">
-                            <a href="#!insitu" ng-click="ChangeMonth(month)">{{ AlphaMonth(month, false) }}</a>
+                            <a ng-click="ChangeMonth(month)">{{ AlphaMonth(month, false) }}</a>
                         </li>
                     </ul>
                 </div>
@@ -37,7 +37,7 @@
                     </button>
                     <ul class="dropdown-menu lv-scrollable-menu" role="menu">
                         <li ng-repeat="month in months">
-                            <a href="#!insitu" ng-click="ChangeMonth(month)">{{ AlphaMonth(month, false) }}</a>
+                            <a ng-click="ChangeMonth(month)">{{ AlphaMonth(month, false) }}</a>
                         </li>
                     </ul>
                 </div>
@@ -49,7 +49,7 @@
                 </button>
                 <ul class="dropdown-menu lv-scrollable-menu" role="menu">
                     <li ng-repeat="day in days">
-                        <a href="#!insitu" ng-click="ChangeDay(day)">{{ day }}</a>
+                        <a ng-click="ChangeDay(day)">{{ day }}</a>
                     </li>
                 </ul>
             </div>
@@ -60,7 +60,7 @@
                 </button>
                 <ul class="dropdown-menu lv-scrollable-menu" role="menu">
                     <li ng-repeat="year in years">
-                        <a href="#!insitu" ng-click="ChangeYear(year)">{{ year }}</a>
+                        <a ng-click="ChangeYear(year)">{{ year }}</a>
                     </li>
                 </ul>
             </div>
