@@ -85,7 +85,7 @@ angular.module('lakeViewApp').directive('d3Chart', function($window) {
                 .attr('text-anchor', 'middle');
 
             g.append('path')
-                .attr('class', 'chart-data');
+                .attr('class', 'chart-line');
 
             g.append('line')
                 .attr('class', 'chart-vertical-line');
@@ -143,7 +143,7 @@ angular.module('lakeViewApp').directive('d3Chart', function($window) {
                         .text(label)
                         .attr('transform', 'translate(' + (width / 2) + ')');
 
-                    renderRoot.select('.chart-data')
+                    renderRoot.select('.chart-line')
                         .attr('d', line(data));
 
                     var linePosition = x(data[step].date);

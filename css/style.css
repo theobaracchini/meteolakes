@@ -6,6 +6,11 @@ div#tab-insitu {
     padding-top: 70px;
 }
 
+/* Larger top padding if navbar takes up two lines */
+@media (max-width: 440px) {
+    div#tab-insitu { padding-top: 140px; }
+}
+
 .lv-main-content {
     padding-top: 100px; /* *** */
 }
@@ -136,11 +141,6 @@ div#tab-insitu {
     shape-rendering: crispEdges;
 }
 
-.chart-data {
-    fill: none;
-    stroke: steelblue;
-    stroke-width: 1.5px;
-}
 .chart-line {
     fill: none;
     stroke: steelblue;
@@ -151,10 +151,12 @@ div#tab-insitu {
     font-size: 100%;
     font-weight: bold;
 }
+
 .navtext {
     padding: 6px 4px;
     white-space: nowrap;
 }
+
 .navtext-mob {
     padding: 5px 4px;
     white-space: nowrap;
@@ -198,19 +200,14 @@ div#tab-insitu {
 
 
 /* Manual smaller sizes for mobile */
-/*@media (max-width: 768px) {
+@media (max-width: 768px) {
     h1 { font-size:27px; }
     .h2, h2 { font-size:23px; }
     .h3, h3 { font-size:18px; }
     .h4, h4 { font-size:14px; }
     .h5, h5 { font-size:11px; }
     .h6, h6 {font-size:9px; }
-    .chart-legend, .chart-axis { font-size: 80%; }
+    .chart-legend, .chart-axis { font-size: 90%; }
     .chart-line { stroke-width: 1px; }
     .chart-circle { stroke-width: 3px; }
-}*/
-
-/* Larger top padding if navbar takes up two lines */
-/*@media (max-width: 440px) {
-    body { padding-top: 140px; }
-}*/
+}
