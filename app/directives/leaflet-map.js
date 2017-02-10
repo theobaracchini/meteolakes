@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').directive('leafletMap', function(CanvasLayer, ShowCoordinates, $timeout) {
+angular.module('meteolakesApp').directive('leafletMap', function(CanvasLayer, ShowCoordinates, $timeout) {
     // Definition of available swisstopo tiles (bounding box) and resolutions
     // Source: https://api3.geo.admin.ch/services/sdiservices.html#parameters
     var TOP_LEFT = L.point(420000, 350000);

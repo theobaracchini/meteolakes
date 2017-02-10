@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('lakeViewApp').component('pageRemote', {
+angular.module('meteolakesApp').component('pageRemote', {
     templateUrl: 'app/page-remote/page-remote.template.html',
     controller: function() {
 

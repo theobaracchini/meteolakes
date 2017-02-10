@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').directive('insituChart', function($window) {
+angular.module('meteolakesApp').directive('insituChart', function($window) {
     return {
         restrict: 'E',
         scope: {

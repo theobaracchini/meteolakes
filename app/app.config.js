@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('lakeViewApp').config(['$locationProvider', '$routeProvider',
+angular.module('meteolakesApp').config(['$locationProvider', '$routeProvider',
     function config($locationProvider, $routeProvider) {
         $locationProvider.hashPrefix('!');
 

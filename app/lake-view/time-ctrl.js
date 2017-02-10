@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval, Time, DateHelpers, DataIndex, Util) {
+angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interval, Time, DateHelpers, DataIndex, Util) {
     var TICK_INTERVAL_MIN = 50;
     var TICK_INTERVAL_MAX = 800;
 

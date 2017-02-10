@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').controller('GraphCtrl', function($scope, $q, Util, InsituDataIndex, PlotIndex) {
+angular.module('meteolakesApp').controller('GraphCtrl', function($scope, $q, Util, InsituDataIndex, PlotIndex) {
     var indexReady = false;
 
     // $scope.chartData = [{ date: moment({ date: 1 }), value: 1 },

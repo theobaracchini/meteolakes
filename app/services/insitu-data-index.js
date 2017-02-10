@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').service('InsituDataIndex', function($q, DATA_HOST, DATA_WEATHER_STATION, DataFile) {
+angular.module('meteolakesApp').service('InsituDataIndex', function($q, DATA_HOST, DATA_WEATHER_STATION, DataFile) {
     this.dataSeries = {};
     this.dataPeriods = {};
     this.availableData = {};

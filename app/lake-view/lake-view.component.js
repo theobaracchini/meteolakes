@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('lakeViewApp').component('lakeView', {
+angular.module('meteolakesApp').component('lakeView', {
     templateUrl: 'app/lake-view/lake-view.template.html',
     transclude: true, // Needed for the lake-icon directive
     bindings: {

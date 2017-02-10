@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').service('Util', function() {
+angular.module('meteolakesApp').service('Util', function() {
     /**
       * finds the entry closest to <query> in <collection>
       */

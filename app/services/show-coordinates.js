@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').service('ShowCoordinates', function() {
+angular.module('meteolakesApp').service('ShowCoordinates', function() {
     L.Control.ShowCoordinates = L.Control.extend({
         options: {
             position: 'bottomleft',

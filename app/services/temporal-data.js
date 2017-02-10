@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, DateHelpers, stats) {
+angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, $q, DateHelpers, stats) {
     var TemporalData = function(fieldName, cropPercentile, suffix) {
         this.fieldName = fieldName;
         this.suffix = suffix || '';

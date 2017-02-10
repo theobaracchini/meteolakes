@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').directive('colorLegend', function() {
+angular.module('meteolakesApp').directive('colorLegend', function() {
     var count = 0;
 
     return {

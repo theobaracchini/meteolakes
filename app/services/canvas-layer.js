@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').service('CanvasLayer', function() {
+angular.module('meteolakesApp').service('CanvasLayer', function() {
     L.CanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
         initialize: function(options) {
             this._dragging = false;

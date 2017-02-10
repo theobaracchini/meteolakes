@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').directive('d3Chart', function($window) {
+angular.module('meteolakesApp').directive('d3Chart', function($window) {
     return {
         restrict: 'E',
         scope: {

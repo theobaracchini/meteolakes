@@ -1,5 +1,4 @@
-angular.module('lakeViewApp').directive('lakeIcon', function() {
-
+angular.module('meteolakesApp').directive('lakeIcon', function() {
     return {
         restrict: 'E',
         transclude: true,

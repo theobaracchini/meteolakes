@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
+angular.module('meteolakesApp').directive('pixiCanvas', function(Util, $timeout) {
     var HORIZONTAL_SCALE = 0.02;
     var CRS = L.CRS.Simple;
 

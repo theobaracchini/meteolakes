@@ -1,6 +1,6 @@
 // Factory for a shared time index variable, so that all
 // graphs can access it
-angular.module('lakeViewApp').factory('Time', function() {
+angular.module('meteolakesApp').factory('Time', function() {
     return {
         tIndex: 0,
         nSteps: 7 * 24 * 60, // number of time steps in a week

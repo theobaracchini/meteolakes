@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').service('PlotIndex', function($q, DATA_HOST, DATA_WEATHER_STATION, InsituDataIndex) {
+angular.module('meteolakesApp').service('PlotIndex', function($q, DATA_HOST, DATA_WEATHER_STATION, InsituDataIndex) {
     this.plots = [];
 
     this.load = function() {

@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').factory('NearestNeighbor', function(rbush, knn) {
+angular.module('meteolakesApp').factory('NearestNeighbor', function(rbush, knn) {
     return function(data) {
         // Initialize nearest neighbor data structure
         var knnData = [];

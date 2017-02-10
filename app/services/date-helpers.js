@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').service('DateHelpers', function() {
+angular.module('meteolakesApp').service('DateHelpers', function() {
     this.firstDayOfWeek = function(week, year) {
         return moment().year(year).isoWeek(week).startOf('isoWeek');
     };

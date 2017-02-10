@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('lakeViewApp').factory('DataFile', function(DATA_HOST, DATA_WEATHER_STATION, DATA_WEATHER_FILEEXT, $q) {
+angular.module('meteolakesApp').factory('DataFile', function(DATA_HOST, DATA_WEATHER_STATION, DATA_WEATHER_FILEEXT, $q) {
     var DataFile = function(series, year, month) {
         this.ready = false;
         this.loading = false;
