@@ -1,4 +1,4 @@
-angular.module('autoActive', []).directive('autoActive', ['$location', function($location) {
+angular.module('lakeViewApp').directive('autoActive', ['$location', function($location) {
     return {
         restrict: 'A',
         scope: false,

@@ -1,0 +1,132 @@
+<div ng-controller="TimeCtrl">
+    <nav class="navbar navbar-default navbar-fixed-top">
+       <div class="container">
+
+           <div class="visible-xs-block lv-navbar-small-buttons">
+               <div class="pull-left">
+                   <img src="img/coresim.png" style="width:35px;height:41px;margin:10px">
+                   <h4 style="display:inline">Water Quality</h4>
+               </div>
+               <div class="pull-right lv-controls-xs">
+                   <div class="navbar-text"><strong><div style="font-size:60%" ng-bind="getDate()"></div><div style="font-size:130%" ng-bind="getTime()"></div></strong></div>
+                   <button type="button" class="btn btn-default navbar-btn" ng-click="play()"><span class="glyphicon" ng-class="{'glyphicon-play': !isPlaying, 'glyphicon-pause': isPlaying}"></span></button>
+               </div>
+               <div class="btn-group btn-group-justified">
+                   <div class="btn-group btn-group-sm">
+                       <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+                           {{ index[selection.lake].name }}
+                           <span class="caret"></span>
+                       </button>
+                       <ul class="dropdown-menu lv-scrollable-menu">
+                           <li ng-repeat="lake in index">
+                               <a ng-click="ChangeLake($index)">{{ lake.name }}</a>
+                           </li>
+                       </ul>
+                   </div>
+                   <div class="btn-group btn-group-sm">
+                       <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+                           {{ "Year " + selection.year }}
+                           <span class="caret"></span>
+                       </button>
+                       <ul class="dropdown-menu lv-scrollable-menu" role="menu">
+                           <li ng-repeat="year in index[selection.lake].years">
+                               <a ng-click="ChangeYear(year)">{{ year }}</a>
+                           </li>
+                       </ul>
+                   </div>
+                   <div class="btn-group btn-group-sm">
+                       <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+                           {{ "Week " + selection.week }}
+                           <span class="caret"></span>
+                       </button>
+                       <ul class="dropdown-menu dropdown-menu-right lv-scrollable-menu" role="menu">
+                           <li ng-repeat="week in index[selection.lake].data.get(selection.year)">
+                               <a ng-click="ChangeWeek(week)">{{ PrettyPrintWeek(week) }}</a>
+                           </li>
+                       </ul>
+                   </div>
+               </div>
+           </div>
+
+           <div class="hidden-xs">
+               <div class="pull-left">
+                   <img src="img/coresim.png" class="lv-navbar-logo">
+               </div>
+               <div class="btn-group"><a class="navbar-brand" href="#!/quality">Water Quality</a></div>
+               <div class="btn-group navbar-btn">
+                   <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+                       {{ index[selection.lake].name }}
+                       <span class="caret"></span>
+                   </button>
+                   <ul class="dropdown-menu lv-scrollable-menu">
+                       <li ng-repeat="lake in index">
+                           <a ng-click="ChangeLake($index)">{{ lake.name }}</a>
+                       </li>
+                   </ul>
+               </div>
+               <div class="btn-group navbar-btn">
+                   <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+                       {{ "Year " + selection.year }}
+                       <span class="caret"></span>
+                   </button>
+                   <ul class="dropdown-menu lv-scrollable-menu" role="menu">
+                       <li ng-repeat="year in index[selection.lake].years">
+                           <a ng-click="ChangeYear(year)">{{ year }}</a>
+                       </li>
+                   </ul>
+               </div>
+               <div class="btn-group navbar-btn">
+                   <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+                       {{ "Week " + selection.week }}
+                       <span class="caret"></span>
+                   </button>
+                   <ul class="dropdown-menu lv-scrollable-menu" role="menu">
+                       <li ng-repeat="week in index[selection.lake].data.get(selection.year)">
+                           <a ng-click="ChangeWeek(week)">{{ PrettyPrintWeek(week) }}</a>
+                       </li>
+                   </ul>
+               </div>
+               <div class="navbar-right">
+                   <div class="btn-group lv-navbar-margin">
+                       <button type="button" class="btn btn-default navbar-btn lv-slower" ng-click="slower()"><span class="glyphicon glyphicon-backward"></span></button>
+                       <button type="button" class="btn btn-default navbar-btn" ng-click="play()"><span class="glyphicon" ng-class="{'glyphicon-play': !isPlaying, 'glyphicon-pause': isPlaying}"></span></button>
+                       <button type="button" class="btn btn-default navbar-btn lv-faster" ng-click="faster()"><span class="glyphicon glyphicon-forward"></span></button>
+                       <button type="button" class="btn btn-default navbar-btn" ng-click="stop()"><span class="glyphicon glyphicon-stop"></span></button>
+                   </div>
+               </div>
+
+               <div>
+                   <div class="btn-group pull-left lv-navbar-margin">
+                       <button type="button" class="btn btn-default navbar-btn" ng-click="backward()"><span class="glyphicon glyphicon-step-backward"></span></button>
+                       <button type="button" class="btn btn-default navbar-btn" ng-click="forward()"><span class="glyphicon glyphicon-step-forward"></span></button>
+                   </div>
+                   <div class="navbar-right"><p class="navbar-text"><strong>Date: <span ng-bind="getDate()"></span><span class="lv-divider-vertical"></span>Time: <span ng-bind="getTime()"></span></strong></p></div>
+                   <div class="lv-timeslider">
+                       <input type="range" ng-model="Time.tIndex" min="0" max="{{ Time.nSteps - 1 }}">
+                   </div>
+               </div>
+           </div>
+       </div>
+    </nav>
+    <div class="lv-main-content">
+       <div class="lv-container-dynamic">
+           <div class="row">
+               <div class="col-sm-12 col-lg-6 lv-extra-padding">
+                   <div>
+                       <h3>Oxygen Concentration</h3>
+                   </div>
+
+                   <lake-view var="oxygen" legend-var="Oxygen concentration (mg/m³)" type="value" has-transects="true">
+                   </lake-view>
+               </div>
+
+               <div class="col-sm-12 col-lg-6 lv-extra-padding">
+                   <h3>Chlorophyll</h3>
+
+                   <lake-view var="chlfa" legend-var="Chlfa (mg/m³)" type="value" has-transects="false">
+                   </lake-view>
+               </div>
+           </div>
+       </div>
+    </div>
+</div>

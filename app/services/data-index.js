@@ -1,4 +1,4 @@
-angular.module('lakeViewApp').service('HydroDataIndex', function($q, DATA_HOST, DateHelpers) {
+angular.module('lakeViewApp').service('DataIndex', function($q, DATA_HOST, DateHelpers) {
     this.load = function() {
         return loadIndex().then(parseLakes);
     };

@@ -6,19 +6,19 @@ angular.module('lakeViewApp').config(['$locationProvider', '$routeProvider',
 
         $routeProvider
         .when('/hydro', {
-            template: '<hydro></hydro>'
+            template: '<page-hydro></page-hydro>'
         })
         .when('/quality', {
-            template: '<quality></quality>'
+            template: '<page-quality></page-quality>'
         })
         .when('/remote', {
-            template: '<remote></remote>'
+            template: '<page-remote></page-remote>'
         })
         .when('/insitu', {
-            template: '<insitu></insitu>'
+            template: '<page-insitu></page-insitu>'
         })
         .when('/about', {
-            template: '<about></about>'
+            template: '<page-about></page-about>'
         })
         .otherwise('/hydro');
     }
