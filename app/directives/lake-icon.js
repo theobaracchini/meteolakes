@@ -16,8 +16,10 @@ angular.module('meteolakesApp').directive('lakeIcon', function() {
         require: '^^lakeView',
         template: '<div ng-transclude></div>',
         link: function(scope, element, attrs, viewCtrl) {
-            var innerHTML = element[0].children[0].innerHTML; // the contents between <lake-icon> and </lake-icon>
-            element[0].children[0].remove(); // we don't want the contents to be visible other than in the leaflet map popup
+            // The contents between <lake-icon> and </lake-icon>
+            var innerHTML = element[0].children[0].innerHTML;
+            // We don't want the contents to be visible other than in the leaflet map popup
+            element[0].children[0].remove();
 
             var icon = {
                 src: scope.src,
