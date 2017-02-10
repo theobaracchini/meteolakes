@@ -24,7 +24,7 @@ angular.module('lakeViewApp').component('lakeView', {
         if (me.type === 'value') {
             me.surfaceData = new TemporalData(me.var, 0.03);
             me.legendColors = ['blue', 'cyan', 'lime', 'yellow', 'red'];
-            if (me.hasTransects) {
+            if (me.hasTransects === 'true') {
                 me.sliceXZData = new TemporalData(me.var, 0, 'slice_xz');
                 me.sliceYZData = new TemporalData(me.var, 0, 'slice_yz');
                 dataSources = ['surface', 'sliceXZ', 'sliceYZ'];
