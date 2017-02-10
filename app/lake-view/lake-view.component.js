@@ -2,6 +2,7 @@
 
 angular.module('lakeViewApp').component('lakeView', {
     templateUrl: 'app/lake-view/lake-view.template.html',
+    transclude: true, // Needed for the lake-icon directive
     bindings: {
         var: '@', // Variable to be plotted (= name of subfolder in CSV data folder)
         legendVar: '@', // Name of Variable, in human-readable format with unit
@@ -14,6 +15,7 @@ angular.module('lakeViewApp').component('lakeView', {
         var animationHandlers = [];
         var dataSources = ['surface'];
         var me = this;
+        var icons = [];
 
         me.tab = 'surface';
         me.dataReady = false;
@@ -23,8 +25,8 @@ angular.module('lakeViewApp').component('lakeView', {
             me.surfaceData = new TemporalData(me.var, 0.03);
             me.legendColors = ['blue', 'cyan', 'lime', 'yellow', 'red'];
             if (me.hasTransects) {
-                me.sliceXZData = new TemporalData(me.var, 0, '_slice_xz');
-                me.sliceYZData = new TemporalData(me.var, 0, '_slice_yz');
+                me.sliceXZData = new TemporalData(me.var, 0, 'slice_xz');
+                me.sliceYZData = new TemporalData(me.var, 0, 'slice_yz');
                 dataSources = ['surface', 'sliceXZ', 'sliceYZ'];
             } else {
                 me.sliceXZData = null; me.sliceYZData = null;
@@ -66,21 +68,21 @@ angular.module('lakeViewApp').component('lakeView', {
         };
 
         me.initMap = function(map) {
-            // Buchillon station marker
-            var stationIcon = L.icon({
-                iconUrl: 'img/stats.png',
-                iconSize: [26, 25], // size of the icon
-                iconAnchor: [0, 24], // point of the icon which will correspond to marker's location
-                popupAnchor: [12, -27] // point from which the popup should open rel. to iconAnchor
+            icons.forEach(function(icon) {
+                var leafletIcon = L.icon({
+                    iconUrl: icon.src,
+                    iconSize: [icon.width, icon.height],
+                    iconAnchor: [icon.anchorLeft, icon.anchorTop],
+                    popupAnchor: [icon.popupLeft, icon.popupTop]
+                });
+                L.marker({ lat: icon.lat, lng: icon.lng }, { icon: leafletIcon })
+                .addTo(map).bindPopup(icon.popupText);
             });
-            var satIcon = L.icon({
-                iconUrl: 'img/satellite.png',
-                iconSize: [50, 50], // size of the icon
-                iconAnchor: [25, 25], // point of icon which will correspond to marker's location
-                popupAnchor: [5, -24] // point from which the popup should open rel. to iconAnchor
-            });
-            //L.marker({ lat: 46.45839177832672, lng: 6.399359513724266 }, { icon: stationIcon }).addTo(map).bindPopup('<a href="#!/insitu">Buchillon field station (Beta)</a>');
-            L.marker({ lat: 46.26181, lng: 6.61576 }, { icon: satIcon }).addTo(map).bindPopup('<a href="#!/remote">Validation by Remote Sensing</a>');
+        };
+
+        // Called by child lake-icon elements
+        me.addIcon = function(icon) {
+            icons.push(icon);
         };
 
         me.drawOverlay = function(data, options) {
@@ -147,7 +149,7 @@ angular.module('lakeViewApp').component('lakeView', {
             }
 
             return graphics;
-        };
+        }
 
         function drawVectorOverlay(data, options) {
             var colorFunction = colorFunctions[options.dataSource];
@@ -213,7 +215,7 @@ angular.module('lakeViewApp').component('lakeView', {
             }
 
             return graphics;
-        };
+        }
 
         function drawArrow(x, y, dx, dy, color, graphics) {
             var extent = Math.sqrt(dx * dx + dy * dy);

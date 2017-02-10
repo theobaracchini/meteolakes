@@ -71,7 +71,7 @@ angular.module('lakeViewApp').directive('pixiCanvas', function(Util, $timeout) {
             source: '@',
             labelLeft: '@',
             labelRight: '@',
-            mapImgSrc: '@'
+            mapImgSrc: '='
         },
         link: function(scope, element, attrs) {
             element.addClass('lv-map');

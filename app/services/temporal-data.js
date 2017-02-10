@@ -188,7 +188,16 @@ angular.module('lakeViewApp').factory('TemporalData', function(DATA_HOST, $q, Da
     TemporalData.prototype.getValuesFile = function() {
         var sel = this.timeSelection;
         if (sel === null) return '';
-        return DATA_HOST + sel.folder + '/' + sel.year + '/' + this.fieldName + '/data_week' + sel.week + this.suffix + '.csv';
+        var suffix = (this.suffix !== '') ? '_' + this.suffix : '';
+        return DATA_HOST + sel.folder + '/' + sel.year + '/' + this.fieldName + '/data_week' + sel.week + suffix + '.csv';
+    };
+
+    // Minimap image showing slice location - this is lake-specific and must be stored with the data
+    TemporalData.prototype.getMinimapSrc = function() {
+        if (this.suffix === '' || this.timeSelection === null) {
+            return '';
+        }
+        return DATA_HOST + this.timeSelection.folder + '/' + this.suffix + '.png';
     };
 
     return TemporalData;
