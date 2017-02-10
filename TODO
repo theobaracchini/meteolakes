@@ -1,0 +1,19 @@
+Recently refactored:
+
+- Created a multi-page structure with single navigation bar
+- Integrated graph-view (Buchillon weather station) as page-insitu
+- Generalized the previous temperature and velocity controllers into a single "lake-view" component that can display both vector and scalar data
+- Added a lake-icon directive to dynamically define georeferenced icons, and moved the transect minimaps to the lake-specific data folder
+
+=> Now it should be easier and involve less code copy-pasting to add new pages such as water quality, and to extend the application to other lakes.
+
+Next refactoring steps:
+
+- Create a time-control component that replaces the TimeCtrl controller and most of page-hydro.template.html. The idea is that
+  several <lake-view> elements can be inserted within <time-control></time-control> tags.
+  Currently the entire top navigation bar HTML code exists twice (page-hydro and page-quality), which is not nice.
+
+- Integrate graph-ctrl.js in page-insitu-component.js, properly turning that page into a component.
+
+
+Martin Zoller 2017-02-10
