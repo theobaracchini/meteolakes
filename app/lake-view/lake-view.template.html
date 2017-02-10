@@ -1,0 +1,31 @@
+<ul class="nav nav-tabs">
+    <li ng-class="{active: $ctrl.tab == 'surface'}"><a ng-click="$ctrl.setTab('surface')">Surface</a></li>
+    <li ng-class="{active: $ctrl.tab == 'sliceXZ', hidden: !$ctrl.sliceXZData.available}"><a ng-click="$ctrl.setTab('sliceXZ')">Transect 1</a></li>
+    <li ng-class="{active: $ctrl.tab == 'sliceYZ', hidden: !$ctrl.sliceYZData.available}"><a ng-click="$ctrl.setTab('sliceYZ')">Transect 2</a></li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane" ng-class="{active: $ctrl.tab == 'surface'}">
+        <leaflet-map active="$ctrl.tab == 'surface'" set-handler="$ctrl.addAnimationHandler(handler)" on-click="$ctrl.mapClicked(point)" marker="$ctrl.chartPoint" data="$ctrl.surfaceData" init="$ctrl.initMap" draw="$ctrl.drawOverlay">
+            <loading ng-hide="$ctrl.dataReady">
+            </loading>
+        </leaflet-map>
+        <color-legend colors="$ctrl.legendColors" extent="$ctrl.surfaceExtent" label="$ctrl.legendVar"></color-legend>
+    </div>
+    <div class="tab-pane" ng-class="{active: $ctrl.tab == 'sliceXZ'}" ng-if="$ctrl.hasTransects">
+        <pixi-canvas active="$ctrl.tab == 'sliceXZ'" set-handler="$ctrl.addAnimationHandler(handler)" on-click="$ctrl.sliceClicked(point)" marker="$ctrl.chartPoint" data="$ctrl.sliceXZData" draw="$ctrl.drawOverlay" source="sliceXZ" label-left="Geneva" label-right="Villeneuve" map-img-src="img/slice1.png">
+            <loading ng-hide="$ctrl.dataReady">
+            </loading>
+        </pixi-canvas>
+        <color-legend colors="$ctrl.legendColors" extent="$ctrl.sliceXZExtent" label="$ctrl.legendVar"></color-legend>
+    </div>
+    <div class="tab-pane" ng-class="{active: $ctrl.tab == 'sliceYZ'}" ng-if="$ctrl.hasTransects">
+        <pixi-canvas active="$ctrl.tab == 'sliceYZ'" set-handler="$ctrl.addAnimationHandler(handler)" on-click="$ctrl.sliceClicked(point)" marker="$ctrl.chartPoint" data="$ctrl.sliceYZData" draw="$ctrl.drawOverlay" source="sliceYZ" label-left="Evian" label-right="Lausanne" map-img-src="img/slice2.png">
+            <loading ng-hide="$ctrl.dataReady">
+            </loading>
+        </pixi-canvas>
+        <color-legend colors="$ctrl.legendColors" extent="$ctrl.sliceYZExtent" label="$ctrl.legendVar"></color-legend>
+    </div>
+</div>
+
+<d3-chart set-handler="$ctrl.addAnimationHandler(handler)" data="$ctrl.chartData" label="$ctrl.legendVar" on-close="$ctrl.closeChart()"></d3-chart>

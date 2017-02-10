@@ -198,6 +198,11 @@ div#tab-insitu {
     margin: 0;
 }
 
+/* Needed for links without href attribute */
+a {
+    cursor: pointer;
+}
+
 
 /* Manual smaller sizes for mobile */
 @media (max-width: 768px) {

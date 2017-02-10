@@ -5,7 +5,6 @@ angular.module('autoActive', []).directive('autoActive', ['$location', function(
         link: function(scope, element) {
             function setActive() {
                 var path = $location.path();
-                console.log('path:'+path);
                 if (path) {
                     angular.forEach(element.find('li'), function(li) {
                         var anchor = li.querySelector('a');

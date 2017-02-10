@@ -7,20 +7,18 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
     var steps = [];
 
     var indexReady = false;
-    $scope.vDataReady = false;
-    $scope.tDataReady = false;
+    $scope.clientsKnown = 0; // Number of animations controlled by this controller
+    $scope.clientsReady = 0; // Number of animations that are ready to play
     var wasPlaying = true; // Initialize as "true" to autoplay on page load
 
     $scope.isPlaying = false;
     $scope.selection = {};
-    $scope.BUCHILLON_URL = 'http://meteolakes.epfl.ch/graph-view/beta/';
 
     $scope.$watch('selection', function(selection) {
         if (indexReady) {
             wasPlaying = $scope.isPlaying || wasPlaying;
             $scope.stop();
-            $scope.vDataReady = false;
-            $scope.tDataReady = false;
+            $scope.clientsReady = 0;
             $scope.$broadcast('updateTimeSelection', selection);
         }
     }, true);
@@ -29,10 +27,10 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
         $scope.$broadcast('tick');
     });
 
-    $scope.$on('tTabChanged', function() {
+    $scope.$on('tabChanged', function() {
         wasPlaying = $scope.isPlaying || wasPlaying;
         $scope.pause();
-        $scope.tDataReady = false;
+        $scope.clientsReady--;
     });
 
     HydroDataIndex.load().then(function(index) {
@@ -52,15 +50,20 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
         console.error('Failed to load data index!', err);
     });
 
-    $scope.$on('vDataReady', function(evt, timeSteps) {
-        steps = timeSteps;
-        Time.nSteps = steps.length;
-        $scope.vDataReady = true;
-        resumeIfReady();
+    // To be called exactly once by each client controller
+    $scope.$on('registerClient', function() {
+        $scope.clientsKnown++;
     });
 
-    $scope.$on('tDataReady', function() {
-        $scope.tDataReady = true;
+    $scope.$on('dataReady', function(evt, timeSteps) {
+        // The time steps are updated whenever one of the connected
+        // animations finishes loading data.
+        // Since all animations on the page use the same time scale,
+        // it shouldn't matter which one is used by the time controller
+        // (it will be the last one to finish loading)
+        steps = timeSteps;
+        Time.nSteps = steps.length;
+        $scope.clientsReady++;
         resumeIfReady();
     });
 
@@ -112,11 +115,11 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
     };
 
     $scope.getDate = function() {
-        return $scope.vDataReady ? DateHelpers.yearMonthDay(currentDate()) : '';
+        return allClientsReady() ? DateHelpers.yearMonthDay(currentDate()) : '';
     };
 
     $scope.getTime = function() {
-        return $scope.vDataReady ? DateHelpers.hoursMinutes(currentDate()) : '';
+        return allClientsReady() ? DateHelpers.hoursMinutes(currentDate()) : '';
     };
 
     $scope.PrettyPrintWeek = function(week) {
@@ -143,6 +146,10 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
         selectClosestYear();
         selectClosestWeek();
     };
+
+    function allClientsReady() {
+        return ($scope.clientsReady === $scope.clientsKnown) && ($scope.clientsKnown > 0);
+    }
 
     function selectClosestYear() {
         var lakeData = $scope.index[$scope.selection.lake];
@@ -176,7 +183,7 @@ angular.module('lakeViewApp').controller('TimeCtrl', function($scope, $interval,
     }
 
     function resumeIfReady() {
-        if ($scope.vDataReady && $scope.tDataReady) {
+        if (allClientsReady()) {
             if (wasPlaying && !$scope.isPlaying) {
                 wasPlaying = false;
                 $scope.play();

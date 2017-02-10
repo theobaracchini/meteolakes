@@ -21,10 +21,12 @@ angular.module('lakeViewApp').service('Util', function() {
     };
 
     /**
-      * Returns the norm of a vector.
-      * The vector is expected to be an array [x, y].
+      * Returns the norm of a vector of length 1 or 2.
       */
     this.norm = function(vec) {
-        return Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
+        if (vec.length === 2) {
+            return Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
+        }
+        return vec;
     };
 });

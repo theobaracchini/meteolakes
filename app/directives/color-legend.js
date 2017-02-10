@@ -6,7 +6,7 @@ angular.module('lakeViewApp').directive('colorLegend', function() {
         scope: {
             colors: '=',
             extent: '=',
-            label: '@'
+            label: '='
         },
         link: function(scope, element, attrs) {
             var container = element[0];
