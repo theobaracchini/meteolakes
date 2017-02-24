@@ -35,6 +35,26 @@ angular.module('meteolakesApp').component('lakeView', {
             me.surfaceData = new TemporalData(me.var);
             me.surfaceData.setValueAccessor(Util.norm);
             me.legendColors = ['blue', 'lime', 'red'];
+        } else if (me.type === 'valueWAQoxygen') {
+            me.surfaceData = new TemporalData(me.var, 0.03);
+            me.legendColors = ['black', 'red', 'yellow', 'cyan','blue'];
+            if (me.hasTransects === 'true') {
+                me.sliceXZData = new TemporalData(me.var, 0, 'slice_xz');
+                me.sliceYZData = new TemporalData(me.var, 0, 'slice_yz');
+                dataSources = ['surface', 'sliceXZ', 'sliceYZ'];
+            } else {
+                me.sliceXZData = null; me.sliceYZData = null;
+            }
+        } else if (me.type === 'valueWAQchlfa') {
+            me.surfaceData = new TemporalData(me.var, 0.03);
+            me.legendColors = ['blue', 'cyan', 'lime','lightgreen', 'green'];
+            if (me.hasTransects === 'true') {
+                me.sliceXZData = new TemporalData(me.var, 0, 'slice_xz');
+                me.sliceYZData = new TemporalData(me.var, 0, 'slice_yz');
+                dataSources = ['surface', 'sliceXZ', 'sliceYZ'];
+            } else {
+                me.sliceXZData = null; me.sliceYZData = null;
+            }
         }
 
         $scope.$emit('registerClient'); // Tell the time controller we're here
