@@ -37,7 +37,7 @@ angular.module('meteolakesApp').component('lakeView', {
             me.legendColors = ['blue', 'lime', 'red'];
         } else if (me.type === 'valueWAQoxygen') {
             me.surfaceData = new TemporalData(me.var, 0.03);
-            me.legendColors = ['black', 'red', 'yellow', 'cyan','blue'];
+            me.legendColors = ['black', 'red','yellow', 'cyan','blue'];
             if (me.hasTransects === 'true') {
                 me.sliceXZData = new TemporalData(me.var, 0, 'slice_xz');
                 me.sliceYZData = new TemporalData(me.var, 0, 'slice_yz');
@@ -47,7 +47,7 @@ angular.module('meteolakesApp').component('lakeView', {
             }
         } else if (me.type === 'valueWAQchlfa') {
             me.surfaceData = new TemporalData(me.var, 0.03);
-            me.legendColors = ['blue', 'cyan', 'lime','lightgreen', 'green'];
+            me.legendColors = ['blue', 'cyan','lightgreen', 'green'];
             if (me.hasTransects === 'true') {
                 me.sliceXZData = new TemporalData(me.var, 0, 'slice_xz');
                 me.sliceYZData = new TemporalData(me.var, 0, 'slice_yz');
