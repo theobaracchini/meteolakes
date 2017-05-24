@@ -200,5 +200,25 @@ angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, $q, 
         return DATA_HOST + this.timeSelection.folder + '/' + this.suffix + '.png';
     };
 
+    // City labels of the slices - this is lake-specific and muist be stored with the data
+    TemporalData.prototype.getSliceLabels = function() {
+        var jsonUrl = DATA_HOST + this.timeSelection.folder + '/labels.json';
+        var suffix = this.suffix;
+        var timeSelection = this.timeSelection;
+        return $q(function(resolve, reject) {
+            if (suffix === '' || timeSelection === null) {
+                reject('No labels found.');
+            }
+            // Read the data labels
+            d3.json(jsonUrl, function(err, json) {
+                if (err) {
+                    reject('Error retrieving lake labels. Url: ' + jsonUrl + '. Error: ' + err);
+                } else {
+                    resolve(json[suffix]);
+                }
+            });
+        });
+    };
+
     return TemporalData;
 });

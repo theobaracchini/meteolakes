@@ -14,14 +14,14 @@
         <color-legend colors="$ctrl.legendColors" extent="$ctrl.surfaceExtent" label="$ctrl.legendVar"></color-legend>
     </div>
     <div class="tab-pane" ng-class="{active: $ctrl.tab == 'sliceXZ'}" ng-if="$ctrl.hasTransects">
-        <pixi-canvas active="$ctrl.tab == 'sliceXZ'" set-handler="$ctrl.addAnimationHandler(handler)" on-click="$ctrl.sliceClicked(point)" marker="$ctrl.chartPoint" data="$ctrl.sliceXZData" draw="$ctrl.drawOverlay" source="sliceXZ" label-left="Geneva" label-right="Villeneuve" map-img-src="$ctrl.sliceXZData.getMinimapSrc()">
+        <pixi-canvas active="$ctrl.tab == 'sliceXZ'" set-handler="$ctrl.addAnimationHandler(handler)" on-click="$ctrl.sliceClicked(point)" marker="$ctrl.chartPoint" data="$ctrl.sliceXZData" draw="$ctrl.drawOverlay" source="sliceXZ" label-left="$ctrl.labelLeft" label-right="$ctrl.labelRight" map-img-src="$ctrl.sliceXZData.getMinimapSrc()">
             <loading ng-hide="$ctrl.dataReady">
             </loading>
         </pixi-canvas>
         <color-legend colors="$ctrl.legendColors" extent="$ctrl.sliceXZExtent" label="$ctrl.legendVar"></color-legend>
     </div>
     <div class="tab-pane" ng-class="{active: $ctrl.tab == 'sliceYZ'}" ng-if="$ctrl.hasTransects">
-        <pixi-canvas active="$ctrl.tab == 'sliceYZ'" set-handler="$ctrl.addAnimationHandler(handler)" on-click="$ctrl.sliceClicked(point)" marker="$ctrl.chartPoint" data="$ctrl.sliceYZData" draw="$ctrl.drawOverlay" source="sliceYZ" label-left="Evian" label-right="Lausanne" map-img-src="$ctrl.sliceYZData.getMinimapSrc()">
+        <pixi-canvas active="$ctrl.tab == 'sliceYZ'" set-handler="$ctrl.addAnimationHandler(handler)" on-click="$ctrl.sliceClicked(point)" marker="$ctrl.chartPoint" data="$ctrl.sliceYZData" draw="$ctrl.drawOverlay" source="sliceYZ" label-left="$ctrl.labelLeft" label-right="$ctrl.labelRight" map-img-src="$ctrl.sliceYZData.getMinimapSrc()">
             <loading ng-hide="$ctrl.dataReady">
             </loading>
         </pixi-canvas>
