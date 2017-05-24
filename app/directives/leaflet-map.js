@@ -4,7 +4,7 @@ angular.module('meteolakesApp').directive('leafletMap', function(CanvasLayer, Sh
     var TOP_LEFT = L.point(420000, 350000);
     var BOTTOM_RIGHT = L.point(900000, 30000);
     var RESOLUTIONS = [4000, 3750, 3500, 3250, 3000, 2750, 2500, 2250, 2000,
-                      1750, 1500, 1250, 1000, 750, 650, 500, 250, 100, 50, 20, 10, 5, 2.5];
+        1750, 1500, 1250, 1000, 750, 650, 500, 250, 100, 50, 20, 10, 5, 2.5];
 
     // Definition for projected coordinate system CH1903 / LV03
     // Source: https://epsg.io/21781.js
