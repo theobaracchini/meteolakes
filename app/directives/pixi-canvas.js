@@ -83,6 +83,10 @@ angular.module('meteolakesApp').directive('pixiCanvas', function(Util, $timeout)
             });
             element.prepend(mapImg);
 
+            scope.$watch('mapImgSrc', function() {
+                element.children('.lv-img-overlay').attr('src', scope.mapImgSrc);
+            });
+
             var bounds;
             var markers;
             var xMax;
