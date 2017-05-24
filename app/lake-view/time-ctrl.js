@@ -1,4 +1,26 @@
 angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interval, Time, DateHelpers, DataIndex, Util) {
+    $scope.init = function(availabilityFile) {
+      $scope.availabilityFile = availabilityFile;
+      console.log(availabilityFile);
+      
+      DataIndex.load($scope.availabilityFile).then(function(index) {
+          $scope.index = index;
+
+          // Initialize with current year/week, closest existing
+          // data for selected lake will be determined later
+          var now = moment();
+          $scope.selection = {
+              year: now.year(),
+              week: now.isoWeek()
+          };
+
+          $scope.ChangeLake(0);
+          indexReady = true;
+      }, function(err) {
+          console.error('Failed to load data index!', err);
+      });
+    };
+
     var TICK_INTERVAL_MIN = 50;
     var TICK_INTERVAL_MAX = 800;
 
@@ -31,23 +53,6 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
         wasPlaying = $scope.isPlaying || wasPlaying;
         $scope.pause();
         $scope.clientsReady--;
-    });
-
-    DataIndex.load().then(function(index) {
-        $scope.index = index;
-
-        // Initialize with current year/week, closest existing
-        // data for selected lake will be determined later
-        var now = moment();
-        $scope.selection = {
-            year: now.year(),
-            week: now.isoWeek()
-        };
-
-        $scope.ChangeLake(0);
-        indexReady = true;
-    }, function(err) {
-        console.error('Failed to load data index!', err);
     });
 
     // To be called exactly once by each client controller
