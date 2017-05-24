@@ -22,4 +22,4 @@ angular.module('meteolakesApp').config(['$locationProvider', '$routeProvider',
         })
         .otherwise('/hydro');
     }
-  ]);
+]);

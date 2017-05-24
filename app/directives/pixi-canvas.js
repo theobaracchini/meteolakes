@@ -69,8 +69,8 @@ angular.module('meteolakesApp').directive('pixiCanvas', function(Util, $timeout)
             data: '=',
             draw: '=',
             source: '@',
-            labelLeft: '@',
-            labelRight: '@',
+            labelLeft: '=',
+            labelRight: '=',
             mapImgSrc: '='
         },
         link: function(scope, element, attrs) {
@@ -82,6 +82,23 @@ angular.module('meteolakesApp').directive('pixiCanvas', function(Util, $timeout)
                 src: scope.mapImgSrc
             });
             element.prepend(mapImg);
+
+            scope.$watch('mapImgSrc', function() {
+                element.children('.lv-img-overlay').attr('src', scope.mapImgSrc);
+            });
+
+            scope.$watch('labelLeft', function() {
+                if (scope.active && xMax && markers) {
+                    markers.left.setContent(scope.labelLeft);
+                }
+            });
+
+            scope.$watch('labelRight', function() {
+                if (scope.active && xMax && markers) {
+                    markers.right
+                    .setContent(scope.labelRight);
+                }
+            });
 
             var bounds;
             var markers;
@@ -203,12 +220,16 @@ angular.module('meteolakesApp').directive('pixiCanvas', function(Util, $timeout)
             }
 
             function addLabels() {
-                if (scope.active && xMax && !markers) {
+                if (scope.active && xMax) {
                     // map has to be visible and data has to be loaded for this to work correctly
-                    markers = {
-                        left: addPopup(L.point(0, 0), scope.labelLeft),
-                        right: addPopup(L.point(xMax, 0), scope.labelRight)
-                    };
+                    if (!markers) {
+                        markers = {
+                            left: addPopup(L.point(0, 0), scope.labelLeft),
+                            right: addPopup(L.point(xMax, 0), scope.labelRight)
+                        };
+                    } else {
+                        markers.right.setLatLng(unproject(L.point(xMax, 0)));
+                    }
                 }
             }
 
