@@ -1,5 +1,5 @@
 <ul class="nav nav-tabs">
-    <li ng-class="{active: $ctrl.tab == 'surface'}"><a ng-click="$ctrl.setTab('surface')">Surface</a></li>
+    <li ng-class="{active: $ctrl.tab == 'surface'}"><a ng-click="$ctrl.setTab('surface')">{{$ctrl.type == 'value' ? "Surface" : "Depth Averaged"}}</a></li>
     <li ng-class="{active: $ctrl.tab == 'sliceXZ', hidden: !$ctrl.sliceXZData.available}"><a ng-click="$ctrl.setTab('sliceXZ')">Transect 1</a></li>
     <li ng-class="{active: $ctrl.tab == 'sliceYZ', hidden: !$ctrl.sliceYZData.available}"><a ng-click="$ctrl.setTab('sliceYZ')">Transect 2</a></li>
 </ul>
