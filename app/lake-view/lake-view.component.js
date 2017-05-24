@@ -264,6 +264,10 @@ angular.module('meteolakesApp').component('lakeView', {
                 me.dataReady = true;
                 $scope.$emit('dataReady', temporalData.timeSteps);
             } else {
+                temporalData.getSliceLabels().then(function(labels) {
+                    me.labelLeft = labels.labelLeft;
+                    me.labelRight = labels.labelRight;
+                });
                 temporalData.readData().then(function() {
                     colorFunctions[source] = generateColorFunction(temporalData.scaleExtent);
                     if (source === 'surface') {
