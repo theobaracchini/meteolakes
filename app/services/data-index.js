@@ -4,7 +4,6 @@ angular.module('meteolakesApp').service('DataIndex', function($q, DATA_HOST, Dat
     };
 
     function loadIndex(file) {
-        console.log(file);
         return $q(function(resolve, reject) {
             d3.json(DATA_HOST + file + '.json', function(err, data) {
                 if (err) {

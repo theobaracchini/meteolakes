@@ -1,8 +1,7 @@
 angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interval, Time, DateHelpers, DataIndex, Util) {
     $scope.init = function(availabilityFile) {
       $scope.availabilityFile = availabilityFile;
-      console.log(availabilityFile);
-      
+
       DataIndex.load($scope.availabilityFile).then(function(index) {
           $scope.index = index;
 
@@ -151,6 +150,12 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
         selectClosestYear();
         selectClosestWeek();
     };
+
+    $scope.$on('$destroy', function() {
+        if (tickTimerId) {
+            $interval.cancel(tickTimerId);
+        }
+    });
 
     function allClientsReady() {
         return ($scope.clientsReady === $scope.clientsKnown) && ($scope.clientsKnown > 0);
