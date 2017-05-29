@@ -1,23 +1,23 @@
 angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interval, Time, DateHelpers, DataIndex, Util) {
     $scope.init = function(availabilityFile) {
-      $scope.availabilityFile = availabilityFile;
+        $scope.availabilityFile = availabilityFile;
 
-      DataIndex.load($scope.availabilityFile).then(function(index) {
-          $scope.index = index;
+        DataIndex.load($scope.availabilityFile).then(function(index) {
+            $scope.index = index;
 
-          // Initialize with current year/week, closest existing
-          // data for selected lake will be determined later
-          var now = moment();
-          $scope.selection = {
-              year: now.year(),
-              week: now.isoWeek()
-          };
+            // Initialize with current year/week, closest existing
+            // data for selected lake will be determined later
+            var now = moment();
+            $scope.selection = {
+                year: now.year(),
+                week: now.isoWeek()
+            };
 
-          $scope.ChangeLake(0);
-          indexReady = true;
-      }, function(err) {
-          console.error('Failed to load data index!', err);
-      });
+            $scope.ChangeLake(0);
+            indexReady = true;
+        }, function(err) {
+            console.error('Failed to load data index!', err);
+        });
     };
 
     var TICK_INTERVAL_MIN = 50;
