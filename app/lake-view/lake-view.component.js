@@ -272,6 +272,7 @@ angular.module('meteolakesApp').component('lakeView', {
             me.closeChart();
             me.tab = tab;
             $scope.$emit('tabChanged');
+            me.dataReady = false;
             loadCurrentData();
         };
 
