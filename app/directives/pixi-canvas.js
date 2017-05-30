@@ -1,5 +1,6 @@
 angular.module('meteolakesApp').directive('pixiCanvas', function(Util, $timeout) {
     var HORIZONTAL_SCALE = 0.02;
+    var TOP_EXTENT_MARGIN_FOR_LABEL = 5;
     var CRS = L.CRS.Simple;
 
     function project(point) {
@@ -34,6 +35,7 @@ angular.module('meteolakesApp').directive('pixiCanvas', function(Util, $timeout)
             L.DomUtil.setPosition(svg.node(), topLeft);
 
             var size = map.getSize();
+
             var topPixel = 0;
             var topDepth = map.containerPointToLatLng([0, margin.top]).lat;
             if (topDepth > 0) {
@@ -202,7 +204,8 @@ angular.module('meteolakesApp').directive('pixiCanvas', function(Util, $timeout)
                     xMax = sliceLength * HORIZONTAL_SCALE;
 
                     var minBounds = unproject(L.point(0, data.zExtent[0]));
-                    var maxBounds = unproject(L.point(xMax, data.zExtent[1]));
+                    var maxBounds = unproject(
+                        L.point(xMax, data.zExtent[1] + TOP_EXTENT_MARGIN_FOR_LABEL));
                     updateBounds(L.latLngBounds(minBounds, maxBounds));
                     addLabels();
                 }

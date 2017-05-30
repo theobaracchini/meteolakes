@@ -1,11 +1,11 @@
 angular.module('meteolakesApp').service('DataIndex', function($q, DATA_HOST, DateHelpers) {
-    this.load = function() {
-        return loadIndex().then(parseLakes);
+    this.load = function(file) {
+        return loadIndex(file).then(parseLakes);
     };
 
-    function loadIndex() {
+    function loadIndex(file) {
         return $q(function(resolve, reject) {
-            d3.json(DATA_HOST + 'available_data.json', function(err, data) {
+            d3.json(DATA_HOST + file + '.json', function(err, data) {
                 if (err) {
                     reject(err);
                 } else {
