@@ -39,6 +39,57 @@ angular.module('meteolakesApp').directive('leafletMap', function(CanvasLayer, Sh
                      'Imagery © <a href="https://mapbox.com">Mapbox</a>';
         var mbUrl = 'https://{s}.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={access_token}';
 
+        L.Map.mergeOptions({
+            touchExtend: true
+        });
+
+        L.Map.TouchExtend = L.Handler.extend({
+
+            initialize: function(_map) {
+                this._map = _map;
+                this._container = _map._container;
+                this._pane = _map._panes.overlayPane;
+            },
+
+            addHooks: function() {
+                L.DomEvent.on(this._container, 'touchstart', this._onTouchStart, this);
+                L.DomEvent.on(this._container, 'touchend', this._onTouchEnd, this);
+            },
+
+            removeHooks: function() {
+                L.DomEvent.off(this._container, 'touchstart', this._onTouchStart);
+                L.DomEvent.off(this._container, 'touchend', this._onTouchEnd);
+            },
+
+            _onTouchStart: function(e) {
+                if (!this._map._loaded) { return; }
+
+                var type = 'touchstart';
+
+                var containerPoint = this._map.mouseEventToContainerPoint(e);
+                var layerPoint = this._map.containerPointToLayerPoint(containerPoint);
+                var latlng = this._map.layerPointToLatLng(layerPoint);
+
+                this._map.fire(type, {
+                    latlng: latlng,
+                    layerPoint: layerPoint,
+                    containerPoint: containerPoint,
+                    originalEvent: e
+                });
+            },
+
+            _onTouchEnd: function(e) {
+                if (!this._map._loaded) { return; }
+
+                var type = 'touchend';
+
+                this._map.fire(type, {
+                    originalEvent: e
+                });
+            }
+        });
+        L.Map.addInitHook('addHandler', 'touchExtend', L.Map.TouchExtend);
+
         var map = L.map(container);
 
         L.tileLayer(mbUrl, {
@@ -72,6 +123,9 @@ angular.module('meteolakesApp').directive('leafletMap', function(CanvasLayer, Sh
             var map = initMapbox(container);
             var canvasLayer = L.canvasLayer({ dataSource: 'surface' });
             var markerLayer;
+            var touchStartTime;
+            var touchStartlatlng;
+            var SINGLE_CLICK_DURATION_MS = 300;
 
             if (typeof scope.init === 'function') {
                 scope.init(map);
@@ -87,6 +141,19 @@ angular.module('meteolakesApp').directive('leafletMap', function(CanvasLayer, Sh
             map.on('click', function(e) {
                 scope.onClick({ point: project(e.latlng) });
                 scope.$apply();
+            });
+
+            map.on('touchstart', function(e) {
+                touchStartlatlng = e.latlng;
+                touchStartTime = Date.now();
+            });
+
+            map.on('touchend', function() {
+                var diff = Date.now() - touchStartTime;
+                if (diff < SINGLE_CLICK_DURATION_MS) {
+                    scope.onClick({ point: project(touchStartlatlng) });
+                    scope.$apply();
+                }
             });
 
             canvasLayer.setDrawFunction(scope.draw);
