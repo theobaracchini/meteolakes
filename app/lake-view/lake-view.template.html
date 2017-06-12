@@ -1,5 +1,6 @@
 <ul class="nav nav-tabs">
     <li ng-class="{active: $ctrl.tab == 'surface'}"><a ng-click="$ctrl.setTab('surface')">{{$ctrl.type == 'vector' ? "Depth Averaged" : "Surface"}}</a></li>
+    <li ng-class="{active: $ctrl.tab == 'particles', hidden: $ctrl.type != 'vector'}"><a ng-click="$ctrl.setTab('particles')">Particles</a></li>
     <li ng-class="{active: $ctrl.tab == 'sliceXZ', hidden: !$ctrl.sliceXZData.available}"><a ng-click="$ctrl.setTab('sliceXZ')">Transect 1</a></li>
     <li ng-class="{active: $ctrl.tab == 'sliceYZ', hidden: !$ctrl.sliceYZData.available}"><a ng-click="$ctrl.setTab('sliceYZ')">Transect 2</a></li>
 </ul>
@@ -7,6 +8,14 @@
 <div class="tab-content">
     <div class="tab-pane" ng-class="{active: $ctrl.tab == 'surface'}">
         <leaflet-map active="$ctrl.tab == 'surface'" set-handler="$ctrl.addAnimationHandler(handler)" on-click="$ctrl.mapClicked(point)" marker="$ctrl.chartPoint" data="$ctrl.surfaceData" init="$ctrl.initMap" draw="$ctrl.drawOverlay">
+            <loading ng-hide="$ctrl.dataReady">
+            </loading>
+            <div ng-transclude><!-- lake-icon tags appear here --></div>
+        </leaflet-map>
+        <color-legend colors="$ctrl.legendColors" extent="$ctrl.surfaceExtent" label="$ctrl.legendVar"></color-legend>
+    </div>
+    <div class="tab-pane" ng-class="{active: $ctrl.tab == 'particles'}">
+        <leaflet-map active="$ctrl.tab == 'particles'" set-handler="$ctrl.addAnimationHandler(handler)" on-click="$ctrl.addParticles(point, latLngToLayerPoint)" data="$ctrl.surfaceData" init="$ctrl.initMap" draw="$ctrl.drawOverlay">
             <loading ng-hide="$ctrl.dataReady">
             </loading>
             <div ng-transclude><!-- lake-icon tags appear here --></div>

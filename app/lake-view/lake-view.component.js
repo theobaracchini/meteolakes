@@ -9,13 +9,19 @@ angular.module('meteolakesApp').component('lakeView', {
         type: '@',  // Type of plotted data, 'value' or 'vector'
         hasTransects: '@' // Whether or not there is transect data available
     },
-    controller: function($scope, $q, Time, TemporalData, NearestNeighbor, Util) {
+    controller: function($scope, $q, Time, TemporalData, NearestNeighbor, Util, MapHelpers) {
         var colorFunctions = [];
         var nearestNeighbor = null;
         var animationHandlers = [];
         var dataSources = ['surface'];
         var me = this;
         var icons = [];
+        var particles = [];
+        var lastClick = 0;
+        var PARTICLE_COLOR = '0xFFCC00';
+        var PARTICLE_SIZE = 3;
+        var PARTICLE_CLICK_DELTA_MS = 50;
+        var leafletMap = null;
 
         me.tab = 'surface';
         me.dataReady = false;
@@ -34,7 +40,10 @@ angular.module('meteolakesApp').component('lakeView', {
         } else if (me.type === 'vector') {
             me.surfaceData = new TemporalData(me.var);
             me.surfaceData.setValueAccessor(Util.norm);
+            me.particlesData = new TemporalData(me.var);
+            me.particlesData.setValueAccessor(Util.norm);
             me.legendColors = ['blue', 'lime', 'red'];
+            dataSources = ['surface', 'particles'];
         } else if (me.type === 'valueWAQoxygen') {
             me.surfaceData = new TemporalData(me.var, 0.03);
             me.legendColors = ['black', 'red', 'yellow', 'cyan', 'blue'];
@@ -78,6 +87,9 @@ angular.module('meteolakesApp').component('lakeView', {
 
         $scope.$on('tick', animate);
         $scope.$watch('$ctrl.chartPoint', updateChart);
+        $scope.$on('mapLoaded', function(evt, map) {
+            leafletMap = map;
+        });
 
         me.addAnimationHandler = function(handler) {
             animationHandlers.push(handler);
@@ -187,6 +199,7 @@ angular.module('meteolakesApp').component('lakeView', {
             var x;
             var y;
 
+
             for (i = 0, len = data.length; i < len; i++) {
                 var row = data[i];
                 for (j = 0; j < row.length; j++) {
@@ -234,7 +247,32 @@ angular.module('meteolakesApp').component('lakeView', {
                 }
             }
 
+            particles.forEach(function(point) {
+                drawParticle(point, graphics);
+            });
+
             return graphics;
+        }
+
+        me.addParticles = function(point) {
+            var diff = Date.now() - lastClick;
+            lastClick = Date.now();
+            if (diff > PARTICLE_CLICK_DELTA_MS) {
+                particles.push(point);
+                $scope.$broadcast('particleAdded');
+            }
+        };
+
+        function drawParticle(point, graphics) {
+            var mapPoint = dataPointToMapPoint(point);
+            graphics.beginFill(PARTICLE_COLOR);
+            graphics.drawCircle(mapPoint.x, mapPoint.y, PARTICLE_SIZE);
+            graphics.endFill();
+        }
+
+        function dataPointToMapPoint(point) {
+            var latlng = MapHelpers.unproject(point);
+            return leafletMap.latLngToLayerPoint(latlng);
         }
 
         function drawArrow(x, y, dx, dy, color, graphics) {
@@ -333,10 +371,26 @@ angular.module('meteolakesApp').component('lakeView', {
             }
         }
 
+        function updateParticle(particle) {
+            var temporalData = me[me.tab + 'Data'];
+            var point = nearestNeighbor.query(particle);
+            var data = temporalData.Data[point.i][point.j];
+            var value = data.values[Time.tIndex];
+            particle.x += value[0] * 3600 * 3;
+            particle.y += value[1] * 3600 * 3;
+        }
+
         function animate() {
             animationHandlers.forEach(function(handler) {
                 handler(Time.tIndex);
             });
+            if (Time.tIndex === 0) {
+                particles = [];
+            } else {
+                particles.forEach(function(particle) {
+                    updateParticle(particle);
+                });
+            }
         }
     }
 });
