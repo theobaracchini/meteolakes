@@ -15,5 +15,8 @@ Next refactoring steps:
 
 - Integrate graph-ctrl.js in page-insitu-component.js, properly turning that page into a component.
 
+User requests:
+- add anchors such as <a name="water" /><h3 class="ng-binding">Water temperature</h3> to access directly graphs like http://meteolakes.epfl.ch/graph-view/beta/#water
+
 
 Martin Zoller 2017-02-10
