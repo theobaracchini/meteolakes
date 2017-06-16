@@ -18,10 +18,13 @@ angular.module('meteolakesApp').component('lakeView', {
         var icons = [];
         var particles = [];
         var lastClick = 0;
-        var PARTICLE_COLOR = '0xFFCC00';
-        var PARTICLE_SIZE = 3;
+        var PARTICLE_COLOR = '0x000000';
+        var PARTICLE_SIZE = 5;
         var PARTICLE_CLICK_DELTA_MS = 50;
+        var PARTICLES_ADDED_ON_CLICK = 5;
+        var PARTICLES_INSERT_RADIUS = 50;
         var leafletMap = null;
+        var currentTindex = Time.tIndex;
 
         me.tab = 'surface';
         me.dataReady = false;
@@ -73,7 +76,7 @@ angular.module('meteolakesApp').component('lakeView', {
             me.dataReady = false;
             me.timeSelection = selection;
             me.closeChart();
-
+            particles = [];
             // Load metadata of all tabs to update tab availabilities
             dataSources.forEach(function(source) {
                 me[source + 'Data'].setTimeSelection(selection).then(function() {
@@ -247,6 +250,7 @@ angular.module('meteolakesApp').component('lakeView', {
                 }
             }
 
+            graphics.lineStyle(0, PARTICLE_COLOR);
             particles.forEach(function(point) {
                 drawParticle(point, graphics);
             });
@@ -258,10 +262,22 @@ angular.module('meteolakesApp').component('lakeView', {
             var diff = Date.now() - lastClick;
             lastClick = Date.now();
             if (diff > PARTICLE_CLICK_DELTA_MS) {
-                particles.push(point);
+                for (var i = 0; i < PARTICLES_ADDED_ON_CLICK; i++) {
+                    var x = random(
+                        point.x - PARTICLES_INSERT_RADIUS,
+                        point.x + PARTICLES_INSERT_RADIUS);
+                    var y = random(
+                        point.y - PARTICLES_INSERT_RADIUS,
+                        point.y + PARTICLES_INSERT_RADIUS);
+                    particles.push({ x: x, y: y });
+                }
                 $scope.$broadcast('particleAdded');
             }
         };
+
+        function random(min, max) {
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
 
         function drawParticle(point, graphics) {
             var mapPoint = dataPointToMapPoint(point);
@@ -272,7 +288,7 @@ angular.module('meteolakesApp').component('lakeView', {
 
         function dataPointToMapPoint(point) {
             var latlng = MapHelpers.unproject(point);
-            return leafletMap.latLngToLayerPoint(latlng);
+            return leafletMap.latLngToContainerPoint(latlng);
         }
 
         function drawArrow(x, y, dx, dy, color, graphics) {
@@ -308,6 +324,7 @@ angular.module('meteolakesApp').component('lakeView', {
 
         me.setTab = function(tab) {
             me.closeChart();
+            particles = [];
             me.tab = tab;
             $scope.$emit('tabChanged');
             me.dataReady = false;
@@ -376,21 +393,31 @@ angular.module('meteolakesApp').component('lakeView', {
             var point = nearestNeighbor.query(particle);
             var data = temporalData.Data[point.i][point.j];
             var value = data.values[Time.tIndex];
-            particle.x += value[0] * 3600 * 3;
-            particle.y += value[1] * 3600 * 3;
+            particle.x += sign(currentTindex, Time.tIndex) * value[0] * 3600 * 3;
+            particle.y += sign(currentTindex, Time.tIndex) * value[1] * 3600 * 3;
+        }
+
+        function sign(lhs, rhs) {
+            if (lhs > rhs) {
+                return -1.0;
+            }
+            return 1.0;
         }
 
         function animate() {
             animationHandlers.forEach(function(handler) {
                 handler(Time.tIndex);
             });
-            if (Time.tIndex === 0) {
-                particles = [];
-            } else {
-                particles.forEach(function(particle) {
-                    updateParticle(particle);
-                });
+            if (me.tab === 'particles') {
+                if (currentTindex === Time.nSteps - 1) {
+                    $scope.$emit('moveToNextWeek');
+                } else {
+                    particles.forEach(function(particle) {
+                        updateParticle(particle);
+                    });
+                }
             }
+            currentTindex = Time.tIndex;
         }
     }
 });
