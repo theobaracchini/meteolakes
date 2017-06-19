@@ -25,6 +25,7 @@ angular.module('meteolakesApp').component('lakeView', {
         var PARTICLES_INSERT_RADIUS = 50;
         var leafletMap = null;
         var currentTindex = Time.tIndex;
+        var saveParticlesForNextWeek = false;
 
         me.tab = 'surface';
         me.dataReady = false;
@@ -76,7 +77,11 @@ angular.module('meteolakesApp').component('lakeView', {
             me.dataReady = false;
             me.timeSelection = selection;
             me.closeChart();
-            particles = [];
+            if (!saveParticlesForNextWeek) {
+                particles = [];
+            } else {
+                saveParticlesForNextWeek = false;
+            }
             // Load metadata of all tabs to update tab availabilities
             dataSources.forEach(function(source) {
                 me[source + 'Data'].setTimeSelection(selection).then(function() {
@@ -333,6 +338,9 @@ angular.module('meteolakesApp').component('lakeView', {
 
         function loadCurrentData() {
             var source = me.tab;
+            if (me.tab === 'particles') {
+                source = 'surface';
+            }
             var temporalData = me[source + 'Data'];
             if (!temporalData.available && source !== 'surface') {
                 me.setTab('surface');
@@ -389,7 +397,7 @@ angular.module('meteolakesApp').component('lakeView', {
         }
 
         function updateParticle(particle) {
-            var temporalData = me[me.tab + 'Data'];
+            var temporalData = me.surfaceData;
             var point = nearestNeighbor.query(particle);
             var data = temporalData.Data[point.i][point.j];
             var value = data.values[Time.tIndex];
@@ -410,6 +418,7 @@ angular.module('meteolakesApp').component('lakeView', {
             });
             if (me.tab === 'particles') {
                 if (currentTindex === Time.nSteps - 1) {
+                    saveParticlesForNextWeek = true;
                     $scope.$emit('moveToNextWeek');
                 } else {
                     particles.forEach(function(particle) {
