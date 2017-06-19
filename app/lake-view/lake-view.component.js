@@ -19,10 +19,11 @@ angular.module('meteolakesApp').component('lakeView', {
         var particles = [];
         var lastClick = 0;
         var PARTICLE_COLOR = '0x000000';
-        var PARTICLE_SIZE = 5;
+        var PARTICLE_SIZE = 4;
         var PARTICLE_CLICK_DELTA_MS = 50;
         var PARTICLES_ADDED_ON_CLICK = 5;
         var PARTICLES_INSERT_RADIUS = 50;
+        var PARTICLES_MAX_DISTANCE_TO_NEIGHBOUR = 450;
         var leafletMap = null;
         var currentTindex = Time.tIndex;
         var saveParticlesForNextWeek = false;
@@ -91,6 +92,10 @@ angular.module('meteolakesApp').component('lakeView', {
                     }
                 });
             });
+        });
+
+        $scope.$on('timerPaused', function() {
+            saveParticlesForNextWeek = false;
         });
 
         $scope.$on('tick', animate);
@@ -284,7 +289,13 @@ angular.module('meteolakesApp').component('lakeView', {
             return Math.floor(Math.random() * (max - min)) + min;
         }
 
-        function drawParticle(point, graphics) {
+        function drawParticle(particle, graphics) {
+            var point = particle;
+            var neighbor = nearestNeighbor.query(point);
+            if (Math.abs(neighbor.x - point.x) > PARTICLES_MAX_DISTANCE_TO_NEIGHBOUR ||
+                Math.abs(neighbor.y - point.y) > PARTICLES_MAX_DISTANCE_TO_NEIGHBOUR) {
+                point = neighbor;
+            }
             var mapPoint = dataPointToMapPoint(point);
             graphics.beginFill(PARTICLE_COLOR);
             graphics.drawCircle(mapPoint.x, mapPoint.y, PARTICLE_SIZE);
