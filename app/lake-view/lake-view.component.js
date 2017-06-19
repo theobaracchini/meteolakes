@@ -20,10 +20,10 @@ angular.module('meteolakesApp').component('lakeView', {
         var hashes = [];
         var lastClick = 0;
         var PARTICLE_COLOR = '0x000000';
-        var PARTICLE_SIZE = 4;
+        var PARTICLE_SIZE = 5;
         var PARTICLE_CLICK_DELTA_MS = 50;
-        var PARTICLES_ADDED_ON_CLICK = 1;
-        var PARTICLES_INSERT_RADIUS = 50;
+        var PARTICLES_ADDED_ON_CLICK = 6;
+        var PARTICLES_INSERT_RADIUS = 500;
         var PARTICLES_MAX_DISTANCE_TO_NEIGHBOUR = 450;
         var leafletMap = null;
         var currentTindex = Time.tIndex;
