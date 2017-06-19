@@ -16,6 +16,9 @@ angular.module('meteolakesApp').factory('Time', function() {
         },
         decrease: function() {
             this.tIndex = Math.max(0, this.tIndex - 1);
+        },
+        moveToEnd: function() {
+            this.tIndex = this.nSteps - 1;
         }
     };
 });
