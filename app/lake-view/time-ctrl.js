@@ -187,8 +187,6 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
 
         if (year === nextYear && week === nextWeek) {
             $scope.pause();
-            Time.tIndex = Time.nSteps - 1;
-            $scope.$broadcast('timerPaused');
         }
 
         $scope.selection.week = nextWeek;

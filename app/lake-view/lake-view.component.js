@@ -16,12 +16,13 @@ angular.module('meteolakesApp').component('lakeView', {
         var dataSources = ['surface'];
         var me = this;
         var icons = [];
-        var particles = [];
+        var particles = {};
+        var hashes = [];
         var lastClick = 0;
         var PARTICLE_COLOR = '0x000000';
         var PARTICLE_SIZE = 4;
         var PARTICLE_CLICK_DELTA_MS = 50;
-        var PARTICLES_ADDED_ON_CLICK = 5;
+        var PARTICLES_ADDED_ON_CLICK = 1;
         var PARTICLES_INSERT_RADIUS = 50;
         var PARTICLES_MAX_DISTANCE_TO_NEIGHBOUR = 450;
         var leafletMap = null;
@@ -261,8 +262,11 @@ angular.module('meteolakesApp').component('lakeView', {
             }
 
             graphics.lineStyle(0, PARTICLE_COLOR);
-            particles.forEach(function(point) {
-                drawParticle(point, graphics);
+            hashes.forEach(function(hash) {
+                var particle = particles[hash][Time.tIndex];
+                if (particle) {
+                    drawParticle(particle, graphics);
+                }
             });
 
             return graphics;
@@ -279,7 +283,11 @@ angular.module('meteolakesApp').component('lakeView', {
                     var y = random(
                         point.y - PARTICLES_INSERT_RADIUS,
                         point.y + PARTICLES_INSERT_RADIUS);
-                    particles.push({ x: x, y: y });
+                    var hash = Date.now();
+
+                    hashes.push(hash);
+                    particles[hash] = [];
+                    particles[hash][Time.tIndex] = { x: x, y: y };
                 }
                 $scope.$broadcast('particleAdded');
             }
@@ -340,7 +348,8 @@ angular.module('meteolakesApp').component('lakeView', {
 
         me.setTab = function(tab) {
             me.closeChart();
-            particles = [];
+            particles = {};
+            hashes = [];
             me.tab = tab;
             $scope.$emit('tabChanged');
             me.dataReady = false;
@@ -407,20 +416,24 @@ angular.module('meteolakesApp').component('lakeView', {
             }
         }
 
-        function updateParticle(particle) {
-            var temporalData = me.surfaceData;
-            var point = nearestNeighbor.query(particle);
-            var data = temporalData.Data[point.i][point.j];
-            var value = data.values[Time.tIndex];
-            particle.x += sign(currentTindex, Time.tIndex) * value[0] * 3600 * 3;
-            particle.y += sign(currentTindex, Time.tIndex) * value[1] * 3600 * 3;
+        function updateParticleOneStep(particleList, tIndex) {
+            var particle = particleList[tIndex];
+            var nextParticle = particleList[tIndex + 1];
+            if (particle && !nextParticle) {
+                var temporalData = me.surfaceData;
+                var point = nearestNeighbor.query(particle);
+                var data = temporalData.Data[point.i][point.j];
+                var value = data.values[tIndex];
+                var x = particle.x + value[0] * 3600 * 3;
+                var y = particle.y + value[1] * 3600 * 3;
+                particleList[tIndex + 1] = { x: x, y: y };
+            }
         }
 
-        function sign(lhs, rhs) {
-            if (lhs > rhs) {
-                return -1.0;
+        function updateParticle(particleList) {
+            for (var tIndex = currentTindex; tIndex < Time.tIndex; tIndex++) {
+                updateParticleOneStep(particleList, tIndex);
             }
-            return 1.0;
         }
 
         function animate() {
@@ -430,10 +443,15 @@ angular.module('meteolakesApp').component('lakeView', {
             if (me.tab === 'particles') {
                 if (currentTindex === Time.nSteps - 1) {
                     saveParticlesForNextWeek = true;
+                    hashes.forEach(function(hash) {
+                        var tmpParticle = particles[hash][currentTindex];
+                        particles[hash] = [];
+                        particles[hash][0] = tmpParticle;
+                    });
                     $scope.$emit('moveToNextWeek');
                 } else {
-                    particles.forEach(function(particle) {
-                        updateParticle(particle);
+                    hashes.forEach(function(hash) {
+                        updateParticle(particles[hash]);
                     });
                 }
             }
