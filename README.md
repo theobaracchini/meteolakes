@@ -27,6 +27,31 @@ Deployment
 6. Extract `lake-view-{version}.tgz` on the server.
 
 
+Mobile: Installation and Development
+--
+
+1. Install [Cordova](https://cordova.apache.org/).
+2. Install [Gradle](https://gradle.org/install).
+3. Install [Android Studio](https://developer.android.com/studio/install.html).
+    1. From Android Studio, install `platform-tools` and `build-tools`.
+    2. Create a new emulator.
+4. Browse to `mobile\`.
+    1. For browser run `cordova run browser`.
+    2. For Android run `cordova run android`.
+  
+Android: Deployment
+--
+
+1. Follow website deployment steps.
+2. Browse to `mobile\`.
+3. Extract `lake-view-{version}.tgz` into the `www\` folder.
+4. Update the version in `config.xml` and `package.json`.
+5. Run `cordova build --release`.
+6. Sign the apk located in `platforms\android\build\outputs\apk\`.
+    1. You can use [apk-signer](https://shatter-box.com/knowledgebase/android-apk-signing-tool-apk-signer/) to sign and align the apk.
+7. Upload the signed apk to the server at the path `package/android/meteolakes_{version}.apk`.
+8. Upload the signed apk to Google Play.
+
 Technologies and Libraries in this project
 --
 
@@ -62,6 +87,8 @@ Name and short description of each product.
 - srihash.org
   - Soubresource Integrity; Ensure that resources hosted on third-party servers
     have not been tampered with.
+- cordova
+  - Mobile framework to create cross-platform application from web technologies
 
 
 Folder structure
@@ -79,3 +106,5 @@ Folder structure
   - `gulp.js` build output
 - `./img`
   - images
+- `mobile`
+  - mobile application related files

@@ -172,6 +172,27 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
                                 $scope.selection.week);
     }
 
+    $scope.$on('moveToNextWeek', moveToNextWeek);
+
+    function moveToNextWeek() {
+        var week = $scope.selection.week;
+        var year = $scope.selection.year;
+        var date = moment().day('Monday').week(week).year(year);
+        date.add(1, 'w');
+        var lakeData = $scope.index[$scope.selection.lake];
+
+        var nextYear = Util.closest(lakeData.years, date.year());
+        var nextWeek = Util.closest(lakeData.data.get(date.year()),
+                                date.week());
+
+        if (year === nextYear && week === nextWeek) {
+            $scope.pause();
+        }
+
+        $scope.selection.week = nextWeek;
+        $scope.selection.year = nextYear;
+    }
+
     function resetTimer() {
         if (tickTimerId) {
             $interval.cancel(tickTimerId);
