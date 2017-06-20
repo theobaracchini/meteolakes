@@ -38,4 +38,4 @@
     </div>
 </div>
 
-<d3-chart set-handler="$ctrl.addAnimationHandler(handler)" data="$ctrl.chartData" label="$ctrl.legendVar" on-close="$ctrl.closeChart()"></d3-chart>
+<d3-chart set-handler="$ctrl.addAnimationHandler(handler)" data="$ctrl.chartData" placeholder="$ctrl.tab == 'particles' ? 'Click on the map to add particles at that point.' : 'Click on the map to show a time series for that point.'" label="$ctrl.legendVar" on-close="$ctrl.closeChart()"></d3-chart>

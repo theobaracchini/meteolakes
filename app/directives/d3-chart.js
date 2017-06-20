@@ -5,6 +5,7 @@ angular.module('meteolakesApp').directive('d3Chart', function($window) {
             setHandler: '&',
             data: '=',
             label: '=',
+            placeholder: '=',
             onClose: '&'
         },
         link: function(scope, element, attrs) {
@@ -21,10 +22,13 @@ angular.module('meteolakesApp').directive('d3Chart', function($window) {
                 .attr('class', 'breadcrumb')
                 .append('li')
                 .attr('class', 'active')
-                .text('Click on the map to show a time series for that point.');
+                .text(scope.placeholder);
+
+            scope.$watch('placeholder', function(newVal, oldVal) {
+                $(placeholder[0][0]).children('ol').children('li').text(newVal);
+            });
 
             var content = d3.select(container).append('div');
-
             content
                 .append('div')
                 .attr('class', 'close')
