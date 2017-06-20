@@ -436,17 +436,19 @@ angular.module('meteolakesApp').component('lakeView', {
 
         function updateParticleOneStep(particleList, tIndex) {
             var particle = particleList[tIndex];
-            var temporalData = me.surfaceData;
-            var point = nearestNeighbor.query(particle);
-            var data = temporalData.Data[point.i][point.j];
-            var value = data.values[tIndex];
-            var x = particle.x + value[0] * 3600 * 3;
-            var y = particle.y + value[1] * 3600 * 3;
-            particleList[parseInt(tIndex, 10) + 1] = { x: x, y: y };
+            if (particle) {
+                var temporalData = me.surfaceData;
+                var point = nearestNeighbor.query(particle);
+                var data = temporalData.Data[point.i][point.j];
+                var value = data.values[tIndex];
+                var x = particle.x + value[0] * 3600 * 3;
+                var y = particle.y + value[1] * 3600 * 3;
+                particleList[parseInt(tIndex, 10) + 1] = { x: x, y: y };
+            }
         }
 
         function updateParticle(particleList) {
-            for (var tIndex = Time.tIndex; tIndex < Time.nSteps - 1; tIndex++) {
+            for (var tIndex = Time.tIndex; tIndex < Time.nSteps; tIndex++) {
                 updateParticleOneStep(particleList, tIndex);
             }
         }
