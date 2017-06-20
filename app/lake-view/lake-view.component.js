@@ -386,9 +386,14 @@ angular.module('meteolakesApp').component('lakeView', {
                 me.dataReady = true;
                 $scope.$emit('dataReady', temporalData.timeSteps);
             } else {
-                temporalData.getSliceLabels().then(function(labels) {
-                    me.labelLeft = labels.labelLeft;
-                    me.labelRight = labels.labelRight;
+                temporalData.getLakeOptions().then(function(options) {
+                    me.options = options;
+                    me.outlets = options.outlets;
+                    var labels = options[me.tab];
+                    if (labels) {
+                        me.labelLeft = labels.labelLeft;
+                        me.labelRight = labels.labelRight;
+                    }
                 });
                 temporalData.readData().then(function() {
                     colorFunctions[source] = generateColorFunction(temporalData.scaleExtent);
@@ -434,9 +439,19 @@ angular.module('meteolakesApp').component('lakeView', {
             }
         }
 
+        function particleInOutlets(particle) {
+            return me.outlets.some(function(outlet) {
+                var distance =
+                Math.sqrt(
+                    Math.pow(particle.x - outlet.x, 2) +
+                    Math.pow(particle.y - outlet.y, 2));
+                return distance < outlet.r;
+            });
+        }
+
         function updateParticleOneStep(particleList, tIndex) {
             var particle = particleList[tIndex];
-            if (particle) {
+            if (particle && !particleInOutlets(particle)) {
                 var temporalData = me.surfaceData;
                 var point = nearestNeighbor.query(particle);
                 var data = temporalData.Data[point.i][point.j];

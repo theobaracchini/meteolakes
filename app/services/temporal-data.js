@@ -201,20 +201,19 @@ angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, $q, 
     };
 
     // City labels of the slices - this is lake-specific and muist be stored with the data
-    TemporalData.prototype.getSliceLabels = function() {
-        var jsonUrl = DATA_HOST + this.timeSelection.folder + '/labels.json';
-        var suffix = this.suffix;
+    TemporalData.prototype.getLakeOptions = function() {
+        var jsonUrl = DATA_HOST + this.timeSelection.folder + '/options.json';
         var timeSelection = this.timeSelection;
         return $q(function(resolve, reject) {
-            if (suffix === '' || timeSelection === null) {
-                reject('No labels found.');
+            if (timeSelection === null) {
+                reject('No options found.');
             }
             // Read the data labels
             d3.json(jsonUrl, function(err, json) {
                 if (err) {
-                    reject('Error retrieving lake labels. Url: ' + jsonUrl + '. Error: ' + err);
+                    reject('Error retrieving lake options. Url: ' + jsonUrl + '. Error: ' + err);
                 } else {
-                    resolve(json[suffix]);
+                    resolve(json);
                 }
             });
         });
