@@ -19,12 +19,7 @@ angular.module('meteolakesApp').component('lakeView', {
         var particles = {};
         var hashes = [];
         var lastClick = 0;
-        var PARTICLE_COLOR = '0x000000';
-        var PARTICLE_SIZE = 5;
         var PARTICLE_CLICK_DELTA_MS = 50;
-        var PARTICLES_ADDED_ON_CLICK = 6;
-        var PARTICLES_INSERT_RADIUS = 500;
-        var PARTICLES_MAX_DISTANCE_TO_NEIGHBOUR = 450;
         var leafletMap = null;
         var currentTindex = Time.tIndex;
         var saveParticlesForNextWeek = false;
@@ -268,7 +263,7 @@ angular.module('meteolakesApp').component('lakeView', {
                 }
             }
 
-            graphics.lineStyle(0, PARTICLE_COLOR);
+            graphics.lineStyle(me.global.particleLineThickness, me.global.particleLineColor);
             hashes.forEach(function(hash) {
                 var particle = particles[hash][Time.tIndex];
                 if (particle) {
@@ -283,13 +278,13 @@ angular.module('meteolakesApp').component('lakeView', {
             var diff = Date.now() - lastClick;
             lastClick = Date.now();
             if (diff > PARTICLE_CLICK_DELTA_MS) {
-                for (var i = 0; i < PARTICLES_ADDED_ON_CLICK; i++) {
+                for (var i = 0; i < me.global.particleAddedOnClick; i++) {
                     var x = random(
-                        point.x - PARTICLES_INSERT_RADIUS,
-                        point.x + PARTICLES_INSERT_RADIUS);
+                        point.x - me.options.insertRadius,
+                        point.x + me.options.insertRadius);
                     var y = random(
-                        point.y - PARTICLES_INSERT_RADIUS,
-                        point.y + PARTICLES_INSERT_RADIUS);
+                        point.y - me.options.insertRadius,
+                        point.y + me.options.insertRadius);
 
                     var hash = guid();
                     hashes.push(hash);
@@ -318,13 +313,13 @@ angular.module('meteolakesApp').component('lakeView', {
         function drawParticle(particle, graphics) {
             var point = particle;
             var neighbor = nearestNeighbor.query(point);
-            if (Math.abs(neighbor.x - point.x) > PARTICLES_MAX_DISTANCE_TO_NEIGHBOUR ||
-                Math.abs(neighbor.y - point.y) > PARTICLES_MAX_DISTANCE_TO_NEIGHBOUR) {
+            if (Math.abs(neighbor.x - point.x) > me.options.maxDistToNeighbour ||
+                Math.abs(neighbor.y - point.y) > me.options.maxDistToNeighbour) {
                 point = neighbor;
             }
             var mapPoint = dataPointToMapPoint(point);
-            graphics.beginFill(PARTICLE_COLOR);
-            graphics.drawCircle(mapPoint.x, mapPoint.y, PARTICLE_SIZE);
+            graphics.beginFill(me.global.particleFillColor);
+            graphics.drawCircle(mapPoint.x, mapPoint.y, me.global.particleSize);
             graphics.endFill();
         }
 
@@ -394,6 +389,9 @@ angular.module('meteolakesApp').component('lakeView', {
                         me.labelLeft = labels.labelLeft;
                         me.labelRight = labels.labelRight;
                     }
+                });
+                temporalData.getGlobalOptions().then(function(options) {
+                    me.global = options;
                 });
                 temporalData.readData().then(function() {
                     colorFunctions[source] = generateColorFunction(temporalData.scaleExtent);

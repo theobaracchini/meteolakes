@@ -200,7 +200,7 @@ angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, $q, 
         return DATA_HOST + this.timeSelection.folder + '/' + this.suffix + '.png';
     };
 
-    // City labels of the slices - this is lake-specific and muist be stored with the data
+    // Lake specific options - this is lake-specific and muist be stored with the data
     TemporalData.prototype.getLakeOptions = function() {
         var jsonUrl = DATA_HOST + this.timeSelection.folder + '/options.json';
         var timeSelection = this.timeSelection;
@@ -212,6 +212,20 @@ angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, $q, 
             d3.json(jsonUrl, function(err, json) {
                 if (err) {
                     reject('Error retrieving lake options. Url: ' + jsonUrl + '. Error: ' + err);
+                } else {
+                    resolve(json);
+                }
+            });
+        });
+    };
+
+    TemporalData.prototype.getGlobalOptions = function() {
+        var jsonUrl = DATA_HOST + '/options.json';
+        return $q(function(resolve, reject) {
+            // Read the data labels
+            d3.json(jsonUrl, function(err, json) {
+                if (err) {
+                    reject('Error retrieving global options. Url: ' + jsonUrl + '. Error: ' + err);
                 } else {
                     resolve(json);
                 }
