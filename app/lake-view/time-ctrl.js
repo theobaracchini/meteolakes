@@ -26,6 +26,7 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
     var tickInterval = 400;
     var tickTimerId = null;
     var steps = [];
+    var wasPausedAutomatically = false;
 
     var indexReady = false;
     $scope.clientsKnown = 0; // Number of animations controlled by this controller
@@ -75,6 +76,7 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
 
     $scope.play = function() {
         $scope.isPlaying = true;
+        wasPausedAutomatically = false;
 
         if (tickTimerId == null) {
             tickTimerId = $interval(tick, tickInterval);
@@ -186,9 +188,12 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
                                 date.week());
 
         if (year === nextYear && week === nextWeek) {
-            $scope.pause();
-            Time.moveToEnd();
-            $scope.$emit('timerPaused');
+            if (!wasPausedAutomatically) {
+                $scope.pause();
+                Time.moveToEnd();
+                $scope.$emit('timerPaused');
+                wasPausedAutomatically = true;
+            }
         } else {
             $scope.selection.week = nextWeek;
             $scope.selection.year = nextYear;
