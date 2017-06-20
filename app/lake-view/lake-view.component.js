@@ -106,6 +106,11 @@ angular.module('meteolakesApp').component('lakeView', {
         $scope.$on('mapLoaded', function(evt, map) {
             leafletMap = map;
         });
+        $scope.$on('dataReady', function() {
+            hashes.forEach(function(hash) {
+                updateParticle(particles[hash]);
+            });
+        });
 
         me.addAnimationHandler = function(handler) {
             animationHandlers.push(handler);
@@ -381,6 +386,7 @@ angular.module('meteolakesApp').component('lakeView', {
                 me.dataReady = true;
                 $scope.$emit('dataReady', temporalData.timeSteps);
             } else {
+                var dataLoaded = 0;
                 temporalData.getLakeOptions().then(function(options) {
                     me.options = options;
                     me.outlets = options.outlets;
@@ -389,9 +395,11 @@ angular.module('meteolakesApp').component('lakeView', {
                         me.labelLeft = labels.labelLeft;
                         me.labelRight = labels.labelRight;
                     }
+                    dataLoaded = doDataLoaded(dataLoaded, temporalData);
                 });
                 temporalData.getGlobalOptions().then(function(options) {
                     me.global = options;
+                    dataLoaded = doDataLoaded(dataLoaded, temporalData);
                 });
                 temporalData.readData().then(function() {
                     colorFunctions[source] = generateColorFunction(temporalData.scaleExtent);
@@ -399,10 +407,18 @@ angular.module('meteolakesApp').component('lakeView', {
                         nearestNeighbor = NearestNeighbor(me.surfaceData);
                     }
                     me[source + 'Extent'] = temporalData.scaleExtent; // This one is used for the color legend
-                    me.dataReady = true;
-                    $scope.$emit('dataReady', temporalData.timeSteps);
+                    dataLoaded = doDataLoaded(dataLoaded, temporalData);
                 });
             }
+        }
+
+        function doDataLoaded(dataLoaded, temporalData) {
+            dataLoaded++;
+            if (dataLoaded === 3) {
+                me.dataReady = true;
+                $scope.$emit('dataReady', temporalData.timeSteps);
+            }
+            return dataLoaded;
         }
 
         function generateColorFunction(extent) {
