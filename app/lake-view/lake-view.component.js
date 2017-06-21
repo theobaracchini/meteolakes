@@ -448,7 +448,7 @@ angular.module('meteolakesApp').component('lakeView', {
         }
 
         function particleInOutlets(particle) {
-            return me.outlets.some(function(outlet) {
+            return me.options.outlets.some(function(outlet) {
                 var distance =
                 Math.sqrt(
                     Math.pow(particle.x - outlet.x, 2) +
