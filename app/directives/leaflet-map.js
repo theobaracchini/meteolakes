@@ -192,7 +192,6 @@ angular.module('meteolakesApp').directive('leafletMap', function(CanvasLayer, Sh
                 if (bounds) {
                     // zoom map such that at least 90% of the area given by bounds is visible
                     map.fitBounds(bounds.pad(-0.05));
-                    canvasLayer.redraw();
                 }
             }
         }
