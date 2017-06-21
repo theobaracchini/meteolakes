@@ -68,7 +68,6 @@ angular.module('meteolakesApp').directive('leafletMap', function(CanvasLayer, Sh
             access_token: 'pk.eyJ1IjoiYXBoeXMiLCJhIjoiY2ltM2g1MzUwMDBwOXZtbTVzdnQ1ZHZpYiJ9.Cm1TVUsbCQLOhUbblOrHfw'
             // lake-view token for user aphys obtained from mapbox.com
         }).addTo(map);
-
         return map;
     }
 
@@ -165,7 +164,6 @@ angular.module('meteolakesApp').directive('leafletMap', function(CanvasLayer, Sh
 
             scope.$watch('data.ready', function() {
                 var data = scope.data;
-
                 if (data && data.ready) {
                     var minBounds = MapHelpers.unproject(L.point(data.xExtent[0], data.yExtent[0]));
                     var maxBounds = MapHelpers.unproject(L.point(data.xExtent[1], data.yExtent[1]));
@@ -194,6 +192,7 @@ angular.module('meteolakesApp').directive('leafletMap', function(CanvasLayer, Sh
                 if (bounds) {
                     // zoom map such that at least 90% of the area given by bounds is visible
                     map.fitBounds(bounds.pad(-0.05));
+                    canvasLayer.redraw();
                 }
             }
         }

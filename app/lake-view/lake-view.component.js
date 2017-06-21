@@ -389,12 +389,6 @@ angular.module('meteolakesApp').component('lakeView', {
                 var dataLoaded = 0;
                 temporalData.getLakeOptions().then(function(options) {
                     me.options = options;
-                    me.outlets = options.outlets;
-                    var labels = options[me.tab];
-                    if (labels) {
-                        me.labelLeft = labels.labelLeft;
-                        me.labelRight = labels.labelRight;
-                    }
                     dataLoaded = doDataLoaded(dataLoaded, temporalData);
                 });
                 temporalData.getGlobalOptions().then(function(options) {

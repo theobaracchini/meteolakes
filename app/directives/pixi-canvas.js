@@ -145,6 +145,7 @@ angular.module('meteolakesApp').directive('pixiCanvas', function(Util, $timeout)
                         if (bounds) {
                             map.fitBounds(bounds);
                             addLabels();
+                            canvasLayer.redraw();
                         }
                     });
                 }
