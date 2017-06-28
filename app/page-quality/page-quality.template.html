@@ -70,7 +70,7 @@
                        <span class="caret"></span>
                    </button>
                    <ul class="dropdown-menu lv-scrollable-menu" role="menu">
-                       <li ng-repeat="year in index[selection.lake].years">
+                       <li ng-repeat="year in index[selection.lake].years | orderBy:'-'">
                            <a ng-click="ChangeYear(year)">{{ year }}</a>
                        </li>
                    </ul>
@@ -81,7 +81,7 @@
                        <span class="caret"></span>
                    </button>
                    <ul class="dropdown-menu lv-scrollable-menu" role="menu">
-                       <li ng-repeat="week in index[selection.lake].data.get(selection.year)">
+                       <li ng-repeat="week in index[selection.lake].data.get(selection.year) | orderBy:'-'">
                            <a ng-click="ChangeWeek(week)">{{ PrettyPrintWeek(week) }}</a>
                        </li>
                    </ul>
