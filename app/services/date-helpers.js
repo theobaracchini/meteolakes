@@ -18,6 +18,10 @@ angular.module('meteolakesApp').service('DateHelpers', function() {
         return date.format('YYYY-MM-DD');
     };
 
+    this.dayMonthYear = function(date) {
+        return date.format('DD-MMM-YYYY');
+    };
+
     this.hoursMinutes = function(date) {
         return date.format('HH:mm');
     };

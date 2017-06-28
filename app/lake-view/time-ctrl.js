@@ -121,7 +121,7 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
     };
 
     $scope.getDate = function() {
-        return allClientsReady() ? DateHelpers.yearMonthDay(currentDate()) : '';
+        return allClientsReady() ? DateHelpers.dayMonthYear(currentDate()) : '';
     };
 
     $scope.getTime = function() {
