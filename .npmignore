@@ -6,3 +6,4 @@ TODO
 .gitignore
 .npmignore
 mobile
+android-keystore.keystore
