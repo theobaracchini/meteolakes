@@ -5,7 +5,7 @@
            <div class="visible-xs-block lv-navbar-small-buttons">
                <div class="pull-left">
                    <img src="img/coresim.png" style="width:35px;height:41px;margin:10px">
-                   <h4 style="display:inline">Water Quality</h4>
+                   <h4 style="display:inline">3D Water Quality</h4>
                </div>
                <div class="pull-right lv-controls-xs">
                    <div class="navbar-text"><strong><div style="font-size:60%" ng-bind="getDate()"></div><div style="font-size:130%" ng-bind="getTime()"></div></strong></div>
@@ -52,7 +52,7 @@
                <div class="pull-left">
                    <img src="img/coresim.png" class="lv-navbar-logo">
                </div>
-               <div class="btn-group"><a class="navbar-brand" href="#!/quality">Water Quality</a></div>
+               <div class="btn-group"><a class="navbar-brand" href="#!/quality">3D Water Quality</a></div>
                <div class="btn-group navbar-btn">
                    <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
                        {{ index[selection.lake].name }}
@@ -112,18 +112,18 @@
        <div class="lv-container-dynamic">
            <div class="row">
                <div class="col-sm-12 col-lg-6 lv-extra-padding">
-                   <div>
-                       <h3>Oxygen Concentration</h3>
-                   </div>
+                   <h3>Chlorophyll-a</h3>
 
-                   <lake-view var="oxygen" legend-var="Oxygen concentration (g/m³)" type="valueWAQoxygen" has-transects="true">
+                   <lake-view var="chlfa" legend-var="Chlorophyll-a concentration (mg/L)" type="valueWAQchlfa" has-transects="true">
                    </lake-view>
                </div>
 
                <div class="col-sm-12 col-lg-6 lv-extra-padding">
-                   <h3>Chlorophyll</h3>
+                   <div>
+                       <h3>Oxygen</h3>
+                   </div>
 
-                   <lake-view var="chlfa" legend-var="Chlfa (mg/m³)" type="valueWAQchlfa" has-transects="true">
+                   <lake-view var="oxygen" legend-var="Oxygen concentration (mg/L)" type="valueWAQoxygen" has-transects="true">
                    </lake-view>
                </div>
            </div>
