@@ -18,6 +18,17 @@
             <div class="btn-group navbar-btn">
                 <span class="navtext">starting on</span>
             </div>
+            <div class="btn-group navbar-btn">
+                <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+                    {{ selection.day }}
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu lv-scrollable-menu" role="menu">
+                    <li ng-repeat="day in days | orderBy:'-'">
+                        <a ng-click="ChangeDay(day)">{{ day }}</a>
+                    </li>
+                </ul>
+            </div>
             <div class="btn-group">
                 <div class="navbar-btn visible-xs">
                     <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
@@ -25,7 +36,7 @@
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu lv-scrollable-menu" role="menu">
-                        <li ng-repeat="month in months">
+                        <li ng-repeat="month in months | orderBy:'-'">
                             <a ng-click="ChangeMonth(month)">{{ AlphaMonth(month, false) }}</a>
                         </li>
                     </ul>
@@ -36,7 +47,7 @@
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu lv-scrollable-menu" role="menu">
-                        <li ng-repeat="month in months">
+                        <li ng-repeat="month in months | orderBy:'-'">
                             <a ng-click="ChangeMonth(month)">{{ AlphaMonth(month, false) }}</a>
                         </li>
                     </ul>
@@ -44,22 +55,11 @@
             </div>
             <div class="btn-group navbar-btn">
                 <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
-                    {{ selection.day }}
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu lv-scrollable-menu" role="menu">
-                    <li ng-repeat="day in days">
-                        <a ng-click="ChangeDay(day)">{{ day }}</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="btn-group navbar-btn">
-                <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
                     {{ selection.year }}
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu lv-scrollable-menu" role="menu">
-                    <li ng-repeat="year in years">
+                    <li ng-repeat="year in years | orderBy:'-'">
                         <a ng-click="ChangeYear(year)">{{ year }}</a>
                     </li>
                 </ul>
