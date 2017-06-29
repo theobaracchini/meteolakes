@@ -7,7 +7,8 @@ angular.module('meteolakesApp').component('lakeView', {
         var: '@', // Variable to be plotted (= name of subfolder in CSV data folder)
         legendVar: '@', // Name of Variable, in human-readable format with unit
         type: '@',  // Type of plotted data, 'value' or 'vector'
-        hasTransects: '@' // Whether or not there is transect data available
+        hasTransects: '@', // Whether or not there is transect data available
+        maxExtentValue: '<'
     },
     controller: function($scope, $q, Time, TemporalData, NearestNeighbor, Util, MapHelpers) {
         var colorFunctions = [];
@@ -396,11 +397,15 @@ angular.module('meteolakesApp').component('lakeView', {
                     dataLoaded = doDataLoaded(dataLoaded, temporalData);
                 });
                 temporalData.readData().then(function() {
-                    colorFunctions[source] = generateColorFunction(temporalData.scaleExtent);
+                    var extent = temporalData.scaleExtent;
+                    if (me.maxExtentValue && extent[1] > me.maxExtentValue) {
+                        extent[1] = me.maxExtentValue;
+                    }
+                    colorFunctions[source] = generateColorFunction(extent);
                     if (source === 'surface') {
                         nearestNeighbor = NearestNeighbor(me.surfaceData);
                     }
-                    me[source + 'Extent'] = temporalData.scaleExtent; // This one is used for the color legend
+                    me[source + 'Extent'] = extent; // This one is used for the color legend
                     dataLoaded = doDataLoaded(dataLoaded, temporalData);
                 });
             }
