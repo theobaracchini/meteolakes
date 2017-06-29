@@ -154,14 +154,14 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
                             .text(col.title);
                         // SVG 1.1 compliant way of reading text width
                         var bbox = t[0][0].getBBox();
+
                         // Legend line full => start new line
                         if (textX + bbox.width > width) {
                             textY += 1.3 * bbox.height;
                             textX = 10;
                             t.attr('x', textX).attr('y', textY);
-                        } else {
-                            textX += bbox.width + 15;
                         }
+                        textX += bbox.width + 15;
                     });
                     margin.bottom = textY - height + 20;
                     svg.style('height', (height + margin.top + margin.bottom) + 'px');
