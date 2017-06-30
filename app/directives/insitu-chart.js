@@ -16,6 +16,8 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
             var margin = { top: 20, right: 20, bottom: 70, left: 40 };
             var width = 0;
             var height = 0;
+             // More colorblind friendly scale
+            var COLORS_G = ['#3366cc', '#dc3912', '#ff9900', '#990099', '#0099c6', '#dd4477', '#b82e2e', '#316395', '#994499', '#22aa99'];
 
             var x = d3.time.scale();
             var y = d3.scale.linear();
@@ -114,7 +116,7 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
                         .call(xAxis);
                     renderRoot.select('.chart-axis.y').call(yAxis);
 
-                    var colors = d3.scale.category10().range();
+                    var colors = COLORS_G;
                     if (spec.columns.length > 10) {
                         // Support up to 20 lines per graph
                         colors = d3.scale.category20b().range();
