@@ -228,6 +228,44 @@ a {
     cursor: pointer;
 }
 
+.lv-timer-mobile {
+    width: 100%;
+    margin-top: 0;
+}
+
+.padding-top120 {
+    padding-top: 120px;
+}
+
+.margin-top15 {
+    margin-top: 15px!important;
+}
+
+.lv-timer-mobile button {
+    margin-top: 0!important;
+}
+
+.lv-timeslider-mobile {
+    width: calc(100% - 60px);
+    margin-top: 0!important;
+    margin-bottom: 0!important;
+}
+
+.lv-timeslider-mobile input {
+    margin-top: 0!important;
+    margin-bottom: 0!important;
+}
+
+.mobile-date {
+    display: inline-block;
+    font-size: 14pt;
+    float: right;
+    margin-bottom: 0;
+}
+
+.width100 {
+    width: 100%;
+}
 
 /* Manual smaller sizes for mobile */
 @media (max-width: 768px) {
