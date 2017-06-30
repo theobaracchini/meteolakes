@@ -386,9 +386,6 @@ angular.module('meteolakesApp').component('lakeView', {
             var temporalData = me[source + 'Data'];
             if (!temporalData.available && source !== 'surface') {
                 me.setTab('surface');
-            } else if (temporalData.ready) {
-                me.dataReady = true;
-                $scope.$emit('dataReady', temporalData.timeSteps);
             } else {
                 var dataLoaded = 0;
                 temporalData.getLakeOptions().then(function(options) {
