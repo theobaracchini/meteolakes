@@ -267,6 +267,10 @@ a {
     width: 100%;
 }
 
+p:not([align]) {
+    text-align: justify;
+}
+
 /* Manual smaller sizes for mobile */
 @media (max-width: 768px) {
     h1 { font-size:27px; }
