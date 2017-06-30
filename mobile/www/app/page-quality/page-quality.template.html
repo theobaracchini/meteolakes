@@ -4,9 +4,9 @@
 
            <div class="visible-xs-block lv-navbar-small-buttons">
                <div class="pull-left width100">
-                   <a href="#!/about"><img src="img/logo_epfl.jpg" style="height:41px;margin:10px;margin-left:0"></a>
+                   <a href="#!/about"><img src="img/logo_epfl.jpg" style="height:41px;margin:10px"></a>
                    <h4 style="display:inline">3D Water Quality</h4>
-                   <div class="navbar-text mobile-date" style="margin-top:5px"><strong><div style="font-size:60%" ng-bind="getDate()"></div><div style="font-size:130%" ng-bind="getTime()"></div></strong></div>
+                   <div class="navbar-text mobile-date"><strong><div style="font-size:60%" ng-bind="getDate()"></div><div style="font-size:130%" ng-bind="getTime()"></div></strong></div>
                </div>
                <div class="pull-right lv-controls-xs lv-timer-mobile">
                    <div class="lv-timeslider lv-timeslider-mobile">
@@ -32,7 +32,7 @@
                            <span class="caret"></span>
                        </button>
                        <ul class="dropdown-menu lv-scrollable-menu" role="menu">
-                           <li ng-repeat="year in index[selection.lake].years">
+                           <li ng-repeat="year in index[selection.lake].years | orderBy:'-'">
                                <a ng-click="ChangeYear(year)">{{ year }}</a>
                            </li>
                        </ul>
@@ -43,7 +43,7 @@
                            <span class="caret"></span>
                        </button>
                        <ul class="dropdown-menu dropdown-menu-right lv-scrollable-menu" role="menu">
-                           <li ng-repeat="week in index[selection.lake].data.get(selection.year)">
+                           <li ng-repeat="week in index[selection.lake].data.get(selection.year) | orderBy:'-'">
                                <a ng-click="ChangeWeek(week)">{{ PrettyPrintWeek(week) }}</a>
                            </li>
                        </ul>
