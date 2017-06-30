@@ -8,7 +8,10 @@ angular.module('meteolakesApp').component('lakeView', {
         legendVar: '@', // Name of Variable, in human-readable format with unit
         type: '@',  // Type of plotted data, 'value' or 'vector'
         hasTransects: '@', // Whether or not there is transect data available
-        maxExtentValue: '<'
+        maxExtentValue: '<',
+        maxExtentForceValue: '<',
+        minExtentValue: '<',
+        minExtentForceValue: '<'
     },
     controller: function($scope, $q, Time, TemporalData, NearestNeighbor, Util, MapHelpers) {
         var colorFunctions = [];
@@ -397,9 +400,33 @@ angular.module('meteolakesApp').component('lakeView', {
                     dataLoaded = doDataLoaded(dataLoaded, temporalData);
                 });
                 temporalData.readData().then(function() {
+                    var diff = 0;
                     var extent = temporalData.scaleExtent;
+                    if (me.minExtentValue && extent[0] < me.minExtentValue) {
+                        diff = me.minExtentValue - extent[0];
+                        extent[0] = me.minExtentValue;
+                        if (extent[1] < me.minExtentValue) {
+                            /* If the max boundary is lower than the new min value,
+                             * we set it to a new value with the same difference as before.
+                             */
+                            extent[1] = me.minExtentValue + diff;
+                        }
+                    }
+                    if (me.minExtentForceValue) {
+                        diff = me.minExtentForceValue - extent[0];
+                        extent[0] = me.minExtentForceValue;
+                        if (extent[1] < me.minExtentForceValue) {
+                            /* If the max boundary is lower than the new min value,
+                             * we set it to a new value with the same difference as before.
+                             */
+                            extent[1] = me.minExtentForceValue + diff;
+                        }
+                    }
                     if (me.maxExtentValue && extent[1] > me.maxExtentValue) {
                         extent[1] = me.maxExtentValue;
+                    }
+                    if (me.maxExtentForceValue) {
+                        extent[1] = me.maxExtentForceValue;
                     }
                     colorFunctions[source] = generateColorFunction(extent);
                     if (source === 'surface') {
