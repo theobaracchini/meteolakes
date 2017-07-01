@@ -116,10 +116,10 @@ angular.module('meteolakesApp').directive('d3Chart', function($window) {
                     }
                     data = values.data;
                     // Don't display the surface elevation as it is not properly defined
-                    if (values.z < -1){
-                      label = 'Location: ' + values.x + ' / ' + values.y + ' / ' + d3.round(values.z, 1) + ' m';
-                    }else{
-                      label = 'Location: ' + values.x + ' / ' + values.y + ' m';
+                    if (values.z < -1) {
+                        label = 'Location: ' + values.x + ' / ' + values.y + ' / ' + d3.round(values.z, 1) + ' m';
+                    } else {
+                        label = 'Location: ' + values.x + ' / ' + values.y + ' m';
                     }
                     x.domain(d3.extent(data, function(d) { return d.date; }));
                     y.domain(d3.extent(data, function(d) { return d.value; }));
