@@ -1,5 +1,6 @@
 <ul class="nav nav-tabs">
     <li ng-class="{active: $ctrl.tab == 'surface'}"><a ng-click="$ctrl.setTab('surface')">{{$ctrl.type == 'vector' ? "Depth Averaged" : "Surface"}}</a></li>
+    <li ng-class="{active: $ctrl.tab == 'particles', hidden: $ctrl.type != 'vector'}"><a ng-click="$ctrl.setTab('particles')">Particle Tracker</a></li>
     <li ng-class="{active: $ctrl.tab == 'sliceXZ', hidden: !$ctrl.sliceXZData.available}"><a ng-click="$ctrl.setTab('sliceXZ')">Transect 1</a></li>
     <li ng-class="{active: $ctrl.tab == 'sliceYZ', hidden: !$ctrl.sliceYZData.available}"><a ng-click="$ctrl.setTab('sliceYZ')">Transect 2</a></li>
 </ul>
@@ -13,15 +14,23 @@
         </leaflet-map>
         <color-legend colors="$ctrl.legendColors" extent="$ctrl.surfaceExtent" label="$ctrl.legendVar"></color-legend>
     </div>
+    <div class="tab-pane" ng-class="{active: $ctrl.tab == 'particles'}">
+        <leaflet-map active="$ctrl.tab == 'particles'" set-handler="$ctrl.addAnimationHandler(handler)" on-click="$ctrl.addParticles(point, latLngToLayerPoint)" data="$ctrl.surfaceData" init="$ctrl.initMap" draw="$ctrl.drawOverlay">
+            <loading ng-hide="$ctrl.dataReady">
+            </loading>
+            <div ng-transclude><!-- lake-icon tags appear here --></div>
+        </leaflet-map>
+        <color-legend colors="$ctrl.legendColors" extent="$ctrl.surfaceExtent" label="$ctrl.legendVar"></color-legend>
+    </div>
     <div class="tab-pane" ng-class="{active: $ctrl.tab == 'sliceXZ'}" ng-if="$ctrl.hasTransects">
-        <pixi-canvas active="$ctrl.tab == 'sliceXZ'" set-handler="$ctrl.addAnimationHandler(handler)" on-click="$ctrl.sliceClicked(point)" marker="$ctrl.chartPoint" data="$ctrl.sliceXZData" draw="$ctrl.drawOverlay" source="sliceXZ" label-left="$ctrl.labelLeft" label-right="$ctrl.labelRight" map-img-src="$ctrl.sliceXZData.getMinimapSrc()">
+        <pixi-canvas active="$ctrl.tab == 'sliceXZ'" set-handler="$ctrl.addAnimationHandler(handler)" on-click="$ctrl.sliceClicked(point)" marker="$ctrl.chartPoint" data="$ctrl.sliceXZData" draw="$ctrl.drawOverlay" source="sliceXZ" label-left="$ctrl.options.sliceXZ.labelLeft" label-right="$ctrl.options.sliceXZ.labelRight" map-img-src="$ctrl.sliceXZData.getMinimapSrc()">
             <loading ng-hide="$ctrl.dataReady">
             </loading>
         </pixi-canvas>
         <color-legend colors="$ctrl.legendColors" extent="$ctrl.sliceXZExtent" label="$ctrl.legendVar"></color-legend>
     </div>
     <div class="tab-pane" ng-class="{active: $ctrl.tab == 'sliceYZ'}" ng-if="$ctrl.hasTransects">
-        <pixi-canvas active="$ctrl.tab == 'sliceYZ'" set-handler="$ctrl.addAnimationHandler(handler)" on-click="$ctrl.sliceClicked(point)" marker="$ctrl.chartPoint" data="$ctrl.sliceYZData" draw="$ctrl.drawOverlay" source="sliceYZ" label-left="$ctrl.labelLeft" label-right="$ctrl.labelRight" map-img-src="$ctrl.sliceYZData.getMinimapSrc()">
+        <pixi-canvas active="$ctrl.tab == 'sliceYZ'" set-handler="$ctrl.addAnimationHandler(handler)" on-click="$ctrl.sliceClicked(point)" marker="$ctrl.chartPoint" data="$ctrl.sliceYZData" draw="$ctrl.drawOverlay" source="sliceYZ" label-left="$ctrl.options.sliceYZ.labelLeft" label-right="$ctrl.options.sliceYZ.labelRight" map-img-src="$ctrl.sliceYZData.getMinimapSrc()">
             <loading ng-hide="$ctrl.dataReady">
             </loading>
         </pixi-canvas>
@@ -29,4 +38,4 @@
     </div>
 </div>
 
-<d3-chart set-handler="$ctrl.addAnimationHandler(handler)" data="$ctrl.chartData" label="$ctrl.legendVar" on-close="$ctrl.closeChart()"></d3-chart>
+<d3-chart set-handler="$ctrl.addAnimationHandler(handler)" data="$ctrl.chartData" placeholder="$ctrl.tab == 'particles' ? 'Click on the map to add particles at that point.' : 'Click on the map to show a time series for that point.'" label="$ctrl.legendVar" on-close="$ctrl.closeChart()"></d3-chart>

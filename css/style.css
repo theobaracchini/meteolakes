@@ -8,7 +8,7 @@ div#tab-insitu {
 
 /* Larger top padding if navbar takes up two lines */
 @media (max-width: 440px) {
-    div#tab-insitu { padding-top: 140px; }
+    div#tab-insitu { padding-top: 80px; }
 }
 
 .lv-main-content {

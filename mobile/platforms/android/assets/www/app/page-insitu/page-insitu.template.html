@@ -1,68 +1,72 @@
 <div ng-controller="GraphCtrl" id="tab-insitu">
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container">
-            <div class="btn-group navbar-btn">
-                <span class="navtext">Show</span>
-            </div>
-            <div class="btn-group navbar-btn">
-                <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
-                    {{  AlphaPeriod(selection.period) }}
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu lv-scrollable-menu" role="menu">
-                    <li ng-repeat="period in [1, 2, 3, 5, 7, 14, 30, 90]">
-                        <a ng-click="ChangePeriod(period)">{{ AlphaPeriod(period) }}</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="btn-group navbar-btn">
-                <span class="navtext">starting on</span>
-            </div>
-            <div class="btn-group">
-                <div class="navbar-btn visible-xs">
+            <div class="lv-navbar-text-inline">
+                <div class="btn-group navbar-btn">
+                    <span class="navtext">From</span>
+                </div>
+                <div class="btn-group navbar-btn">
                     <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
-                        {{ AlphaMonth(selection.month, true) }}
+                        {{ selection.day }}
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu lv-scrollable-menu" role="menu">
-                        <li ng-repeat="month in months">
-                            <a ng-click="ChangeMonth(month)">{{ AlphaMonth(month, false) }}</a>
+                        <li ng-repeat="day in days | orderBy:'-'">
+                            <a ng-click="ChangeDay(day)">{{ day }}</a>
                         </li>
                     </ul>
                 </div>
-                <div class="navbar-btn hidden-xs">
+                <div class="btn-group">
+                    <div class="navbar-btn visible-xs">
+                        <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+                            {{ AlphaMonth(selection.month, true) }}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu lv-scrollable-menu" role="menu">
+                            <li ng-repeat="month in months | orderBy:'-'">
+                                <a ng-click="ChangeMonth(month)">{{ AlphaMonth(month, false) }}</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="navbar-btn hidden-xs">
+                        <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+                            {{ AlphaMonth(selection.month, false) }}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu lv-scrollable-menu" role="menu">
+                            <li ng-repeat="month in months | orderBy:'-'">
+                                <a ng-click="ChangeMonth(month)">{{ AlphaMonth(month, false) }}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="btn-group navbar-btn">
                     <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
-                        {{ AlphaMonth(selection.month, false) }}
+                        {{ selection.year }}
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu lv-scrollable-menu" role="menu">
-                        <li ng-repeat="month in months">
-                            <a ng-click="ChangeMonth(month)">{{ AlphaMonth(month, false) }}</a>
+                        <li ng-repeat="year in years | orderBy:'-'">
+                            <a ng-click="ChangeYear(year)">{{ year }}</a>
                         </li>
                     </ul>
                 </div>
             </div>
-            <div class="btn-group navbar-btn">
-                <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
-                    {{ selection.day }}
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu lv-scrollable-menu" role="menu">
-                    <li ng-repeat="day in days">
-                        <a ng-click="ChangeDay(day)">{{ day }}</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="btn-group navbar-btn">
-                <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
-                    {{ selection.year }}
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu lv-scrollable-menu" role="menu">
-                    <li ng-repeat="year in years">
-                        <a ng-click="ChangeYear(year)">{{ year }}</a>
-                    </li>
-                </ul>
+            <div class="lv-navbar-text-inline">
+                <div class="btn-group navbar-btn">
+                    <span class="navtext">Show</span>
+                </div>
+                <div class="btn-group navbar-btn">
+                    <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+                        {{  AlphaPeriod(selection.period) }}
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu lv-scrollable-menu" role="menu">
+                        <li ng-repeat="period in [1, 2, 3, 5, 7, 14, 30, 90]">
+                            <a ng-click="ChangePeriod(period)">{{ AlphaPeriod(period) }}</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </nav>

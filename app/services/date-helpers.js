@@ -15,7 +15,7 @@ angular.module('meteolakesApp').service('DateHelpers', function() {
     };
 
     this.yearMonthDay = function(date) {
-        return date.format('YYYY-MM-DD');
+        return date.format('DD-MMM-YYYY');
     };
 
     this.dayMonthYear = function(date) {
