@@ -5,7 +5,7 @@ Meteolakes
 
 Web application to visualize the result of a Delft3D simulation of Lake Geneva.
 
-[Demo](http://meteolakes.epfl.ch/)
+[Demo](http://meteolakes.ch/)
 
 Installation and Development
 --
@@ -38,7 +38,7 @@ Mobile: Installation and Development
 4. Browse to `mobile\`.
     1. For browser run `cordova run browser`.
     2. For Android run `cordova run android`.
-  
+
 Android: Deployment
 --
 
