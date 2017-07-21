@@ -8,7 +8,7 @@
     },
     "installed_plugins": {
         "cordova-plugin-whitelist": {
-            "PACKAGE_NAME": "ch.epfl.meteolakes"
+            "PACKAGE_NAME": "ch.meteolakes"
         }
     },
     "dependent_plugins": {},
