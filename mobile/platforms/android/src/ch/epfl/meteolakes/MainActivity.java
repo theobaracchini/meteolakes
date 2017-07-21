@@ -17,7 +17,7 @@
        under the License.
  */
 
-package ch.epfl.meteolakes;
+package ch.meteolakes;
 
 import android.os.Bundle;
 import org.apache.cordova.*;
