@@ -15,7 +15,7 @@ angular.module('meteolakesApp').directive('colorLegend', function() {
             count++;
             var gradientId = 'color-legend-gradient-' + count;
 
-            var w = 250;
+            var w = 265;
             var h = 80;
             var margin = { top: 10, right: 20, bottom: 10, left: 10 };
             var width = w - margin.left - margin.right;
