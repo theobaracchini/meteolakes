@@ -217,7 +217,7 @@ div#tab-insitu {
     -o-transform-origin: top left;
     -ms-transform-origin: top left;
     transform-origin: top left;
-    background: #f5f5f5;
+    background: rgb(255,255,255);
     border: 0;
     padding: 0;
     margin: 0;
@@ -248,7 +248,7 @@ a {
 .lv-timeslider-mobile {
     width: calc(100% - 60px);
     margin-top: 0!important;
-    margin-bottom: 0!important;
+    margin-bottom: 5px;
 }
 
 .lv-timeslider-mobile input {

@@ -5,14 +5,8 @@
            <div class="visible-xs-block lv-navbar-small-buttons">
                <div class="pull-left width100">
                    <a href="#!/about"><img src="img/logo_epfl.jpg" style="height:41px;margin:10px"></a>
-                   <h4 style="display:inline">3D Water Quality</h4>
+                   <h4 style="display:inline;font-weight:bold">3D Water Quality</h4>
                    <div class="navbar-text mobile-date"><strong><div style="font-size:60%" ng-bind="getDate()"></div><div style="font-size:130%" ng-bind="getTime()"></div></strong></div>
-               </div>
-               <div class="pull-right lv-controls-xs lv-timer-mobile">
-                   <div class="lv-timeslider lv-timeslider-mobile">
-                       <input type="range" ng-model="Time.tIndex" min="0" max="{{ Time.nSteps - 1 }}">
-                   </div>
-                   <button type="button" class="btn btn-default navbar-btn" ng-click="play()"><span class="glyphicon" ng-class="{'glyphicon-play': !isPlaying, 'glyphicon-pause': isPlaying}"></span></button>
                </div>
                <div class="btn-group btn-group-justified">
                    <div class="btn-group btn-group-sm">
@@ -111,11 +105,15 @@
            </div>
        </div>
     </nav>
+<<<<<<< HEAD
 
     <div class="lv-main-content padding-top120">
+=======
+    <div class="lv-main-content">
+>>>>>>> 87cdea6a3dbd64534e3cd4979e696d52fbf76f85
        <div class="lv-container-dynamic">
-           <div class="row">
-            <div class="col-sm-12  lv-extra-padding margin-top15">
+           <div class="row" style="margin-top:-25px">
+            <div class="col-sm-12 lv-extra-padding" style="margin-top:15px;margin-bottom:-10px">
              <div class="alert alert-info">
                  This feature is experimental, the 3D ecological model is still under development. Your feedback is welcome. Use this data with caution.
              </div>
@@ -128,7 +126,7 @@
                    </lake-view>
                </div>
 
-               <div class="col-sm-12 col-lg-6 lv-extra-padding">
+               <div class="col-sm-12 col-lg-6 lv-extra-padding" style="margin-bottom:10px">
                    <h3>Oxygen</h3>
 
                    <lake-view var="oxygen" legend-var="Dissolved oxygen concentration (mg/L)" max-extent-value="14" type="valueWAQoxygen" has-transects="true">
@@ -137,4 +135,16 @@
            </div>
        </div>
     </div>
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+       <div class="container">
+         <div class="visible-xs-block lv-navbar-small-buttons" style="margin-bottom:86px">
+          <div class="pull-right lv-controls-xs lv-timer-mobile">
+            <div class="lv-timeslider lv-timeslider-mobile">
+                <input type="range" ng-model="Time.tIndex" min="0" max="{{ Time.nSteps - 1 }}">
+            </div>
+            <button type="button" class="btn btn-default navbar-btn" ng-click="play()"><span class="glyphicon" ng-class="{'glyphicon-play': !isPlaying, 'glyphicon-pause': isPlaying}"></span></button>
+        </div>
+      </div>
+      </div>
+    </nav>
 </div>
