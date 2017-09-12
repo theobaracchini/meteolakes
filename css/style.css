@@ -246,7 +246,7 @@ a {
 }
 
 .lv-timeslider-mobile {
-    width: calc(100% - 60px);
+    width: calc(100% - 57px);
     margin-top: 0!important;
     margin-bottom: 5px;
 }
@@ -282,4 +282,17 @@ p:not([align]) {
     .chart-legend, .chart-axis { font-size: 90%; }
     .chart-line { stroke-width: 1px; }
     .chart-circle { stroke-width: 3px; }
+}
+
+.nav-title {
+    font-weight: bold;
+    color:#FFF;
+    font-size:16px;
+}
+
+.meteolakes-title {
+    font-size:21px;
+    display:inline;
+    font-weight:bold;
+    margin-left:calc(50% - 164px);
 }

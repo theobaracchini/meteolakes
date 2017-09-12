@@ -137,3 +137,24 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+  $(function () {
+     var url = window.location.href.toString();
+
+      var strs = url.split("/");
+      var title = strs[4].toString();
+      if (title == "hydro") {
+          $("#title").text("3D Hydrodynamics");
+      } else if (title == "quality") {
+          $("#title").text("3D Water Quality");
+      } else if (title == "remote") {
+          $("#title").text("Remote Sensing");
+      } else if (title == "insitu") {
+          $("#title").text("In-situ Measurements");
+      } else if (title == "about") {
+          $("#title").text("About");
+      }
+
+  })
+</script>
