@@ -3,10 +3,10 @@
     <head>
         <meta charset="utf-8">
 
-        <title>Forecasting Hydrodynamic Lake Model</title>
+        <title>The online platform for monitoring and forecasting the bio-physical state of Swiss lakes.</title>
 
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-        <meta name="description" content="3D forecasting hydrodynamic models for real-time lakes monitoring using Delft3D / Modélisations hydrodynamiques en 3D et temps réel pour suivre et prédire l'état des lacs.">
+        <meta name="description" content="This product is developped, managed and maintained by Theo Baracchini and part of his PhD thesis. The application shares with the public some results of 3D hydrodynamic-biological simulations performed daily with the Delft3D modelling framework on a compute server. Additionally, it displays measurements from a field station with data connexion and remote sensing images downloaded from satellites in real-time.">
 
         <!-- Integrity hashes generated using https://www.srihash.org/ -->
         <link rel="stylesheet"
@@ -71,10 +71,11 @@
                </div>
                <div class="collapse navbar-collapse" id="bottomNav">
                    <ul auto-active class="nav navbar-nav">
-                       <li><a href="#!/hydro">Hydrodynamic Model</a></li>
-                       <li><a href="#!/remote">Remote Sensing</a></li>
-                       <li><a href="#!/insitu">In-situ Measurements</a></li>
-                       <li><a href="#!/about">About</a></li>
+                       <li><a href="#!/hydro" data-toggle="collapse" data-target="#bottomNav">Hydrodynamic Model</a></li>
+                       <li><a href="#!/quality" data-toggle="collapse" data-target="#bottomNav">Water Quality Model</a></li>
+                       <li><a href="#!/remote" data-toggle="collapse" data-target="#bottomNav">Remote Sensing</a></li>
+                       <li><a href="#!/insitu" data-toggle="collapse" data-target="#bottomNav">In-situ Measurements</a></li>
+                       <li><a href="#!/about" data-toggle="collapse" data-target="#bottomNav">About</a></li>
                    </ul>
                </div>
            </div>
@@ -86,8 +87,8 @@
            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
            })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
            ga('create', 'UA-78739267-1', 'auto');
-           ga('send', 'pageview');
            ga('set', 'anonymizeIp', true);
+           ga('send', 'pageview');
         </script>
     </body>
 </html>

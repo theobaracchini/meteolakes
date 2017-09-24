@@ -217,7 +217,7 @@ div#tab-insitu {
     -o-transform-origin: top left;
     -ms-transform-origin: top left;
     transform-origin: top left;
-    background: #f5f5f5;
+    background: rgb(255,255,255);
     border: 0;
     padding: 0;
     margin: 0;
@@ -246,9 +246,9 @@ a {
 }
 
 .lv-timeslider-mobile {
-    width: calc(100% - 60px);
+    width: calc(100% - 57px);
     margin-top: 0!important;
-    margin-bottom: 0!important;
+    margin-bottom: 5px;
 }
 
 .lv-timeslider-mobile input {
@@ -282,4 +282,17 @@ p:not([align]) {
     .chart-legend, .chart-axis { font-size: 90%; }
     .chart-line { stroke-width: 1px; }
     .chart-circle { stroke-width: 3px; }
+}
+
+.nav-title {
+    font-weight: bold;
+    color:#FFF;
+    font-size:16px;
+}
+
+.meteolakes-title {
+    font-size:21px;
+    display:inline;
+    font-weight:bold;
+    margin-left:calc(50% - 164px);
 }
