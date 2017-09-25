@@ -149,8 +149,13 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
         $scope.selection.lake = lake;
         $scope.selection.folder = lakeData.folder;
         $scope.selection.interval = lakeData.interval;
-        selectClosestYear();
-        selectClosestWeek();
+
+        // TB: This is a bad but working fix for a long lasting problem
+        // preventing the webpage to load! TODO: find the real problem
+        setTimeout(function(){
+          selectClosestYear();
+          selectClosestWeek();
+        }, 50);
     };
 
     $scope.$on('$destroy', function() {
@@ -222,10 +227,58 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
 
     function resumeIfReady() {
         if (allClientsReady()) {
+
+            updateSliderCSS('input[type="range"]');
+
+            var nowMoment = moment();
+            if ($scope.selection.week == nowMoment.isoWeek()){
+            var nowStep = closestStep(nowMoment,steps);
+            Time.tIndex = nowStep;
+
+            setTimeout(function(){
+              if (wasPlaying && !$scope.isPlaying) {
+                  wasPlaying = false;
+                  $scope.play();
+              }
+            }, 5000);
+
+          }else{
             if (wasPlaying && !$scope.isPlaying) {
                 wasPlaying = false;
                 $scope.play();
             }
+          }
+
         }
     }
+
+    function closestStep(selectMoment,momentsArray){
+      var closestStep = NaN;
+      var bestDiff = Infinity;
+
+      var i;
+      for(i = 0; i < momentsArray.length; ++i){
+         var currDiff = Math.abs(momentsArray[i] - selectMoment);
+         if(currDiff < bestDiff){
+             closestStep = i;
+             bestDiff = currDiff;
+         }
+      }
+      return closestStep
+    }
+
+    function updateSliderCSS(field) {
+
+      var nowMoment = moment();
+      var nowStep = closestStep(nowMoment,steps)+1;
+      var val = nowStep/Time.nSteps;
+
+      $(field).css('background-image',
+                  '-webkit-gradient(linear, left top, right top, '
+                  + 'color-stop(' + val + ', #989898), '
+                  + 'color-stop(' + val + ', #ADD8E6)'
+                  + ')'
+                  );
+      }
+
 });

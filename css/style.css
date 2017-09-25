@@ -99,6 +99,18 @@ div#tab-insitu {
     margin: 15px 0;
 }
 
+input[type="range"]{
+  -webkit-appearance: none;
+  -moz-apperance: none;
+  background-image: -webkit-gradient(
+          linear,
+          left top,
+          right top,
+          color-stop(1, #989898),
+          color-stop(1, #ADD8E6)
+      );
+}
+
 .lv-no-margin {
     margin: 0;
 }
