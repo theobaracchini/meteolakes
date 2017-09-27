@@ -150,12 +150,8 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
         $scope.selection.folder = lakeData.folder;
         $scope.selection.interval = lakeData.interval;
 
-        // TB: This is a bad but working fix for a long lasting problem
-        // preventing the webpage to load! TODO: find the real problem
-        setTimeout(function(){
-          selectClosestYear();
-          selectClosestWeek();
-        }, 50);
+        selectClosestYear();
+        selectClosestWeek();
     };
 
     $scope.$on('$destroy', function() {
@@ -169,8 +165,8 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
     }
 
     function selectClosestYear() {
-        var lakeData = $scope.index[$scope.selection.lake];
-        $scope.selection.year = Util.closest(lakeData.years, $scope.selection.year);
+      var lakeData = $scope.index[$scope.selection.lake];
+      $scope.selection.year = Util.closest(lakeData.years, $scope.selection.year);
     }
 
     function selectClosestWeek() {
@@ -230,23 +226,26 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
 
             updateSliderCSS('input[type="range"]');
 
+
             var nowMoment = moment();
             if ($scope.selection.week == nowMoment.isoWeek()){
-            var nowStep = closestStep(nowMoment,steps);
-            Time.tIndex = nowStep;
+              updateBubbleCSS("input[type='range']");
+              var nowStep = closestStep(nowMoment,steps);
+              Time.tIndex = nowStep;
 
-            setTimeout(function(){
+              setTimeout(function(){
+                if (wasPlaying && !$scope.isPlaying) {
+                    wasPlaying = false;
+                    $scope.play();
+                }
+              }, 5000);
+
+            }else{
+              removeBubbleCSS("input[type='range']");
               if (wasPlaying && !$scope.isPlaying) {
                   wasPlaying = false;
                   $scope.play();
               }
-            }, 5000);
-
-          }else{
-            if (wasPlaying && !$scope.isPlaying) {
-                wasPlaying = false;
-                $scope.play();
-            }
           }
 
         }
@@ -280,5 +279,89 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
                   + ')'
                   );
       }
+
+  function updateBubbleCSS(field) {
+
+       var el = $(field);
+       var width = el.width();
+       var position = el.position();
+       var nowStep = closestStep(moment(),steps)+1;
+       var val = nowStep/Time.nSteps;
+
+       // Static margins specific to current css design
+       var offset = 25;
+       var offsetDate = 122;
+
+       var mobileOffset = -3;
+       var mobileWidth = window.innerWidth - 90;
+
+       // Move large bubble
+       el
+         .next("bubble.large")
+         .css({
+           left: val*(width-offsetDate) + "px",
+           marginLeft: position.left - offset + "px",
+           visibility: "visible",
+           opacity: 0.82
+          })
+
+       // Move small bubble
+       el
+         .next("bubble.xs")
+         .css({
+           left: val*mobileWidth + "px",
+           marginLeft: position.left + mobileOffset + "px",
+           visibility: "visible",
+           opacity: 0.82
+          })
+   };
+
+   function removeBubbleCSS(field) {
+        var el = $(field);
+        // Remove large bubble
+        el
+          .next("bubble.large")
+          .css({
+            visibility: "hidden",
+            opacity: 0
+          })
+
+        // Remove small bubble
+        el
+          .next("bubble.xs")
+          .css({
+            visibility: "hidden",
+            opacity: 0
+          })
+    };
+
+
+    window.addEventListener("resize", function(){
+      var el = $("input[type='range']");
+      var position = el.position();
+      var nowStep = closestStep(moment(),steps)+1;
+      var val = nowStep/Time.nSteps;
+
+      // Move large bubble
+      el
+        .next("bubble.large")
+        .css({
+          left: val*el.width() + "px",
+          marginLeft: position.left - 25 + "px",
+          visibility: "visible",
+          opacity: 0.82
+         })
+
+      // Move small bubble
+      el
+        .next("bubble.xs")
+        .css({
+          left: val*(window.innerWidth - 90) + "px",
+          marginLeft: position.left - 3 + "px",
+          visibility: "visible",
+          opacity: 0.82
+         })
+       }
+    );
 
 });
