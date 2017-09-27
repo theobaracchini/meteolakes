@@ -149,6 +149,7 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
         $scope.selection.lake = lake;
         $scope.selection.folder = lakeData.folder;
         $scope.selection.interval = lakeData.interval;
+
         selectClosestYear();
         selectClosestWeek();
     };
@@ -164,8 +165,8 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
     }
 
     function selectClosestYear() {
-        var lakeData = $scope.index[$scope.selection.lake];
-        $scope.selection.year = Util.closest(lakeData.years, $scope.selection.year);
+      var lakeData = $scope.index[$scope.selection.lake];
+      $scope.selection.year = Util.closest(lakeData.years, $scope.selection.year);
     }
 
     function selectClosestWeek() {
@@ -222,10 +223,145 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
 
     function resumeIfReady() {
         if (allClientsReady()) {
-            if (wasPlaying && !$scope.isPlaying) {
-                wasPlaying = false;
-                $scope.play();
-            }
+
+            updateSliderCSS('input[type="range"]');
+
+
+            var nowMoment = moment();
+            if ($scope.selection.week == nowMoment.isoWeek()){
+              updateBubbleCSS("input[type='range']");
+              var nowStep = closestStep(nowMoment,steps);
+              Time.tIndex = nowStep;
+
+              setTimeout(function(){
+                if (wasPlaying && !$scope.isPlaying) {
+                    wasPlaying = false;
+                    $scope.play();
+                }
+              }, 5000);
+
+            }else{
+              removeBubbleCSS("input[type='range']");
+              if (wasPlaying && !$scope.isPlaying) {
+                  wasPlaying = false;
+                  $scope.play();
+              }
+          }
+
         }
     }
+
+    function closestStep(selectMoment,momentsArray){
+      var closestStep = NaN;
+      var bestDiff = Infinity;
+
+      var i;
+      for(i = 0; i < momentsArray.length; ++i){
+         var currDiff = Math.abs(momentsArray[i] - selectMoment);
+         if(currDiff < bestDiff){
+             closestStep = i;
+             bestDiff = currDiff;
+         }
+      }
+      return closestStep
+    }
+
+    function updateSliderCSS(field) {
+
+      var nowMoment = moment();
+      var nowStep = closestStep(nowMoment,steps)+1;
+      var val = nowStep/Time.nSteps;
+
+      $(field).css('background-image',
+                  '-webkit-gradient(linear, left top, right top, '
+                  + 'color-stop(' + val + ', #989898), '
+                  + 'color-stop(' + val + ', #ADD8E6)'
+                  + ')'
+                  );
+      }
+
+  function updateBubbleCSS(field) {
+
+       var el = $(field);
+       var width = el.width();
+       var position = el.position();
+       var nowStep = closestStep(moment(),steps)+1;
+       var val = nowStep/Time.nSteps;
+
+       // Static margins specific to current css design
+       var offset = 25;
+       var offsetDate = 122;
+
+       var mobileOffset = -3;
+       var mobileWidth = window.innerWidth - 90;
+
+       // Move large bubble
+       el
+         .next("bubble.large")
+         .css({
+           left: val*(width-offsetDate) + "px",
+           marginLeft: position.left - offset + "px",
+           visibility: "visible",
+           opacity: 0.82
+          })
+
+       // Move small bubble
+       el
+         .next("bubble.xs")
+         .css({
+           left: val*mobileWidth + "px",
+           marginLeft: position.left + mobileOffset + "px",
+           visibility: "visible",
+           opacity: 0.82
+          })
+   };
+
+   function removeBubbleCSS(field) {
+        var el = $(field);
+        // Remove large bubble
+        el
+          .next("bubble.large")
+          .css({
+            visibility: "hidden",
+            opacity: 0
+          })
+
+        // Remove small bubble
+        el
+          .next("bubble.xs")
+          .css({
+            visibility: "hidden",
+            opacity: 0
+          })
+    };
+
+
+    window.addEventListener("resize", function(){
+      var el = $("input[type='range']");
+      var position = el.position();
+      var nowStep = closestStep(moment(),steps)+1;
+      var val = nowStep/Time.nSteps;
+
+      // Move large bubble
+      el
+        .next("bubble.large")
+        .css({
+          left: val*el.width() + "px",
+          marginLeft: position.left - 25 + "px",
+          visibility: "visible",
+          opacity: 0.82
+         })
+
+      // Move small bubble
+      el
+        .next("bubble.xs")
+        .css({
+          left: val*(window.innerWidth - 90) + "px",
+          marginLeft: position.left - 3 + "px",
+          visibility: "visible",
+          opacity: 0.82
+         })
+       }
+    );
+
 });
