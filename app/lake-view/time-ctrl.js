@@ -32,6 +32,7 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
     $scope.clientsKnown = 0; // Number of animations controlled by this controller
     $scope.clientsReady = 0; // Number of animations that are ready to play
     var wasPlaying = true; // Initialize as "true" to autoplay on page load
+    $scope.playTimeout;
 
     $scope.isPlaying = false;
     $scope.selection = {};
@@ -228,20 +229,23 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
 
 
             var nowMoment = moment();
-            if ($scope.selection.week == nowMoment.isoWeek()){
-              updateBubbleCSS("input[type='range']");
+            if ($scope.selection.week == nowMoment.isoWeek() && $scope.selection.year == nowMoment.year()){
               var nowStep = closestStep(nowMoment,steps);
               Time.tIndex = nowStep;
 
+              // Kind of bad fix but nice as "animation"
               setTimeout(function(){
+                updateBubbleCSS();
+              }, 1000);
+
+              $scope.playTimeout = setTimeout(function(){
                 if (wasPlaying && !$scope.isPlaying) {
-                    wasPlaying = false;
-                    $scope.play();
+                  wasPlaying = false;
+                  $scope.play();
                 }
               }, 5000);
-
             }else{
-              removeBubbleCSS("input[type='range']");
+              removeBubbleCSS();
               if (wasPlaying && !$scope.isPlaying) {
                   wasPlaying = false;
                   $scope.play();
@@ -267,7 +271,6 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
     }
 
     function updateSliderCSS(field) {
-
       var nowMoment = moment();
       var nowStep = closestStep(nowMoment,steps)+1;
       var val = nowStep/Time.nSteps;
@@ -280,27 +283,19 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
                   );
       }
 
-  function updateBubbleCSS(field) {
+   function updateBubbleCSS(){
+     var el = $("input[type='range']");
+     var position = el.position();
+     var nowStep = closestStep(moment(),steps)+1;
+     var val = nowStep/Time.nSteps;
 
-       var el = $(field);
-       var width = el.width();
-       var position = el.position();
-       var nowStep = closestStep(moment(),steps)+1;
-       var val = nowStep/Time.nSteps;
-
-       // Static margins specific to current css design
-       var offset = 25;
-       var offsetDate = 122;
-
-       var mobileOffset = -3;
-       var mobileWidth = window.innerWidth - 90;
-
-       // Move large bubble
+     // Move large bubble
+     if ($scope.selection.week == moment().isoWeek()){
        el
          .next("bubble.large")
          .css({
-           left: val*(width-offsetDate) + "px",
-           marginLeft: position.left - offset + "px",
+           left: val*el.width() + "px",
+           marginLeft: position.left - 25 + "px",
            visibility: "visible",
            opacity: 0.82
           })
@@ -309,15 +304,16 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
        el
          .next("bubble.xs")
          .css({
-           left: val*mobileWidth + "px",
-           marginLeft: position.left + mobileOffset + "px",
+           left: val*(window.innerWidth - 90) + "px",
+           marginLeft: position.left - 3 + "px",
            visibility: "visible",
            opacity: 0.82
           })
-   };
+        }
+      }
 
-   function removeBubbleCSS(field) {
-        var el = $(field);
+   function removeBubbleCSS() {
+        var el = $("input[type='range']");
         // Remove large bubble
         el
           .next("bubble.large")
@@ -335,33 +331,11 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
           })
     };
 
+    window.addEventListener("resize",updateBubbleCSS);
 
-    window.addEventListener("resize", function(){
-      var el = $("input[type='range']");
-      var position = el.position();
-      var nowStep = closestStep(moment(),steps)+1;
-      var val = nowStep/Time.nSteps;
-
-      // Move large bubble
-      el
-        .next("bubble.large")
-        .css({
-          left: val*el.width() + "px",
-          marginLeft: position.left - 25 + "px",
-          visibility: "visible",
-          opacity: 0.82
-         })
-
-      // Move small bubble
-      el
-        .next("bubble.xs")
-        .css({
-          left: val*(window.innerWidth - 90) + "px",
-          marginLeft: position.left - 3 + "px",
-          visibility: "visible",
-          opacity: 0.82
-         })
-       }
-    );
+    // Needed cause when changing main tabs while timeout the animation will become unstoppable
+    $scope.$on('$locationChangeSuccess', function(){
+        clearTimeout($scope.playTimeout);
+    });
 
 });
