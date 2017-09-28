@@ -333,9 +333,11 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
 
     window.addEventListener("resize",updateBubbleCSS);
 
-    // Needed cause when changing main tabs while timeout the animation will become unstoppable
+    // Needed cause when changing main tabs fast while timeout the animation will become unstoppable
     $scope.$on('$locationChangeSuccess', function(){
         clearTimeout($scope.playTimeout);
+        $scope.pause();
+        wasPlaying = false;
     });
 
 });
