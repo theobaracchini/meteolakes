@@ -99,6 +99,89 @@ div#tab-insitu {
     margin: 15px 0;
 }
 
+input[type="range"]{
+  -webkit-appearance: none;
+  -moz-apperance: none;
+  -ms-apperance: none;
+  background-image: -webkit-gradient(
+          linear,
+          left top,
+          right top,
+          color-stop(1, #989898),
+          color-stop(1, #ADD8E6)
+      );
+}
+
+input[type=range]::-moz-range-track {
+    background: none;
+}
+
+bubble.large{
+position: absolute;
+margin-top: -4px;
+margin-left: 00%;
+left: 0px;
+visibility: hidden;
+opacity: 0;
+transition: visibility 0s, opacity 1s linear;
+width: 50px;
+height: 29px;
+padding-top: 4px;
+padding-left: 10px;
+background: #989898;
+-webkit-border-radius: 5px;
+-moz-border-radius: 5px;
+border-radius: 5px;
+font-size: 11pt;
+color:#FFF;
+}
+
+bubble.large:after{
+content: '';
+position: absolute;
+border-style: solid;
+border-width: 0 9px 11px;
+border-color: #989898 transparent;
+display: block;
+width: 0;
+z-index: 1;
+top: -11px;
+left: 16px;
+}
+
+bubble.xs{
+position: absolute;
+bottom: 86px;
+margin-left: 00%;
+left: 0px;
+visibility: hidden;
+opacity: 0;
+transition: visibility 0s, opacity 1s linear;
+width: 50px;
+height: 29px;
+padding-top: 4px;
+padding-left: 10px;
+background: #989898;
+-webkit-border-radius: 5px;
+-moz-border-radius: 5px;
+border-radius: 5px;
+font-size: 11pt;
+color:#FFF;
+}
+
+bubble.xs:after{
+content: '';
+position: absolute;
+border-style: solid;
+border-width: 10px 10px 0;
+border-color: #989898 transparent;
+display: block;
+width: 0;
+z-index: 1;
+bottom: -8px;
+left: 14px;
+}
+
 .lv-no-margin {
     margin: 0;
 }
@@ -260,7 +343,10 @@ a {
     display: inline-block;
     font-size: 14pt;
     float: right;
-    margin-bottom: 0;
+    margin-bottom: 0px;
+    margin-right: 5%;
+    margin-top: 6px;
+    text-align:center;
 }
 
 .width100 {
