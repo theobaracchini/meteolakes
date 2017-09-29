@@ -273,6 +273,9 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
     function updateSliderCSS(field) {
       var nowMoment = moment();
       var nowStep = closestStep(nowMoment,steps)+1;
+      if (nowStep == 1){
+        nowStep = 0;
+      }
       var val = nowStep/Time.nSteps;
 
       $(field).css('background-image',
