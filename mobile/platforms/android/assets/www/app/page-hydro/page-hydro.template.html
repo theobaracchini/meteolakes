@@ -5,14 +5,8 @@
            <div class="visible-xs-block lv-navbar-small-buttons">
                <div class="pull-left width100">
                    <a href="#!/about"><img src="img/logo_epfl.jpg" style="height:41px;margin:10px"></a>
-                   <h4 style="display:inline">3D Hydrodynamics</h4>
-                   <div class="navbar-text mobile-date"><strong><div style="font-size:60%" ng-bind="getDate()"></div><div style="font-size:130%" ng-bind="getTime()"></div></strong></div>
-               </div>
-               <div class="pull-right lv-controls-xs lv-timer-mobile">
-                   <div class="lv-timeslider lv-timeslider-mobile">
-                       <input type="range" ng-model="Time.tIndex" min="0" max="{{ Time.nSteps - 1 }}">
-                   </div>
-                   <button type="button" class="btn btn-default navbar-btn" ng-click="play()"><span class="glyphicon" ng-class="{'glyphicon-play': !isPlaying, 'glyphicon-pause': isPlaying}"></span></button>
+                   <div class="meteolakes-title">Meteolakes</div>
+                   <div class="navbar-text mobile-date"><strong><div style="font-size:70%" ng-bind="getDate()"></div><div style="font-size:130%" ng-bind="getTime()"></div></strong></div>
                </div>
                <div class="btn-group btn-group-justified">
                    <div class="btn-group btn-group-sm">
@@ -55,7 +49,7 @@
                <div class="pull-left">
                    <a href="#!/about"><img src="img/logo_epfl.jpg" class="lv-navbar-logo"></a>
                </div>
-               <div class="btn-group"><a class="navbar-brand" href="#!/hydro">3D Hydrodynamics</a></div>
+               <div class="btn-group"><a class="navbar-brand" href="#!/hydro" style="font-weight:bold">Meteolakes</a></div>
                <div class="btn-group navbar-btn">
                    <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
                        {{ index[selection.lake].name }}
@@ -105,16 +99,21 @@
                    </div>
                    <div class="navbar-right"><p class="navbar-text"><strong>Date: <span ng-bind="getDate()"></span><span class="lv-divider-vertical"></span>Time: <span ng-bind="getTime()"></span></strong></p></div>
                    <div class="lv-timeslider">
+
                        <input type="range" ng-model="Time.tIndex" min="0" max="{{ Time.nSteps - 1 }}">
+                       <bubble class="large">Now</bubble>
+                       <!--<div style="margin-left:10px;margin-top:-35px;font-size:11pt;color:#FFF;font-weight:bold;display:inline;">Past</div>
+                       <div style="position:relative;margin-left:44%;font-size: 11pt;color:#989898;font-weight:bold;display:inline;">Future</div>-->
+
                    </div>
                </div>
            </div>
        </div>
     </nav>
-    <div class="lv-main-content padding-top120">
+    <div class="lv-main-content">
        <div class="lv-container-dynamic">
-           <div class="row">
-               <div class="col-sm-12 col-lg-6 lv-extra-padding margin-top15">
+           <div class="row" style="margin-top:-25px">
+               <div class="col-sm-12 col-lg-6 lv-extra-padding" >
                    <div>
                        <h3>Temperature</h3>
                    </div>
@@ -125,7 +124,7 @@
                    </lake-view>
                </div>
 
-               <div class="col-sm-12 col-lg-6 lv-extra-padding margin-top15">
+               <div class="col-sm-12 col-lg-6 lv-extra-padding" style="margin-bottom:10px">
                    <h3>Water Velocity</h3>
 
                    <lake-view var="velocity" legend-var="Depth Averaged Velocity (m/s)" type="vector" has-transects="false"></lake-view>
@@ -133,4 +132,24 @@
            </div>
        </div>
     </div>
+
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+       <div class="container">
+         <div class="visible-xs-block lv-navbar-small-buttons" style="margin-bottom:87px;margin-top:1px">
+          <div class="pull-right lv-controls-xs lv-timer-mobile">
+            <div class="lv-timeslider lv-timeslider-mobile">
+                <input type="range" ng-model="Time.tIndex" min="0" max="{{ Time.nSteps - 1 }}">
+                <bubble class="xs">Now</bubble>
+            </div>
+            <button type="button" class="btn btn-default navbar-btn" ng-click="play()"><span class="glyphicon" ng-class="{'glyphicon-play': !isPlaying, 'glyphicon-pause': isPlaying}"></span></button>
+        </div>
+      </div>
+      </div>
+    </nav>
 </div>
+
+<script type="text/javascript">
+  $(function () {
+    $("#title").text("3D Hydrodynamics");
+  })
+</script>

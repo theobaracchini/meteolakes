@@ -14,23 +14,12 @@
                         }
                     ]
                 }
-            },
-            "res/values/strings.xml": {
-                "parents": {
-                    "/resources": []
-                }
-            },
-            "AndroidManifest.xml": {
-                "parents": {
-                    "/*": [],
-                    "/manifest/application": []
-                }
             }
         }
     },
     "installed_plugins": {
         "cordova-plugin-whitelist": {
-            "PACKAGE_NAME": "ch.meteolakes"
+            "PACKAGE_NAME": "ch.epfl.meteolakes"
         }
     },
     "dependent_plugins": {},

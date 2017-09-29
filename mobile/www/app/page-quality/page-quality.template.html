@@ -6,7 +6,7 @@
                <div class="pull-left width100">
                    <a href="#!/about"><img src="img/logo_epfl.jpg" style="height:41px;margin:10px"></a>
                    <div class="meteolakes-title">Meteolakes</div>
-                   <div class="navbar-text mobile-date"><strong><div style="font-size:60%" ng-bind="getDate()"></div><div style="font-size:130%" ng-bind="getTime()"></div></strong></div>
+                   <div class="navbar-text mobile-date"><strong><div style="font-size:70%" ng-bind="getDate()"></div><div style="font-size:130%" ng-bind="getTime()"></div></strong></div>
                </div>
                <div class="btn-group btn-group-justified">
                    <div class="btn-group btn-group-sm">
@@ -100,6 +100,7 @@
                    <div class="navbar-right"><p class="navbar-text"><strong>Date: <span ng-bind="getDate()"></span><span class="lv-divider-vertical"></span>Time: <span ng-bind="getTime()"></span></strong></p></div>
                    <div class="lv-timeslider">
                        <input type="range" ng-model="Time.tIndex" min="0" max="{{ Time.nSteps - 1 }}">
+                       <bubble class="large">Now</bubble>
                    </div>
                </div>
            </div>
@@ -137,6 +138,7 @@
           <div class="pull-right lv-controls-xs lv-timer-mobile">
             <div class="lv-timeslider lv-timeslider-mobile">
                 <input type="range" ng-model="Time.tIndex" min="0" max="{{ Time.nSteps - 1 }}">
+                <bubble class="xs">Now</bubble>
             </div>
             <button type="button" class="btn btn-default navbar-btn" ng-click="play()"><span class="glyphicon" ng-class="{'glyphicon-play': !isPlaying, 'glyphicon-pause': isPlaying}"></span></button>
         </div>

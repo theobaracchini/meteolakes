@@ -1,7 +1,7 @@
 {
     "name": "ch.epfl.meteolakes",
     "displayName": "Meteolakes",
-    "version": "1.3.3",
+    "version": "1.3.7",
     "description": "Meteolakes is an online platform for monitoring and forecasting the bio-physical state of Swiss lakes. The application visualizes the results of 3D hydrodynamic-biological simulations performed daily with the Delft3D modelling framework on a compute server. Additionally, it displays measurements from a field station with data connexion and remote sensing images downloaded from satellites in real-time.",
     "main": "index.js",
     "scripts": {},
