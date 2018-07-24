@@ -42,6 +42,20 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
                 .x(function(d) { return x(d.date); })
                 .y(function(d) { return y(d.value); });
 
+            function make_x_axis() {
+                return d3.svg.axis()
+                    .scale(x)
+                     .orient("bottom")
+                     .ticks(Math.max(width / 100, 2))
+            }
+
+            function make_y_axis() {
+                return d3.svg.axis()
+                    .scale(y)
+                    .orient("left")
+                    .ticks(Math.max(height / 50, 4))
+            }
+
             var svg = content.append('svg')
                 .style('width', '100%');
 
@@ -53,6 +67,21 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
 
             g.append('g')
                 .attr('class', 'chart-axis y');
+
+            g.append("g")
+                .attr("class", "grid x")
+                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+                .call(make_x_axis()
+                    .tickSize(-height, 0, 0)
+                    .tickFormat("")
+                );
+
+            g.append("g")
+                .attr("class", "grid y")
+                .call(make_y_axis()
+                    .tickSize(-width, 0, 0)
+                    .tickFormat("")
+                );
 
             var yLabel = g.append('text')
                     .attr('x', 10)
@@ -114,7 +143,19 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
                     renderRoot.select('.chart-axis.x')
                         .attr('transform', 'translate(0,' + height + ')')
                         .call(xAxis);
-                    renderRoot.select('.chart-axis.y').call(yAxis);
+                    renderRoot.select('.chart-axis.y')
+                        .call(yAxis);
+
+                    renderRoot.select('.grid.x')
+                        .attr("transform", "translate(0," + height + ")")
+                        .call(make_x_axis()
+                        .tickSize(-height, 0, 0)
+                        .tickFormat(""));
+
+                    renderRoot.select('.grid.y')
+                        .call(make_y_axis()
+                        .tickSize(-width, 0, 0)
+                        .tickFormat(""));
 
                     var colors = COLORS_G;
                     if (spec.columns.length > 10) {
@@ -180,11 +221,11 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
                 if (w < 720) {
                     // Mobile: Set height to 75% of width
                     height = w * 0.75 - (margin.top + margin.bottom);
-                    margin.left = 30;
+                    margin.left = 40;
                 } else {
                     // Desktop: Set height to 40% of width
                     height = w * 0.4 - (margin.top + margin.bottom);
-                    margin.left = 40;
+                    margin.left = 50;
                 }
                 g.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
                 width = w - (margin.left + margin.right);

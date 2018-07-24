@@ -118,7 +118,13 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
 
     $scope.stop = function() {
         $scope.pause();
-        Time.tIndex = 0;
+        var nowMoment = moment();
+        if ($scope.selection.week == nowMoment.isoWeek() && $scope.selection.year == nowMoment.year()){
+            var nowStep = closestStep(nowMoment,steps);
+            Time.tIndex = nowStep;
+        }else{
+            Time.tIndex = 0;
+        }
     };
 
     $scope.getDate = function() {
@@ -255,6 +261,21 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
         }
     }
 
+    // TODO: go to now when click on bubble
+    function checkBubbleClick(event){
+      var xClick = event.clientX;
+      var yClick = event.clientY;
+      var xMin = 10;
+      var xMax = 40;
+      var yMin = 10;
+      var yMax = 100;
+
+      //console.log("clientX: " + xClick + " - clientY: " + yClick);
+      if(xClick < xMax && xClick > xMin && yClick < yMax && yClick > yMin){
+          $scope.stop();
+      }
+    }
+
     function closestStep(selectMoment,momentsArray){
       var closestStep = NaN;
       var bestDiff = Infinity;
@@ -335,6 +356,7 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
     };
 
     window.addEventListener("resize",updateBubbleCSS);
+    //window.addEventListener("click",checkBubbleClick);
 
     // Needed cause when changing main tabs fast while timeout the animation will become unstoppable
     $scope.$on('$locationChangeSuccess', function(){

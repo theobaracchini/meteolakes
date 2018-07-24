@@ -382,3 +382,12 @@ p:not([align]) {
     font-weight:bold;
     margin-left:calc(51% - 164px);
 }
+
+
+.grid .tick {
+    stroke: lightgrey;
+    opacity: 0.7;
+}
+.grid path {
+      stroke-width: 0;
+}
