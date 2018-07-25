@@ -29,6 +29,10 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
                 ['%b %d', function() { return true; }]
             ]);
 
+            var parseDate = d3.time.format("%d-%b-%y").parse,
+                bisectDate = d3.bisector(function(d) { return d.date; }).left,
+                formatValue = d3.format(",.1f");
+
             var xAxis = d3.svg.axis()
                 .scale(x)
                 .orient('bottom')
@@ -92,7 +96,21 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
                     .text('[Unit]');
 
             g.append('path')
-                .attr('class', 'chart-data');
+                .attr('class', 'chart-data')
+
+            // Display values when mouse hovering
+            var focus = g.append("g")
+                  .attr("class", "focus")
+                  .style("display", "none");
+
+            focus.append("circle")
+                //.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+                .attr("r", 4.5);
+
+            focus.append("text")
+                //.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+                .attr("x", 9)
+                .attr("dy", ".35em");
 
             // Run digest on window resize; this is required to detect container size changes
             angular.element($window).bind('resize', function() {
@@ -134,8 +152,10 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
                     // Use unit from plot definition, fall back to unit from sensor data
                     if ('unit' in spec) {
                         yLabel.text(spec.unit);
+                        var formatUnit = function(d) { return formatValue(d) + " " + spec.unit; };
                     } else {
                         yLabel.text(spec.columns[0].unit);
+                        var formatUnit = function(d) { return formatValue(d) + " " + spec.columns[0].unit; };
                     }
 
                     var renderRoot = enableTransition ? g.transition() : g;
@@ -189,6 +209,16 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
                             });
                         }
 
+                        // We're passing in a function in d3.max to tell it what we're maxing (x value)
+                        var xScale = d3.time.scale()
+                            .domain(xExtent)
+                            .range([margin.left, width - margin.right]);  // Set margins for x specific
+
+                        // We're passing in a function in d3.max to tell it what we're maxing (y value)
+                        var yScale = d3.scale.linear()
+                            .domain(yExtent)
+                            .range([margin.top, height - margin.bottom]);  // Set margins for y specific
+
                         var t = renderRoot.append('text')
                             .attr('x', textX)
                             .attr('y', textY)
@@ -206,6 +236,51 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
                         }
                         textX += bbox.width + 15;
                     });
+
+                    // Mouse hovering popup
+                    function mousemove() {
+                      var x0 = x.invert(d3.mouse(this)[0]);
+
+                      var col = spec.columns[0].data,
+                          i = bisectDate(col, x0, 1),
+                          colInd = x0 - col[i-1].date > col[i].date - x0 ? i : i-1;
+                      focus.attr("transform", "translate(" + x(col[colInd].date) +"," + y(col[colInd].value) + ")");
+                      focus.select("text").text(formatUnit(col[colInd].value));
+                    }
+
+                    // TODO: multiple hover bubbles when multiple lines
+                    /*var mousePerLine = focus.selectAll('.mouse-per-line')
+                       .data(spec.columns)
+                       .enter()
+                       .append("g")
+                       .attr("class", "mouse-per-line");
+
+                    function mousemove() {
+                      var x0 = x.invert(d3.mouse(this)[0]);
+
+                      var col = spec.columns[0].data,
+                          i = bisectDate(col, x0, 1),
+                          colInd = x0 - col[i-1].date > col[i].date - x0 ? i : i-1;
+
+                      d3.selectAll(".mouse-per-line")
+                          .attr("transform", function(d, i) {
+                            var colloop = d.data;
+                            console.log(colloop[colInd])
+                            console.log(x[colInd])
+                            return "translate(" + x(colloop[colInd].date) +"," + y(colloop[colInd].value) + ")";
+                          });
+                      focus.select("text").text(formatUnit(col[colInd].value));
+                    }*/
+
+                    g.append("rect")
+                        .attr("class", "overlay")
+                        .attr("width", width)
+                        .attr("height", height)
+                        .on("mouseover", function() { focus.style("display", null); })
+                        .on("mouseout", function() { focus.style("display", "none"); })
+                        .on("mousemove", mousemove);
+
+
                     margin.bottom = textY - height + 20;
                     svg.style('height', (height + margin.top + margin.bottom) + 'px');
                 }

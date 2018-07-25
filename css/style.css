@@ -391,3 +391,15 @@ p:not([align]) {
 .grid path {
       stroke-width: 0;
 }
+
+/* This is for the hover values in in-situ */
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.focus circle {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 3;
+}
