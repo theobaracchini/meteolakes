@@ -344,8 +344,8 @@ a {
     font-size: 14pt;
     float: right;
     margin-bottom: 0px;
-    margin-right: 5%;
-    margin-top: 6px;
+    margin-right: 8px;
+    margin-top: 8px;
     text-align:center;
 }
 
@@ -380,5 +380,26 @@ p:not([align]) {
     font-size:21px;
     display:inline;
     font-weight:bold;
-    margin-left:calc(50% - 164px);
+    margin-left:calc(51% - 164px);
+}
+
+
+.grid .tick {
+    stroke: lightgrey;
+    opacity: 0.7;
+}
+.grid path {
+      stroke-width: 0;
+}
+
+/* This is for the hover values in in-situ */
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.focus circle {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 3;
 }

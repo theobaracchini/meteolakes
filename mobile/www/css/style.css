@@ -344,8 +344,13 @@ a {
     font-size: 14pt;
     float: right;
     margin-bottom: 0px;
+<<<<<<< HEAD
     margin-right: 5%;
     margin-top: 6px;
+=======
+    margin-right: 8px;
+    margin-top: 8px;
+>>>>>>> master
     text-align:center;
 }
 
@@ -380,5 +385,5 @@ p:not([align]) {
     font-size:21px;
     display:inline;
     font-weight:bold;
-    margin-left:calc(50% - 164px);
+    margin-left:calc(51% - 164px);
 }
