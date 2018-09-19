@@ -26,24 +26,44 @@ angular.module('meteolakesApp').service('PlotIndex', function($q, DATA_HOST, DAT
     // and time period, then retrieve the desired columns and crop
     // them to the appropriate date range
     this.loadPlotData = function(startDate, period) {
+        var me = this;
         var loadingFiles = [];
         var processing = [];
         var endDate = startDate.clone().add(period, 'days').endOf('day');
-        this.plots.forEach(function(plot) {
-            // Load data of each column in the plot
+        //search files needed
+        var dataFiles = new Set();
+        me.plots.forEach(function(plot) {
             plot.columns.forEach(function(col) {
                 var files = InsituDataIndex.getFilesByColumn(col.name, startDate, endDate);
-                files.forEach(function(file) {
-                    if (!(file.loading || file.ready)) {
-                        // Asynchronously load the files
-                        var q = file.readData();
-                        loadingFiles.push(q);
-                    }
+                files.forEach(function(file){
+                    dataFiles.add(file);
                 });
+                col.files = files.map(function(file){
+                    return file.series
+                });
+            });
+        });
+        //Load files data
+        dataFiles.forEach(function(file) {
+            if (!(file.loading || file.ready)) {
+                // Asynchronously load the files
+                var q = file.readData();
+                loadingFiles.push(q);
+            }
+        });
 
-                // After we've read the files, continue...
-                // (For simplicity, we wait for ALL files we've started loading so far)
-                var r = $q.all(loadingFiles).then(function() {
+        // After we've read the files, we add data data of each column in the plot
+        // (For simplicity, we wait for ALL files we've started loading so far)
+        var r = $q.all(loadingFiles).then(function() {
+            me.plots.forEach(function(plot) {
+                plot.columns.forEach(function(col) {
+                    // Extract the needed column data, concatenated from all files
+                    var files = [];
+                    dataFiles.forEach(function(file) {
+                        if (col.files.includes(file.series)){
+                            files.push(file);
+                        }
+                    });
                     // Sort files by timestamp of first/last row
                     // Assuming the data within files is sorted and date ranges
                     // don't intersect, we will get out sorted data
@@ -56,7 +76,6 @@ angular.module('meteolakesApp').service('PlotIndex', function($q, DATA_HOST, DAT
                         }
                         return 0;
                     });
-                    // Extract the needed column data, concatenated from all files
                     col.data = [];
                     files.forEach(function(file) {
                         file.data.forEach(function(row, idx) {

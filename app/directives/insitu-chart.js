@@ -118,15 +118,10 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
                     var xExtent = [];
                     var yExtent = [];
                     spec.columns.forEach(function(col) {
-                        try {
-                            var plotXextent = d3.extent(col.data, function(d) { return d.date; });
-                            var plotYextent = d3.extent(col.data, function(d) { return d.value; });
-                            xExtent = xExtent.concat(plotXextent);
-                            yExtent = yExtent.concat(plotYextent);
-                        }
-                        catch(err){
-                            console.log("Error: Problem in data loading. Couldn't get variable: " + col.title)
-                        }
+                    var plotXextent = d3.extent(col.data, function(d) { return d.date; });
+                    var plotYextent = d3.extent(col.data, function(d) { return d.value; });
+                    xExtent = xExtent.concat(plotXextent);
+                    yExtent = yExtent.concat(plotYextent);
                     });
                     xExtent = d3.extent(xExtent);
                     yExtent = d3.extent(yExtent);
@@ -177,32 +172,27 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
 
                     renderRoot.selectAll('.chart-data').remove();
                     spec.columns.forEach(function(col, idx) {
-                      try{
-                        if (spec.style === 'line' || spec.style === 'both') {
-                            renderRoot.append('path')
-                                .attr('class', 'chart-data chart-line')
-                                .attr('d', line(col.data))
-                                .style('stroke', colors[idx]);
-                        }
+                    if (spec.style === 'line' || spec.style === 'both') {
+                        renderRoot.append('path')
+                            .attr('class', 'chart-data chart-line')
+                            .attr('d', line(col.data))
+                            .style('stroke', colors[idx]);
+                    }
 
-                        if (spec.style === 'dots' || spec.style === 'both') {
-                            col.data.forEach(function(dot) {
-                                // Implement circles as zero-length lines in order
-                                // to change radius by CSS in browsers without
-                                // SVG2 support
-                                renderRoot.append('line')
-                                .attr('class', 'chart-data chart-circle')
-                                .attr('x1', x(dot.date))
-                                .attr('y1', y(dot.value))
-                                .attr('x2', x(dot.date))
-                                .attr('y2', y(dot.value))
-                                .style('stroke', colors[idx]);
-                            });
-                        }
-                      }
-                      catch(err){
-                          console.log("Error: problem in data plotting. Couldn't display: " + col.title + ". Please reload/resize page.")
-                      }
+                    if (spec.style === 'dots' || spec.style === 'both') {
+                        col.data.forEach(function(dot) {
+                            // Implement circles as zero-length lines in order
+                            // to change radius by CSS in browsers without
+                            // SVG2 support
+                            renderRoot.append('line')
+                            .attr('class', 'chart-data chart-circle')
+                            .attr('x1', x(dot.date))
+                            .attr('y1', y(dot.value))
+                            .attr('x2', x(dot.date))
+                            .attr('y2', y(dot.value))
+                            .style('stroke', colors[idx]);
+                        });
+                    }
 
                         // We're passing in a function in d3.max to tell it what we're maxing (x value)
                         var xScale = d3.time.scale()
