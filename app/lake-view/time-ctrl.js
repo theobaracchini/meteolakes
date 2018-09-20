@@ -4,17 +4,16 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
 
         DataIndex.load($scope.availabilityFile).then(function(index) {
             $scope.index = index;
-
+            indexReady = true;
             // Initialize with current year/week, closest existing
             // data for selected lake will be determined later
             var now = moment();
+            
             $scope.selection = {
                 year: now.year(),
                 week: now.isoWeek()
             };
-
             $scope.ChangeLake(0);
-            indexReady = true;
         }, function(err) {
             console.error('Failed to load data index!', err);
         });
