@@ -143,6 +143,8 @@ angular.module('meteolakesApp').component('lakeView', {
         };
 
         me.drawOverlay = function(data, options) {
+            if (!me.dataReady) {return new PIXI.Graphics();}
+
             if (me.type === 'vector') {
                 return drawVectorOverlay(data, options);
             }
@@ -151,7 +153,6 @@ angular.module('meteolakesApp').component('lakeView', {
 
         function drawValueOverlay(data, options) {
             var colorFunction = colorFunctions[options.dataSource];
-
             var size = options.size;
             var graphics = new PIXI.Graphics();
 
