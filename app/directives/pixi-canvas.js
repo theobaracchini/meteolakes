@@ -90,15 +90,21 @@ angular.module('meteolakesApp').directive('pixiCanvas', function(Util, $timeout)
             });
 
             scope.$watch('labelLeft', function() {
+                
                 if (scope.active && xMax && markers) {
                     markers.left.setContent(scope.labelLeft);
+                } else if (xMax && markers) {
+                    //differ the label update when the map becomes acitve
+                    markers.left.labelReady = false;
                 }
             });
 
             scope.$watch('labelRight', function() {
                 if (scope.active && xMax && markers) {
-                    markers.right
-                    .setContent(scope.labelRight);
+                    markers.right.setContent(scope.labelRight);
+                } else if (xMax && markers) {
+                    //differ the label update when the map becomes acitve
+                    markers.right.labelReady = false;
                 }
             });
 
@@ -230,7 +236,15 @@ angular.module('meteolakesApp').directive('pixiCanvas', function(Util, $timeout)
                             left: addPopup(L.point(0, 0), scope.labelLeft),
                             right: addPopup(L.point(xMax, 0), scope.labelRight)
                         };
+                        markers.left.labelReady = true;
+                        markers.right.labelReady = true;
                     } else {
+                        if (!markers.left.labelReady){
+                            markers.left.setContent(scope.labelLeft);
+                        }
+                        if (!markers.right.labelReady){
+                            markers.right.setContent(scope.labelRight);
+                        } 
                         markers.right.setLatLng(unproject(L.point(xMax, 0)));
                     }
                 }

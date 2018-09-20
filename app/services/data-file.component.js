@@ -21,7 +21,6 @@ angular.module('meteolakesApp').factory('DataFile', function(DATA_HOST, DATA_WEA
             var file = me.getFileURL();
             // Log loading files to monitor loading progress
             // eslint-disable-next-line no-console
-            console.log('Reading data file: ' + me.series + ' (' + me.period + ')');
             d3.text(file, function(err, data) {
                 if (err) {
                     reject('File not found: ' + file);
@@ -30,20 +29,24 @@ angular.module('meteolakesApp').factory('DataFile', function(DATA_HOST, DATA_WEA
                     // Current month: Read non-archived data file too, and concatenate the two
                     if (me.year === moment().year() && me.month === moment().month()) {
                         // eslint-disable-next-line no-console
-                        console.log('Reading current data file for ' + me.series);
                         file = DATA_HOST + DATA_WEATHER_STATION + '/' + me.series + DATA_WEATHER_FILEEXT;
                         d3.text(file, function(err2, data2) {
                             if (err) {
                                 reject('File not found: ' + file);
                             } else {
                                 me.data = me.data.concat(me.parseCSV(data2));
+                                me.ready = true;
+                                me.loading = false;
+                                resolve();
                             }
                         });
+                    } else {
+                        me.ready = true;
+                        me.loading = false;
+                        resolve();
                     }
 
-                    me.ready = true;
-                    me.loading = false;
-                    resolve();
+                    
                 }
             });
         });

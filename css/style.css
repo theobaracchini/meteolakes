@@ -101,8 +101,8 @@ div#tab-insitu {
 
 input[type="range"]{
   -webkit-appearance: none;
-  -moz-apperance: none;
-  -ms-apperance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
   background-image: -webkit-gradient(
           linear,
           left top,
@@ -129,8 +129,6 @@ height: 29px;
 padding-top: 4px;
 padding-left: 10px;
 background: #989898;
--webkit-border-radius: 5px;
--moz-border-radius: 5px;
 border-radius: 5px;
 font-size: 11pt;
 color:#FFF;
@@ -162,8 +160,6 @@ height: 29px;
 padding-top: 4px;
 padding-left: 10px;
 background: #989898;
--webkit-border-radius: 5px;
--moz-border-radius: 5px;
 border-radius: 5px;
 font-size: 11pt;
 color:#FFF;
