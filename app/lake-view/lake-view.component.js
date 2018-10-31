@@ -31,6 +31,8 @@ angular.module('meteolakesApp').component('lakeView', {
         me.tab = 'surface';
         me.dataReady = false;
         me.timeSelection = null;
+        me.vectorLabel = "Depth Averaged";
+        me.valueLabel = "Surface";
 
         if (me.type === 'value') {
             me.surfaceData = new TemporalData(me.var, 0.03);
@@ -77,6 +79,14 @@ angular.module('meteolakesApp').component('lakeView', {
             colorFunctions = {};
             me.dataReady = false;
             me.timeSelection = selection;
+            if (selection.depth !== null) {
+                me.vectorLabel = "Layer " + Math.abs(selection.depth) + " m";
+                me.valueLabel = "Layer " + Math.abs(selection.depth) + " m";
+            } else {
+                me.vectorLabel = "Depth Averaged";
+                me.valueLabel = "Surface";
+            }
+            
             me.closeChart();
             if (!saveParticlesForNextWeek) {
                 hashes = [];
@@ -224,6 +234,7 @@ angular.module('meteolakesApp').component('lakeView', {
             var j;
             var x;
             var y;
+            var maxNorm = 0;
 
 
             for (i = 0, len = data.length; i < len; i++) {
@@ -236,6 +247,11 @@ angular.module('meteolakesApp').component('lakeView', {
                             y = Math.floor((d.p.y) / cellSize) + 2;
 
                             var value = d.values[Time.tIndex];
+                            // compute maxNorm
+                            for (var m = 0; m < d.values.length; m++) {
+                                var norm = Math.sqrt(d.values[m][0] * d.values[m][0] + d.values[m][1] * d.values[m][1]);
+                                if (norm > maxNorm) { maxNorm = norm; }
+                            }
 
                             grid[y] = grid[y] || [];
                             cell = grid[y][x];
@@ -267,7 +283,7 @@ angular.module('meteolakesApp').component('lakeView', {
                             var color = colorFunction([dx, dy]);
 
                             // TODO use max velocity to determine scale factor
-                            drawArrow(x, y, dx, -dy, color, graphics);
+                            drawArrow(x, y, dx, -dy, color, graphics, maxNorm);
                         }
                     }
                 }
@@ -338,17 +354,19 @@ angular.module('meteolakesApp').component('lakeView', {
             return leafletMap.latLngToContainerPoint(latlng);
         }
 
-        function drawArrow(x, y, dx, dy, color, graphics) {
+        function drawArrow(x, y, dx, dy, color, graphics, maxNorm) {
             var extent = Math.sqrt(dx * dx + dy * dy);
             if (extent > 0.001) {
-                var clampedExtent = Math.min(extent, 0.1);
                 var fromx = x;
                 var fromy = y;
-                var tox = x + 500 * dx / extent * clampedExtent;
-                var toy = y + 500 * dy / extent * clampedExtent;
+                var scaledDx = dx * scaling(extent, maxNorm);
+                var scaledDy = dy * scaling(extent, maxNorm);
+                var tox = x + scaledDx;
+                var toy = y + scaledDy;
 
-                var headlen = 100 * clampedExtent;   // length of head in pixels
-                var angle = Math.atan2(toy - fromy, tox - fromx);
+                var newNorm = Math.sqrt(scaledDx * scaledDx + scaledDy * scaledDy)
+                var headlen = newNorm / 5 > 2 ? newNorm / 5 : 2 ;   // length of head in pixels
+                var angle = Math.atan2(scaledDy, scaledDx);
 
                 graphics.lineStyle(1 + 5 * extent, +color.replace('#', '0x'));
                 graphics.moveTo(fromx, fromy);
@@ -358,6 +376,17 @@ angular.module('meteolakesApp').component('lakeView', {
                 graphics.moveTo(tox, toy);
                 graphics.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6),
                     toy - headlen * Math.sin(angle + Math.PI / 6));
+            }
+        }
+
+        function scaling(norm, maxNorm) {
+            var maxLength = 30
+            var minLength = 5;
+            var result = (-1 / (norm / maxNorm + 1) + 1) * maxLength * 2;
+            if (result < minLength) {
+                return minLength / norm;
+            } else {
+                return result / norm;
             }
         }
 

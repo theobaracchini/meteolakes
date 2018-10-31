@@ -1,4 +1,4 @@
-angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, $q, DateHelpers, stats) {
+angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, NETCDF_DATA_HOST, $q, DateHelpers, stats) {
     var TemporalData = function(fieldName, cropPercentile, suffix) {
         this.fieldName = fieldName;
         this.suffix = suffix || '';
@@ -27,7 +27,7 @@ angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, $q, 
     TemporalData.prototype.setTimeSelection = function(selection) {
         var me = this;
         me.timeSelection = selection;
-        var file = me.getValuesFile();
+        var file = me.getValuesFile(true);
         me.ready = false;
 
         return $q(function(resolve) {
@@ -48,7 +48,7 @@ angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, $q, 
     TemporalData.prototype.readData = function() {
         var me = this;
         me.ready = false;
-
+  
         return $q(function(resolve, reject) {
             if (!me.available) {
                 reject('No data available');
@@ -185,10 +185,16 @@ angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, $q, 
         return result;
     };
 
-    TemporalData.prototype.getValuesFile = function() {
+    TemporalData.prototype.getValuesFile = function(json) {
         var sel = this.timeSelection;
         if (sel === null) return '';
         var suffix = (this.suffix !== '') ? '_' + this.suffix : '';
+        
+        if (sel.needNetcdf && !json && suffix === '') {
+            var lake = sel.folder === 'data' ? 'geneva' : sel.folder.slice(5);
+            return NETCDF_DATA_HOST + '/week/' + sel.week + '/' + sel.year + '/' + lake + '/' + this.fieldName + '/' + sel.depth;
+        }
+        
         return DATA_HOST + sel.folder + '/' + sel.year + '/' + this.fieldName + '/data_week' + sel.week + suffix + '.csv';
     };
 
