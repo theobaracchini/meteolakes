@@ -1,0 +1,116 @@
+<div class="lv-container-dynamic">
+
+   <!--  <div class="row">
+        <div class="col-sm-12"  style="margin-top:-15px">
+            
+        </div>
+    </div> -->
+
+    <div class="row api-description">
+        <div class="col-md-3"></div>
+        <div class="col-md-6 col-xs-12">
+            <h2>Data Form</h2>
+            <p>This page is a documentation of the Meteolakes API that allows you to download CSV files containing data about the studied lakes. There are 3 different types of files: </p>
+            <ul type="square">
+                <li>Week Data Files</li>
+                <li>Coordinates Data Files</li>
+                <li>Layer Data Files</li>
+            </ul>
+            <p>You'll find below the explanation of each type and how to donwload it.</p>
+
+            <h3>Week Data Files</h3>
+            <p>Those files are the one used by the application when selecting a specific depth. Their format is specific to be read by the application, therefore not optimized for human reading data.</p>
+            <p>The link structure to download a csv file is as follow:</p> 
+            <p class="api">{{ $ctrl.hostname }}/week/:weekNumber/:year/:lake/:variable/:depth</p>
+            <p>If you are looking for the water level variable, you don't specify the depth arguemnt (e.g. <span class="api">{{ $ctrl.hostname }}/week/30/2018/geneva/water_level)</span></p>
+
+            <h3>Coordinates Data Files</h3>
+            <p>Those files are a data table at a specific coordinate on the lake. The table shows the veriable values along the given time range on all levels (if depth is not specified) or at a given depth. the horizontal index corresponds to the time, where the vertical index corresponds to the depth. The index values are specified on the csv file.</p>
+            <p>The link structure to download a csv file is as follow:</p> 
+            <p class="api">{{ $ctrl.hostname }}/coordinates/:x/:y/:lake/:variable/:startTime/:endTime/:depth</p>
+            <p>If you are looking for the water level variable, you don't specify the depth argûment since the data is only available at the surface. (e.g. <span class="api">{{ $ctrl.hostname }}/coordinates/516040/140140/geneva/water_level/1532509200000/1532682000000)</span></p>
+
+            <h3>Layer Data Files</h3>
+            <p>Those files contain a single depth layer of a selected lake. The data represented is the chosen variable at a specific timestamp. You also need to specify the depth you want. The result will be the data at the closest depth layer to the chosen value.</p>
+            <p>The link structure to download a csv file is as follow:</p> 
+            <p class="api">{{ $ctrl.hostname }}layer/:lake/:variable/:time/:depth</p>
+            <p>If you are looking for the water level variable, you don't specify the depth argument since the data is only available at the surface. (e.g. <span class="api">{{ $ctrl.hostname }}/api/layer/geneva/water_level/1532325600000</span></p>
+
+            <h3>Variables</h3>
+            <table class="variable">
+                <tr>
+                    <th>Variable   </th>
+                    <th>Description</th> 
+                    <th>Values</th>
+                </tr>
+                <tr>
+                    <td>:lake</td>
+                    <td>name of the lake</td> 
+                    <td>geneva/ greifensee / biel</td>
+                </tr>
+                <tr>
+                    <td>:variable</td>
+                    <td>name of the variable</td> 
+                    <td>temperature / water_level / velocity</td>
+                </tr>
+                <tr>
+                    <td>:time</td>
+                    <td>javascript timestamp</td> 
+                    <td>e.g.: 1539583200000</td>
+                </tr>
+                <tr>
+                    <td>:depth</td>
+                    <td>depth in meters</td> 
+                    <td>e.g.: 30 </td>
+                </tr>
+                <tr>
+                    <td>:x</td>
+                    <td>swiss latitude coordinate</td> 
+                    <td>e.g.: 532830</td>
+                </tr>
+                <tr>
+                    <td>:y</td>
+                    <td>swiss longitude coordinate</td> 
+                    <td>e.g.: 144660 </td>
+                </tr>
+                <tr>
+                    <td>:startTime</td>
+                    <td>javascript timestamp where to start selection</td> 
+                    <td>e.g.: 1539583200000</td>
+                </tr>
+                <tr>
+                    <td>:endTime</td>
+                    <td>javascript timestamp where to end selection</td> 
+                    <td>e.g.: 1539583200000</td>
+                </tr>
+            </table>
+
+            <h3>Timestamp comuptation</h3>
+            <p>Use this tool to compute your timestamps:</p>
+            <div class="dropdown">
+                <a class="dropdown-toggle" id="dropdown" role="button" data-toggle="dropdown" data-target=".dropdown">
+                    <div class="input-group">
+                        <div id="date" class="form-control"><span ng-if="date">{{ result | date:'dd-MM-yyyy HH:mm' : 'UTC'}} -> {{ result.getTime() }}</span></div>
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                    </div>
+                </a>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                    <datetimepicker   data-ng-model="date"  data-on-set-time="onSetTime(newDate, oldDate)"
+                                    data-datetimepicker-config="{ 
+                                        dropdownSelector: '#dropdown',
+                                        startView: 'year',
+                                        minView: 'hour'
+                                     }"></datetimepicker>
+                </ul>
+            </div>
+            
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+  $(function () {
+    $("#title").text("Data Form");
+  })
+</script>

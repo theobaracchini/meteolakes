@@ -20,6 +20,9 @@ angular.module('meteolakesApp').config(['$locationProvider', '$routeProvider',
         .when('/about', {
             template: '<page-about></page-about>'
         })
+        .when('/data', {
+            template: '<page-data-form></page-data-form>'
+        })
         .otherwise('/hydro');
     }
 ]);

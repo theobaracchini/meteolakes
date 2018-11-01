@@ -21,5 +21,8 @@
   },
   "repository": "theobaracchini/meteolakes",
   "author": "Theo Baracchini",
-  "license": "Freeware"
+  "license": "Freeware",
+  "dependencies": {
+    "angularjs-bootstrap-datetimepicker": "^1.1.4"
+  }
 }

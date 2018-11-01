@@ -399,3 +399,30 @@ p:not([align]) {
   stroke: steelblue;
   stroke-width: 3;
 }
+
+/* This is for the Data Form page */
+
+.api-description p.api {
+    word-break: break-all;
+    font-style: italic;
+    font-weight: bold;
+}
+
+.api-description span.api {
+    word-break: break-all;
+    font-style: italic;
+}
+
+table.variable {
+    width: 100%;
+}
+
+table.variable th, table.variable td {
+    padding: 5px 5px 5px 0;
+    border-bottom: 1px solid lightgray;
+}
+
+.dropdown-menu {
+    top: auto;
+    bottom: 100%;
+}
