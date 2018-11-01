@@ -3,6 +3,10 @@ angular.module('meteolakesApp').service('DataIndex', function($q, DATA_HOST, Dat
         return loadIndex(file).then(parseLakes);
     };
 
+    this.loadNetcdf = function(file) {
+        return loadIndex(file).then(parseNetcdfInfo);
+    };
+
     function loadIndex(file) {
         return $q(function(resolve, reject) {
             d3.json(DATA_HOST + file + '.json', function(err, data) {
@@ -41,6 +45,33 @@ angular.module('meteolakesApp').service('DataIndex', function($q, DATA_HOST, Dat
                     interval: interval,
                     data: pdata,
                     years: years
+                };
+            });
+            resolve(parsedData);
+        });
+    }
+
+    function parseNetcdfInfo(data) {
+        return $q(function(resolve, reject) {
+            var parsedData = data.map(function(lakeData) {
+                var name = lakeData.name;
+                if (typeof name !== 'string') {
+                    reject('invalid name'); return null;
+                }
+                var pdata = parseData(lakeData.data);
+                if (!pdata) {
+                    reject('invalid data'); return null;
+                }
+                var years = pdata.keys().sort();
+                var depths = lakeData.depths;
+                if (!depths) {
+                    reject('invalid depths'); return null;
+                }
+                return {
+                    name: name,
+                    data: pdata,
+                    years: years,
+                    depths: depths
                 };
             });
             resolve(parsedData);

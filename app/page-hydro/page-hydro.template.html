@@ -1,4 +1,4 @@
-<div ng-controller="TimeCtrl" ng-init="init('available_data')">
+<div ng-controller="TimeCtrl" ng-init="init('available_data', 'available_data_netcdf')">
     <nav class="navbar navbar-default navbar-fixed-top">
        <div class="container">
 
@@ -17,9 +17,22 @@
                        <ul class="dropdown-menu lv-scrollable-menu">
                            <li ng-repeat="lake in index">
                                <a ng-click="ChangeLake($index)">{{ lake.name }}</a>
+                           </li>   
+                       </ul>
+                   </div>
+                   <div class="btn-group btn-group-sm" ng-if="hasDepthList()">
+                       <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+                           {{ "Depth " + PrettyPrintDepth(selection.depth)}}
+                           <span class="caret"></span>
+                       </button>
+                       <ul class="dropdown-menu dropdown-menu-right lv-scrollable-menu" role="menu">
+                           <li ng-repeat="depth in netcdfIndex[selection.lake].depths">
+                               <a ng-click="ChangeDepth(depth)">{{ PrettyPrintDepth(depth) }}</a> 
                            </li>
                        </ul>
                    </div>
+               </div>
+               <div class="btn-group btn-group-justified">
                    <div class="btn-group btn-group-sm">
                        <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
                            {{ "Year " + selection.year }}
@@ -83,6 +96,17 @@
                        </li>
                    </ul>
                </div>
+               <div class="btn-group navbar-btn" ng-if="hasDepthList()">
+                   <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+                       {{ "Depth " + PrettyPrintDepth(selection.depth)}}
+                       <span class="caret"></span>
+                   </button>
+                   <ul class="dropdown-menu lv-scrollable-menu" role="menu">
+                       <li ng-repeat="depth in netcdfIndex[selection.lake].depths">
+                           <a ng-click="ChangeDepth(depth)">{{ PrettyPrintDepth(depth) }}</a> 
+                       </li>
+                   </ul>
+               </div>
                <div class="navbar-right">
                    <div class="btn-group lv-navbar-margin">
                        <button type="button" class="btn btn-default navbar-btn lv-slower" ng-click="slower()"><span class="glyphicon glyphicon-backward"></span></button>
@@ -112,7 +136,7 @@
     </nav>
     <div class="lv-main-content">
        <div class="lv-container-dynamic">
-           <div class="row" style="margin-top:-25px">
+           <div class="row">
                <div class="col-sm-12 col-lg-6 lv-extra-padding" >
                    <div>
                        <h3>Temperature</h3>
@@ -127,7 +151,7 @@
                <div class="col-sm-12 col-lg-6 lv-extra-padding" style="margin-bottom:10px">
                    <h3>Water Velocity</h3>
 
-                   <lake-view var="velocity" legend-var="Depth Averaged Velocity (m/s)" type="vector" has-transects="false"></lake-view>
+                   <lake-view var="velocity" legend-var="Velocity (m/s)" type="vector" has-transects="false"></lake-view>
                </div>
            </div>
        </div>
