@@ -422,7 +422,7 @@ table.variable th, table.variable td {
     border-bottom: 1px solid lightgray;
 }
 
-.dropdown-menu {
+.date-ui.dropdown-menu {
     top: auto;
     bottom: 100%;
 }
