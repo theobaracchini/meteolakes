@@ -134,11 +134,11 @@
                 <a class="dropdown-toggle" id="dropdown" role="button" data-toggle="dropdown" data-target=".dropdown">
                     <div class="input-group">
                         <div id="date" class="form-control"><span ng-if="date">{{ result | date:'dd-MM-yyyy HH:mm' : 'UTC'}} -> {{ result.getTime() }}</span></div>
-                        <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                     </div>
                 </a>
                 <ul class="date-ui dropdown-menu" role="menu" aria-labelledby="dLabel">
-                    <datetimepicker   data-ng-model="date"  data-on-set-time="onSetTime(newDate, oldDate)"
+                    <datetimepicker data-ng-model="date"  data-on-set-time="onSetTime(newDate, oldDate)"
                                     data-datetimepicker-config="{
                                         dropdownSelector: '#dropdown',
                                         startView: 'year',
