@@ -1,0 +1,164 @@
+<div class="lv-container-dynamic">
+
+   <!--  <div class="row">
+        <div class="col-sm-12"  style="margin-top:-15px">
+
+        </div>
+    </div> -->
+
+    <div class="row api-description">
+        <div class="col-md-3"></div>
+        <div class="col-md-6 col-xs-12">
+            <h2>Meteolakes API</h2>
+            <div class="alert alert-info">
+                Welcome to the Meteolakes API. Please note that this is an experimental feature, which may not be permanent. <br>
+                Data is provided for personal use, please contact <A HREF="mailto:theo.baracchini@meteolakes.ch">theo.baracchini@meteolakes.ch</A> for other use-cases.
+            </div>
+
+            <h2>Data Form</h2>
+            <p>This page is a documentation of the Meteolakes API allowing you to download CSV files containing the results of our 3D numerical simulations.</p>
+
+            <!-- <p>There are 3 different types of files: </p>
+            <ul type="square">
+                <li>Week Data Files</li>
+                <li>Coordinates Data Files</li>
+                <li>Layer Data Files</li>
+            </ul>
+            <p>You'll find below the explanation of each type and how to dnwnload it.</p>
+            -->
+
+            <p>Generally, the steps are the following: </p>
+            <ul type="square">
+                <li>Make sure the data (time numbers are isoweeks) you want in available by looking <a href="http://meteolakes.ch/meteolac/available_data_netcdf.json" target="_blank">here</a>.</li>
+                <li>Find the coordinates (in the Swiss CH1903 system) of your point of interest. You can use <a href="https://map.geo.admin.ch" target="_blank">this website</a>.</li>
+                <li>Generate a link (by following the structure below) to request your data.</li>
+                <li>Download the CSV file (the server should extract your selection within a few seconds).</li>
+            </ul>
+            <p>Below are detailed indications on how to proceed.</p>
+
+            <!--
+              <h3>Week Data Files</h3>
+            <p>Those files are the one used by the application when selecting a specific depth. Their format is specific to be read by the application, therefore not optimized for human reading data.</p>
+            <p>The link structure to download a csv file is as follow:</p>
+            <p class="api">{{ $ctrl.hostname }}/week/:weekNumber/:year/:lake/:variable/:depth</p>
+            <p>If you are looking for the water level variable, you don't specify the depth arguemnt (e.g. <span class="api">{{ $ctrl.hostname }}/week/30/2018/geneva/water_level)</span></p>
+            -->
+
+            <h4>Coordinates Data Files</h4>
+            <p>Those files are data tables at specific coordinates on the lake. The table shows the variable values along the given time period at all vertical layers available (if depth is not specified) or at a given depth (if specified).
+               The horizontal index corresponds to the time, where the vertical index corresponds to the depth.
+               Indices values are specified on the CSV file.</p>
+            <p>To request a file to download, generate a link with the following structure:</p>
+            <!--<p>The link structure to download a csv file is as follow:</p>-->
+            <p class="api">{{ $ctrl.hostname }}/coordinates/:x/:y/:lake/:variable/:startTime/:endTime/:depth</p>
+
+            <h4>Example</h4>
+            <p>
+              <a href="http://aphyspc18.epfl.ch/api/coordinates/532830/144660/geneva/temperature/1536573600000/1537030800000/20"><strong>http://aphyspc18.epfl.ch/api/coordinates/532830/144660/geneva/temperature/1536573600000/1537030800000/20</strong></a>
+            </p>
+
+            <p>The link above is an example to retrieve data with the following caracteristics:</p>
+            <ul type="square">
+                <li>Lake Geneva</li>
+                <li>Center of the lake (in CH1903): <a href="https://map.geo.admin.ch/?lang=fr&topic=ech&bgLayer=ch.swisstopo.pixelkarte-farbe&layers=ch.swisstopo.zeitreihen,ch.bfs.gebaeude_wohnungs_register,ch.bav.haltestellen-oev,ch.swisstopo.swisstlm3d-wanderwege&layers_visibility=false,false,false,false&layers_timestamp=18641231,,,&E=2537300&N=1146000&zoom=4&crosshair=marker" target="_blank"><strong>537'300, 145'160</strong></a></li>
+                <li>Water temperature</li>
+                <li>From 10-09-2018 10:00 (1536573600000) to 15-09-2018 17:00 (1537030800000)</li>
+                <li>At 20 meters depth</li>
+            </ul>
+
+
+            <!--
+            <p>If you are looking for the water level variable, you don't specify the depth argûment since the data is only available at the surface. (e.g. <span class="api">{{ $ctrl.hostname }}/coordinates/516040/140140/geneva/water_level/1532509200000/1532682000000)</span></p>
+            -->
+
+            <!--
+            <h3>Layer Data Files</h3>
+            <p>Those files contain a single depth layer of a selected lake. The data represented is the chosen variable at a specific timestamp. You also need to specify the depth you want. The result will be the data at the closest depth layer to the chosen value.</p>
+            <p>The link structure to download a csv file is as follow:</p>
+            <p class="api">{{ $ctrl.hostname }}layer/:lake/:variable/:time/:depth</p>
+            <p>If you are looking for the water level variable, you don't specify the depth argument since the data is only available at the surface. (e.g. <span class="api">{{ $ctrl.hostname }}/api/layer/geneva/water_level/1532325600000</span></p>
+            -->
+
+            <h4>Variables</h4>
+            <table class="variable">
+                <tr>
+                    <th>Variable   </th>
+                    <th>Description</th>
+                    <th>Values</th>
+                </tr>
+                <tr>
+                    <td>:lake</td>
+                    <td>name of the lake</td>
+                    <td>geneva/ greifensee </td>
+                </tr>
+                <tr>
+                    <td>:variable</td>
+                    <td>name of the variable</td>
+                    <td>temperature / velocity</td>
+                </tr>
+                <tr>
+                    <td>:time</td>
+                    <td>javascript timestamp</td>
+                    <td>e.g.: 1539583200000</td>
+                </tr>
+                <tr>
+                    <td>:depth</td>
+                    <td>depth in meters</td>
+                    <td>e.g.: 30 </td>
+                </tr>
+                <tr>
+                    <td>:x</td>
+                    <td>swiss x-coordinate (CH1903)</td>
+                    <td>e.g.: 532830</td>
+                </tr>
+                <tr>
+                    <td>:y</td>
+                    <td>swiss y-coordinate (CH1903)</td>
+                    <td>e.g.: 144660 </td>
+                </tr>
+                <tr>
+                    <td>:startTime</td>
+                    <td>javascript timestamp where to start selection</td>
+                    <td>e.g.: 1539583200000</td>
+                </tr>
+                <tr>
+                    <td>:endTime</td>
+                    <td>javascript timestamp where to end selection</td>
+                    <td>e.g.: 1539583200000</td>
+                </tr>
+            </table>
+
+            <h4>Timestamp comuptation</h4>
+            <p>If you are not familiar with javascript times, you can use this tool to compute your desired timestamps:</p>
+            <div class="dropdown">
+                <a class="dropdown-toggle" id="dropdown" role="button" data-toggle="dropdown" data-target=".dropdown">
+                    <div class="input-group">
+                        <div id="date" class="form-control"><span ng-if="date">{{ result | date:'dd-MM-yyyy HH:mm' : 'UTC'}} -> {{ result.getTime() }}</span></div>
+                        <span class="input-group-addon">
+                          <i class="glyphicon glyphicon-calendar"></i>
+                        </span>
+                    </div>
+                </a>
+                <div class="dropdown">
+                <ul class="date-ui dropdown-menu" role="menu" aria-labelledby="dLabel">
+                    <datetimepicker data-ng-model="date" data-on-set-time="onSetTime(newDate, oldDate)"
+                                    data-datetimepicker-config="{
+                                        dropdownSelector: '#dropdown',
+                                        startView: 'year',
+                                        minView: 'hour'
+                                        }"></datetimepicker>
+                </ul>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+  $(function () {
+    $("#title").text("Data Form");
+  })
+</script>
