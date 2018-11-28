@@ -101,8 +101,8 @@ div#tab-insitu {
 
 input[type="range"]{
   -webkit-appearance: none;
-  -moz-apperance: none;
-  -ms-apperance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
   background-image: -webkit-gradient(
           linear,
           left top,
@@ -129,8 +129,6 @@ height: 29px;
 padding-top: 4px;
 padding-left: 10px;
 background: #989898;
--webkit-border-radius: 5px;
--moz-border-radius: 5px;
 border-radius: 5px;
 font-size: 11pt;
 color:#FFF;
@@ -162,8 +160,6 @@ height: 29px;
 padding-top: 4px;
 padding-left: 10px;
 background: #989898;
--webkit-border-radius: 5px;
--moz-border-radius: 5px;
 border-radius: 5px;
 font-size: 11pt;
 color:#FFF;
@@ -344,8 +340,13 @@ a {
     font-size: 14pt;
     float: right;
     margin-bottom: 0px;
+<<<<<<< HEAD
+    margin-right: 5%;
+    margin-top: 6px;
+=======
     margin-right: 8px;
     margin-top: 8px;
+>>>>>>> master
     text-align:center;
 }
 
@@ -381,4 +382,52 @@ p:not([align]) {
     display:inline;
     font-weight:bold;
     margin-left:calc(51% - 164px);
+}
+
+
+.grid .tick {
+    stroke: lightgrey;
+    opacity: 0.7;
+}
+.grid path {
+      stroke-width: 0;
+}
+
+/* This is for the hover values in in-situ */
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.focus circle {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 3;
+}
+
+/* This is for the Data Form page */
+
+.api-description p.api {
+    word-break: break-all;
+    font-style: italic;
+    font-weight: bold;
+}
+
+.api-description span.api {
+    word-break: break-all;
+    font-style: italic;
+}
+
+table.variable {
+    width: 100%;
+}
+
+table.variable th, table.variable td {
+    padding: 5px 5px 5px 0;
+    border-bottom: 1px solid lightgray;
+}
+
+.date-ui.dropdown-menu {
+    top: auto;
+    bottom: 100%;
 }
