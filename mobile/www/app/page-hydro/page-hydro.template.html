@@ -1,10 +1,9 @@
-<div ng-controller="TimeCtrl" ng-init="init('available_data')">
+<div ng-controller="TimeCtrl" ng-init="init('available_data', 'available_data_netcdf')">
     <nav class="navbar navbar-default navbar-fixed-top">
-       <div class="container">
-
+       <div class="container">         
            <div class="visible-xs-block lv-navbar-small-buttons">
                <div class="pull-left width100">
-                   <a href="#!/about"><img src="img/logo_epfl.jpg" style="height:41px;margin:10px"></a>
+                   <a href="#!/about"><img src="img/logo_epfl.png" style="height:41px;margin:10px"></a>
                    <div class="meteolakes-title">Meteolakes</div>
                    <div class="navbar-text mobile-date"><strong><div style="font-size:70%" ng-bind="getDate()"></div><div style="font-size:130%" ng-bind="getTime()"></div></strong></div>
                </div>
@@ -20,6 +19,19 @@
                            </li>
                        </ul>
                    </div>
+                   <div class="btn-group btn-group-sm" ng-if="hasDepthList()">
+                       <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+                           {{ "Depth " + PrettyPrintDepth(selection.depth)}}
+                           <span class="caret"></span>
+                       </button>
+                       <ul class="dropdown-menu dropdown-menu-right lv-scrollable-menu" role="menu">
+                           <li ng-repeat="depth in netcdfIndex[selection.lake].depths">
+                               <a ng-click="ChangeDepth(depth)">{{ PrettyPrintDepth(depth) }}</a>
+                           </li>
+                       </ul>
+                   </div>
+               </div>
+               <div class="btn-group btn-group-justified">
                    <div class="btn-group btn-group-sm">
                        <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
                            {{ "Year " + selection.year }}
@@ -47,7 +59,7 @@
 
            <div class="hidden-xs">
                <div class="pull-left">
-                   <a href="#!/about"><img src="img/logo_epfl.jpg" class="lv-navbar-logo"></a>
+                   <a href="#!/about"><img src="img/logo_epfl.png" class="lv-navbar-logo"></a>
                </div>
                <div class="btn-group"><a class="navbar-brand" href="#!/hydro" style="font-weight:bold">Meteolakes</a></div>
                <div class="btn-group navbar-btn">
@@ -83,6 +95,17 @@
                        </li>
                    </ul>
                </div>
+               <div class="btn-group navbar-btn" ng-if="hasDepthList()">
+                   <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+                       {{ "Depth " + PrettyPrintDepth(selection.depth)}}
+                       <span class="caret"></span>
+                   </button>
+                   <ul class="dropdown-menu lv-scrollable-menu" role="menu">
+                       <li ng-repeat="depth in netcdfIndex[selection.lake].depths">
+                           <a ng-click="ChangeDepth(depth)">{{ PrettyPrintDepth(depth) }}</a>
+                       </li>
+                   </ul>
+               </div>
                <div class="navbar-right">
                    <div class="btn-group lv-navbar-margin">
                        <button type="button" class="btn btn-default navbar-btn lv-slower" ng-click="slower()"><span class="glyphicon glyphicon-backward"></span></button>
@@ -112,7 +135,7 @@
     </nav>
     <div class="lv-main-content">
        <div class="lv-container-dynamic">
-           <div class="row" style="margin-top:-25px">
+           <div class="row">
                <div class="col-sm-12 col-lg-6 lv-extra-padding" >
                    <div>
                        <h3>Temperature</h3>
@@ -127,7 +150,7 @@
                <div class="col-sm-12 col-lg-6 lv-extra-padding" style="margin-bottom:10px">
                    <h3>Water Velocity</h3>
 
-                   <lake-view var="velocity" legend-var="Depth Averaged Velocity (m/s)" type="vector" has-transects="false"></lake-view>
+                   <lake-view var="velocity" legend-var="Velocity (m/s)" type="vector" has-transects="false"></lake-view>
                </div>
            </div>
        </div>
