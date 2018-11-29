@@ -246,18 +246,27 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
                       var col = spec.columns[0].data,
                           i = bisectDate(col, x0, 1),
                           colInd = x0 - col[i-1].date > col[i].date - x0 ? i : i-1;
+
+                      var backShift;
+                      if (x(col[spec.columns[0].data.length-1].date) - x(col[colInd].date) < 100){
+                        backShift = -104;
+                      }  else {
+                        backShift = 8;
+                      }
+
                       // TODO: multiple hover bubbles when multiple lines
                       focus.attr("transform", "translate(" + x(col[colInd].date) +"," + y(col[colInd].value) + ")");
 
                       focus.select("text")
+                          .attr("x", backShift+1)
                           .text(formatUnit(col[colInd].value))
                           .append('svg:tspan')
-                          .attr("x", 9)
+                          .attr("x", backShift+1)
                           .attr("dy", "1.35em")
                           .text(col[colInd].date.format("DD-MMM HH:mm"));
 
                       hoverBox.select("rect")
-                        .attr("x", x(col[colInd].date)+8) // Fixed shift
+                        .attr("x", x(col[colInd].date)+backShift) // Fixed shift
                         .attr("y", y(col[colInd].value)-17) // Fixed shift
                         .attr("width", 95) // Fixed size for now
                         .attr("height", 35) // Fixed size for now
