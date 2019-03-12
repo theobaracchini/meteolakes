@@ -286,23 +286,6 @@ left: 14px;
    height: calc(100% - 20px);
 }
 
-.iframe-scale-70 {
-    width:1900px;
-    height:1000px;
-    -webkit-transform:scale(0.7);
-    -moz-transform:scale(0.7);
-    transform:scale(0.7);
-    -moz-transform-origin: top left;
-    -webkit-transform-origin: top left;
-    -o-transform-origin: top left;
-    -ms-transform-origin: top left;
-    transform-origin: top left;
-    background: rgb(255,255,255);
-    border: 0;
-    padding: 0;
-    margin: 0;
-}
-
 /* Needed for links without href attribute */
 a {
     cursor: pointer;
@@ -426,4 +409,36 @@ table.variable th, table.variable td {
 .date-ui.dropdown-menu {
     top: auto;
     bottom: 100%;
+}
+
+.iframe-scale-70 {
+    width:1900px;
+    height:1000px;
+    -webkit-transform:scale(0.7);
+    -moz-transform:scale(0.7);
+    transform:scale(0.7);
+    -moz-transform-origin: top left;
+    -webkit-transform-origin: top left;
+    -o-transform-origin: top left;
+    -ms-transform-origin: top left;
+    transform-origin: top left;
+    background: rgb(255,255,255);
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+
+/*.navbar {
+    color: #000000;
+    background-color: #A9A9A9;
+}*/
+
+.navbar {
+    font-size:16px;
+}
+
+.navbar-nav > .active{
+    font-weight: bold;
+    color: #8a0e0b;
+    background-color: #808080;
 }
