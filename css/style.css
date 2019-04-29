@@ -424,9 +424,7 @@ table.variable th, table.variable td {
 .iframe-scale-70 {
     width:1900px;
     height:1000px;
-    -webkit-transform:scale(0.7);
-    -moz-transform:scale(0.7);
-    transform:scale(0.7);
+	position: absolute;
     -moz-transform-origin: top left;
     -webkit-transform-origin: top left;
     -o-transform-origin: top left;
@@ -436,6 +434,13 @@ table.variable th, table.variable td {
     border: 0;
     padding: 0;
     margin: 0;
+	margin-bottom: 100px;
+}
+
+.iframe-click-overlay{
+	z-index:10;
+	background: none;
+	height: 900px;
 }
 
 /*.navbar {
@@ -494,6 +499,7 @@ color:#FFF;
 -webkit-animation: opacityOnAndOff 15s normal forwards;
 -moz-animation: opacityOnAndOff 15s normal forwards;
 animation: opacityOnAndOff 15s normal forwards;
+z-index: 100;
 }
 
 @keyframes opacityOnAndOff {
