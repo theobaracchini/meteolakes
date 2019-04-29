@@ -1,3 +1,7 @@
+html {
+	margin-left: calc(100% - 100vw);
+}
+
 body {
     padding-bottom: 70px;
 }
@@ -11,8 +15,14 @@ div#tab-insitu {
     div#tab-insitu { padding-top: 80px; }
 }
 
+
 .lv-main-content {
-    padding-top: 100px; /* *** */
+    padding-top: 85px; /* *** */
+}
+@media (max-width: 767px) {	
+	.lv-main-content {
+		padding-top: 100px; /* *** */
+	}
 }
 
 .lv-container-dynamic {
