@@ -163,13 +163,13 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
 
     $scope.ChangeWeek = function(week) {
         $scope.selection.week = week;
-        selectDefaultDepth();
+        tryKeepDepth();
     };
 
     $scope.ChangeYear = function(year) {
         $scope.selection.year = year;
         selectClosestWeek();
-        selectDefaultDepth();
+        tryKeepDepth();
     };
 
     $scope.ChangeLake = function(lake) {
@@ -180,7 +180,7 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
 
         selectClosestYear();
         selectClosestWeek();
-        selectDefaultDepth();
+        selectSurfaceDepth();
     };
 
     $scope.ChangeDepth = function(depth) {
@@ -219,6 +219,21 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
         $scope.selection.depth = null;
         $scope.selection.needNetcdf = false;
     }
+	
+	function selectSurfaceDepth() {
+		if($scope.hasDepthList()) {
+			$scope.ChangeDepth($scope.netcdfIndex[$scope.selection.lake].depths[0]);
+		} else {
+			selectDefaultDepth();
+		}
+	}
+	
+	function tryKeepDepth() {
+		if(!($scope.hasDepthList() && 
+			$scope.netcdfIndex[$scope.selection.lake].depths.indexOf(-$scope.selection.depth) !== -1)) {
+			selectSurfaceDepth();
+		}
+	}
 
     $scope.$on('moveToNextWeek', moveToNextWeek);
 
