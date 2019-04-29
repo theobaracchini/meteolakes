@@ -63,6 +63,7 @@ angular.module('meteolakesApp').directive('d3Chart', function($window) {
                 .orient('left');
 
             var line = d3.svg.line()
+				.interpolate("monotone")
                 .x(function(d) { return x(d.date); })
                 .y(function(d) { return y(d.value); });
 
