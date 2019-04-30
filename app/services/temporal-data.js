@@ -259,15 +259,10 @@ angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, NETC
                 'date': moment(rows[0][i], "DD/MM/YYY HH:mm"),
                 'value': value,
             };
-            /*
-             if(rows.length > 2) { // Add min/max if available to plot the range
+            if(rows.length > 3) { // Add min/max if available to plot the range
                 object['min_value'] = rows[2][i];
                 object['max_value'] = rows[3][i];
             }
-            /*/
-            object['min_value'] = value - .2;
-            object['max_value'] = value + .2;
-            //*/
             result.push(object);
         }
         return result;
@@ -285,7 +280,7 @@ angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, NETC
 			url = `${url}/${Math.abs(coord.z)}`;
 		}
 	
-		return url;
+        return url;
     };
 	
 	TemporalData.prototype.getDataAtPoint = function(coord) {
