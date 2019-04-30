@@ -172,6 +172,9 @@ angular.module('meteolakesApp').directive('d3Chart', function($window) {
                     if(data[0].min_value && data[0].max_value) {
                         renderRoot.select('.chart-area')
                             .attr('d', area(data));
+                    } else {
+                        renderRoot.select('.chart-area')
+                            .attr('d', null);
                     }
 
                     renderRoot.select('.chart-line')
