@@ -132,7 +132,14 @@ angular.module('meteolakesApp').directive('d3Chart', function($window) {
                         label = 'Location: ' + values.x + ' / ' + values.y + ' m';
                     }
                     x.domain(d3.extent(data, function(d) { return d.date; }));
-                    y.domain(d3.extent(data, function(d) { return d.value; }));
+                    if(data[0].min_value && data[0].max_value) {
+                        y.domain([
+                            d3.min(data, function(d) { return d.min_value; }),
+                            d3.max(data, function(d) { return d.max_value; })
+                        ]);
+                    } else {
+                        y.domain(d3.extent(data, function(d) { return d.value; }));
+                    }
                     show();
                     render();
                 } else {
