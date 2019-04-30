@@ -492,15 +492,18 @@ angular.module('meteolakesApp').component('lakeView', {
 
         function updateChart(point) {
             if (point) {
-                var temporalData = me[me.tab + 'Data'];
+				var temporalData = me[me.tab + 'Data'];
                 var data = temporalData.Data[point.i][point.j];
-                var values = data.values.map(Util.norm);
-                me.chartData = {
-                    x: data.x,
-                    y: data.y,
-                    z: data.z,
-                    data: temporalData.withTimeSteps(values)
-                };
+
+				// TODO call to API
+				temporalData.getDataAtPoint(data, me.var).then(function(plotData) {
+                    me.chartData = {
+                        x: data.x,
+                        y: data.y,
+                        z: data.z,
+                        data: plotData
+                    };
+                });
             } else {
                 me.chartData = null;
             }

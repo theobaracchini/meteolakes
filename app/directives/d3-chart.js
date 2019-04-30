@@ -62,6 +62,12 @@ angular.module('meteolakesApp').directive('d3Chart', function($window) {
                 .scale(y)
                 .orient('left');
 
+            var area = d3.svg.area()
+                .interpolate('monotone')
+                .x(function (d) { return x(d.date) || 1; })
+                .y0(function (d) { return y(d.max_value); })
+                .y1(function (d) { return y(d.min_value); });
+
             var line = d3.svg.line()
 				.interpolate("monotone")
                 .x(function(d) { return x(d.date); })
@@ -88,6 +94,9 @@ angular.module('meteolakesApp').directive('d3Chart', function($window) {
             g.append('text')
                 .attr('class', 'chart-label')
                 .attr('text-anchor', 'middle');
+
+            g.append('path')
+                .attr('class', 'chart-area');
 
             g.append('path')
                 .attr('class', 'chart-line');
@@ -152,6 +161,11 @@ angular.module('meteolakesApp').directive('d3Chart', function($window) {
                     renderRoot.select('.chart-label')
                         .text(label)
                         .attr('transform', 'translate(' + (width / 2) + ')');
+
+                    if(data[0].min_value && data[0].max_value) {
+                        renderRoot.select('.chart-area')
+                            .attr('d', area(data));
+                    }
 
                     renderRoot.select('.chart-line')
                         .attr('d', line(data));

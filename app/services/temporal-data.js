@@ -1,4 +1,4 @@
-angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, NETCDF_DATA_HOST, $q, DateHelpers, stats) {
+angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, NETCDF_DATA_HOST, $q, DateHelpers, stats, Util) {
     var TemporalData = function(fieldName, cropPercentile, suffix) {
         this.fieldName = fieldName;
         this.suffix = suffix || '';
@@ -238,6 +238,70 @@ angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, NETC
             });
         });
     };
+
+    TemporalData.prototype.parseDataCSV = function(data) {
+        let rows = [];
+        d3.csv.parseRows(data, function(row) {
+            rows.push(row.slice(1))
+        });
+        let result = [];
+        for(let i = 0; i < rows[0].length; i++) {
+
+            let value = +rows[1][i];
+
+            var regExp = /\(([^,)]+), ([^)]+)\)/;
+            var matches = regExp.exec(rows[1][i]);
+            if(matches) {
+                value = Util.norm([matches[1], matches[2]]);
+            }
+
+            let object = {
+                'date': moment(rows[0][i], "DD/MM/YYY HH:mm"),
+                'value': value,
+            };
+            /*
+             if(rows.length > 2) { // Add min/max if available to plot the range
+                object['min_value'] = rows[2][i];
+                object['max_value'] = rows[3][i];
+            }
+            /*/
+            object['min_value'] = value - .2;
+            object['max_value'] = value + .2;
+            //*/
+            result.push(object);
+        }
+        return result;
+    };
+
+	// Get data to plot graph e.g. http://aphyspc18.epfl.ch/api/coordinates/534700/144950/geneva/temperature/1537034400000/1537768800000/20
+	TemporalData.prototype.buildDataUrl = function(point, type) {
+		var sel = this.timeSelection;
+        if (sel === null) return '';
+        
+        var lake = sel.folder === 'data' ? 'geneva' : sel.folder.slice(5);
+		var url = `${NETCDF_DATA_HOST}/coordinates/${point.x}/${point.y}/${lake}/${type}/${+DateHelpers.firstDayOfWeek(sel.week, sel.year)}/${+DateHelpers.lastDayOfWeek(sel.week, sel.year)}`;
+		
+		if(point.z) {
+			url = `${url}/${Math.abs(point.z)}`;
+		}
+	
+		return url;
+    };
+	
+	TemporalData.prototype.getDataAtPoint = function(point, type) {
+		var me = this;
+  
+        return $q(function(resolve, reject) {
+			var url = me.buildDataUrl(point, type);
+			d3.text(url, function(err, data) {
+				if (err) {
+					reject('url not found: ' + url);
+				} else {
+					resolve(me.parseDataCSV(data));
+				}
+			});
+        });
+	}
 
     return TemporalData;
 });

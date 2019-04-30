@@ -232,7 +232,13 @@ left: 14px;
 .chart-line {
     fill: none;
     stroke: steelblue;
-    stroke-width: 1.5px;
+    stroke-width: 2px;
+}
+
+.chart-area {
+  fill: rgba(70,130,180, .25);
+  stroke: none;
+  stroke-width: 0;
 }
 
 .chart-legend {
