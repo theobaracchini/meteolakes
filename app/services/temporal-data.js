@@ -274,25 +274,25 @@ angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, NETC
     };
 
 	// Get data to plot graph e.g. http://aphyspc18.epfl.ch/api/coordinates/534700/144950/geneva/temperature/1537034400000/1537768800000/20
-	TemporalData.prototype.buildDataUrl = function(point, type) {
+	TemporalData.prototype.buildDataUrl = function(coord) {
 		var sel = this.timeSelection;
         if (sel === null) return '';
         
         var lake = sel.folder === 'data' ? 'geneva' : sel.folder.slice(5);
-		var url = `${NETCDF_DATA_HOST}/coordinates/${point.x}/${point.y}/${lake}/${type}/${+DateHelpers.firstDayOfWeek(sel.week, sel.year)}/${+DateHelpers.lastDayOfWeek(sel.week, sel.year)}`;
+		var url = `${NETCDF_DATA_HOST}/coordinates/${coord.x}/${coord.y}/${lake}/${this.fieldName}/${+DateHelpers.firstDayOfWeek(sel.week, sel.year)}/${+DateHelpers.lastDayOfWeek(sel.week, sel.year)}`;
 		
-		if(point.z) {
-			url = `${url}/${Math.abs(point.z)}`;
+		if(coord.z) {
+			url = `${url}/${Math.abs(coord.z)}`;
 		}
 	
 		return url;
     };
 	
-	TemporalData.prototype.getDataAtPoint = function(point, type) {
+	TemporalData.prototype.getDataAtPoint = function(coord) {
 		var me = this;
   
         return $q(function(resolve, reject) {
-			var url = me.buildDataUrl(point, type);
+			var url = me.buildDataUrl(coord);
 			d3.text(url, function(err, data) {
 				if (err) {
 					reject('url not found: ' + url);
