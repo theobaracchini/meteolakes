@@ -247,12 +247,15 @@ angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, NETC
         let result = [];
         for(let i = 0; i < rows[0].length; i++) {
 
-            let value = +rows[1][i];
 
             var regExp = /\(([^,)]+), ([^)]+)\)/;
-            var matches = regExp.exec(rows[1][i]);
+
+            let value = rows[1][i];
+            var matches = regExp.exec(value);
             if(matches) {
                 value = Util.norm([matches[1], matches[2]]);
+            } else {
+                value = +value;
             }
 
             let object = {
@@ -260,8 +263,23 @@ angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, NETC
                 'value': value,
             };
             if(rows.length > 3) { // Add min/max if available to plot the range
-                object['min_value'] = rows[2][i];
-                object['max_value'] = rows[3][i];
+                let min_value = rows[2][i];
+                var matches = regExp.exec(min_value);
+                if(matches) {
+                    min_value = Util.norm([matches[1], matches[2]]);
+                } else {
+                    min_value = +min_value;
+                }
+                object['min_value'] = min_value;
+
+                let max_value = rows[3][i];
+                var matches = regExp.exec(max_value);
+                if(matches) {
+                    max_value = Util.norm([matches[1], matches[2]]);
+                } else {
+                    max_value = +max_value;
+                }
+                object['max_value'] = max_value;
             }
             result.push(object);
         }
