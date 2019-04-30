@@ -500,7 +500,7 @@ angular.module('meteolakesApp').component('lakeView', {
                         me.chartData = {
                             x: data.x,
                             y: data.y,
-                            z: data.z,
+                            z: me.tab === 'surface' ? me.timeSelection.depth : data.z,
                             data: plotData
                         };
                     });
@@ -509,7 +509,6 @@ angular.module('meteolakesApp').component('lakeView', {
                     me.chartData = {
                         x: data.x,
                         y: data.y,
-                        z: data.z,
                         data: temporalData.withTimeSteps(values)
                     };
                 }

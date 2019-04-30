@@ -245,10 +245,9 @@ angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, NETC
             rows.push(row.slice(1))
         });
         let result = [];
+        var regExp = /\(([^,)]+), ([^)]+)\)/;
+
         for(let i = 0; i < rows[0].length; i++) {
-
-
-            var regExp = /\(([^,)]+), ([^)]+)\)/;
 
             let value = rows[1][i];
             var matches = regExp.exec(value);
