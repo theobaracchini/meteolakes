@@ -18,6 +18,7 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
             var height = 0;
              // More colorblind friendly scale
             var COLORS_G = ['#3366cc', '#dc3912', '#ff9900', '#990099', '#0099c6', '#dd4477', '#b82e2e', '#316395', '#994499', '#22aa99'];
+            var MINIMAL_TOOLTIP_GAP = 40;
 
             var x = d3.time.scale();
             var y = d3.scale.linear();
@@ -272,6 +273,8 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
                     function mousemove() {
                         var x0 = x.invert(d3.mouse(this)[0]);
                         
+                        var prevY;
+
                         spec.columns.forEach(function(column, idx) {
                             var col = column.data,
                             i = bisectDate(col, x0, 1),
@@ -287,11 +290,27 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
                             var hoverBox = hoverBoxes[idx];
                             var focus = focuses[idx];
 
-                            // TODO: multiple hover bubbles when multiple lines
+                            var currentY = y(col[colInd].value);
+                            var diff = 0;
+                            if(prevY) {
+                                if(currentY < prevY && prevY - currentY < MINIMAL_TOOLTIP_GAP) {
+                                    diff = prevY - currentY;
+                                    currentY = prevY - MINIMAL_TOOLTIP_GAP;
+                                    diff = currentY - y(col[colInd].value);
+                                }
+                                if(currentY > prevY && currentY - prevY < MINIMAL_TOOLTIP_GAP) {
+                                    currentY = prevY + MINIMAL_TOOLTIP_GAP;
+                                    diff = currentY - y(col[colInd].value);
+                                }
+                            } else {
+                                prevY = currentY;
+                            }
+
                             focus.attr("transform", "translate(" + x(col[colInd].date) +"," + y(col[colInd].value) + ")");
 
                             focus.select("text")
                                 .attr("x", backShift+1)
+                                .attr("transform", "translate(" + 0 +"," + diff + ")")
                                 .text(formatUnit(col[colInd].value))
                                 .append('svg:tspan')
                                 .attr("x", backShift+1)
@@ -300,7 +319,7 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
 
                             hoverBox.select("rect")
                                 .attr("x", x(col[colInd].date)+backShift) // Fixed shift
-                                .attr("y", y(col[colInd].value)-17) // Fixed shift
+                                .attr("y", currentY-17) // Fixed shift
                                 .attr("width", 95) // Fixed size for now
                                 .attr("height", 35) // Fixed size for now
                                 .style("opacity", 0.6);
