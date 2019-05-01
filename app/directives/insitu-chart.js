@@ -310,6 +310,7 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
 
                             focus.select("text")
                                 .attr("x", backShift+1)
+                                .attr("fill", "white")
                                 .attr("transform", "translate(" + 0 +"," + diff + ")")
                                 .text(formatUnit(col[colInd].value))
                                 .append('svg:tspan')
