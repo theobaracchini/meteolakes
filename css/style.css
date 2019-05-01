@@ -449,6 +449,16 @@ table.variable th, table.variable td {
 	height: 900px;
 }
 
+.margin-top-28-lg {
+  margin-top: 28px;
+}
+@media (max-width: 768px) {
+  .margin-top-28-lg {
+    margin-top: 0;
+  }
+}
+
+
 /*.navbar {
     color: #000000;
     background-color: #A9A9A9;
