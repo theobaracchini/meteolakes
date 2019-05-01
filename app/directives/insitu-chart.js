@@ -227,8 +227,6 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
                     var focuses = [];
                     var hoverBoxes = [];
 
-                    console.log(spec);
-
                     for(let i = 0; i < spec.columns.length; i++) {
                         var color = COLORS_G[i%COLORS_G.length];
                         // Display values when mouse hovering
@@ -276,9 +274,12 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
                         var prevY;
 
                         spec.columns.forEach(function(column, idx) {
-                            var col = column.data,
-                            i = bisectDate(col, x0, 1),
-                            colInd = x0 - col[i-1].date > col[i].date - x0 ? i : i-1;
+                            var col = column.data;
+                            var i = bisectDate(col, x0, 1);
+							if(!col[i - 1] || !col[i]) {
+								return;
+							}
+                            var colInd = x0 - col[i-1].date > col[i].date - x0 ? i : i-1;
 
                             var backShift;
                             if (x(col[spec.columns[0].data.length-1].date) - x(col[colInd].date) < 100){

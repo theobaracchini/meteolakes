@@ -240,7 +240,7 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
     function moveToNextWeek() {
         var week = $scope.selection.week;
         var year = $scope.selection.year;
-        var date = moment().day('Monday').week(week).year(year);
+        var date = moment().day('Monday').year(year).week(week);
         date.add(1, 'w');
         var lakeData = $scope.index[$scope.selection.lake];
 
