@@ -263,7 +263,7 @@ angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, NETC
             };
             if(rows.length > 3) { // Add min/max if available to plot the range
                 let min_value = rows[2][i];
-                var matches = regExp.exec(min_value);
+                matches = regExp.exec(min_value);
                 if(matches) {
                     min_value = Util.norm([matches[1], matches[2]]);
                 } else {
@@ -272,7 +272,7 @@ angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, NETC
                 object['min_value'] = min_value;
 
                 let max_value = rows[3][i];
-                var matches = regExp.exec(max_value);
+                matches = regExp.exec(max_value);
                 if(matches) {
                     max_value = Util.norm([matches[1], matches[2]]);
                 } else {
@@ -285,13 +285,13 @@ angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, NETC
         return result;
     };
 
-	// Get data to plot graph e.g. http://aphyspc18.epfl.ch/api/coordinates/534700/144950/geneva/temperature/1537034400000/1537768800000/20
+	// Get data to plot graph e.g. http://aphyspc18.epfl.ch/api/range/coordinates/534700/144950/geneva/temperature/1537034400000/1537768800000/20
 	TemporalData.prototype.buildDataUrl = function(coord) {
 		var sel = this.timeSelection;
         if (sel === null) return '';
         
         var lake = sel.folder === 'data' ? 'geneva' : sel.folder.slice(5);
-		var url = `${NETCDF_DATA_HOST}/coordinates/${coord.x}/${coord.y}/${lake}/${this.fieldName}/${+DateHelpers.firstDayOfWeek(sel.week, sel.year)}/${+DateHelpers.lastDayOfWeek(sel.week, sel.year)}`;
+		var url = `${NETCDF_DATA_HOST}/range/coordinates/${coord.x}/${coord.y}/${lake}/${this.fieldName}/${+DateHelpers.firstDayOfWeek(sel.week, sel.year)}/${+DateHelpers.lastDayOfWeek(sel.week, sel.year)}`;
 		
 		if(coord.z) {
 			url = `${url}/${Math.abs(coord.z)}`;
