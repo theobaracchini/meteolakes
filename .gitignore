@@ -1,3 +1,4 @@
 dist
 node_modules
 lake-view-*.tgz
+npm-debug.log

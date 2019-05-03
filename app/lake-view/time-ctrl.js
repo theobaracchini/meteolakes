@@ -163,13 +163,13 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
 
     $scope.ChangeWeek = function(week) {
         $scope.selection.week = week;
-        selectDefaultDepth();
+        tryKeepDepth();
     };
 
     $scope.ChangeYear = function(year) {
         $scope.selection.year = year;
         selectClosestWeek();
-        selectDefaultDepth();
+        tryKeepDepth();
     };
 
     $scope.ChangeLake = function(lake) {
@@ -180,7 +180,7 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
 
         selectClosestYear();
         selectClosestWeek();
-        selectDefaultDepth();
+        selectSurfaceDepth();
     };
 
     $scope.ChangeDepth = function(depth) {
@@ -219,13 +219,28 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
         $scope.selection.depth = null;
         $scope.selection.needNetcdf = false;
     }
+	
+	function selectSurfaceDepth() {
+		if($scope.hasDepthList()) {
+			$scope.ChangeDepth($scope.netcdfIndex[$scope.selection.lake].depths[0]);
+		} else {
+			selectDefaultDepth();
+		}
+	}
+	
+	function tryKeepDepth() {
+		if(!($scope.hasDepthList() && 
+			$scope.netcdfIndex[$scope.selection.lake].depths.indexOf(-$scope.selection.depth) !== -1)) {
+			selectSurfaceDepth();
+		}
+	}
 
     $scope.$on('moveToNextWeek', moveToNextWeek);
 
     function moveToNextWeek() {
         var week = $scope.selection.week;
         var year = $scope.selection.year;
-        var date = moment().day('Monday').week(week).year(year);
+        var date = moment().day('Monday').year(year).week(week);
         date.add(1, 'w');
         var lakeData = $scope.index[$scope.selection.lake];
 
@@ -299,21 +314,6 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
         }
     }
 
-    // TODO: go to now when click on bubble
-    function checkBubbleClick(event){
-      var xClick = event.clientX;
-      var yClick = event.clientY;
-      var xMin = 10;
-      var xMax = 40;
-      var yMin = 10;
-      var yMax = 100;
-
-      //console.log("clientX: " + xClick + " - clientY: " + yClick);
-      if(xClick < xMax && xClick > xMin && yClick < yMax && yClick > yMin){
-          $scope.stop();
-      }
-    }
-
     function closestStep(selectMoment,momentsArray){
       var closestStep = NaN;
       var bestDiff = Infinity;
@@ -344,6 +344,10 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
                   + ')'
                   );
       }
+	  
+	$scope.bubbleClick = function() {
+        $scope.stop();
+	}
 
    function updateBubbleCSS(){
      var el = $("input[type='range']");
@@ -359,7 +363,8 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
            left: val*el.width() + "px",
            marginLeft: position.left - 25 + "px",
            visibility: "visible",
-           opacity: 0.82
+           opacity: 0.82,
+           cursor: "pointer"
           })
 
        // Move small bubble
@@ -369,7 +374,8 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
            left: val*(window.innerWidth - 90) + "px",
            marginLeft: position.left - 3 + "px",
            visibility: "visible",
-           opacity: 0.82
+           opacity: 0.82,
+           cursor: "pointer"
           })
         }
       }
@@ -394,7 +400,6 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
     };
 
     window.addEventListener("resize",updateBubbleCSS);
-    //window.addEventListener("click",checkBubbleClick);
 
     // Needed cause when changing main tabs fast while timeout the animation will become unstoppable
     $scope.$on('$locationChangeSuccess', function(){

@@ -100,7 +100,7 @@
                    <div class="navbar-right"><p class="navbar-text"><strong>Date: <span ng-bind="getDate()"></span><span class="lv-divider-vertical"></span>Time: <span ng-bind="getTime()"></span></strong></p></div>
                    <div class="lv-timeslider">
                        <input type="range" ng-model="Time.tIndex" min="0" max="{{ Time.nSteps - 1 }}">
-                       <bubble class="large">Now</bubble>
+                       <bubble class="large" ng-click="bubbleClick()">Now</bubble>
                    </div>
                </div>
            </div>
@@ -111,7 +111,7 @@
        <div class="lv-container-dynamic">
            <div class="row" style="margin-top:-25px">
             <div class="col-sm-12 lv-extra-padding" style="margin-top:15px;margin-bottom:-10px">
-             <div class="alert alert-info">
+             <div class="alert alert-info margin-top-28-lg">
                  This feature is experimental, the 3D ecological model is still under development. Your feedback is welcome. Use this data with caution.
              </div>
             </div>
@@ -141,7 +141,7 @@
           <div class="pull-right lv-controls-xs lv-timer-mobile">
             <div class="lv-timeslider lv-timeslider-mobile">
                 <input type="range" ng-model="Time.tIndex" min="0" max="{{ Time.nSteps - 1 }}">
-                <bubble class="xs">Now</bubble>
+                <bubble class="xs" ng-click="bubbleClick()">Now</bubble>
             </div>
             <button type="button" class="btn btn-default navbar-btn" ng-click="play()"><span class="glyphicon" ng-class="{'glyphicon-play': !isPlaying, 'glyphicon-pause': isPlaying}"></span></button>
         </div>

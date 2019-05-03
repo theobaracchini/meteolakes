@@ -6,7 +6,10 @@
             <popupSmall class="glow"><a href="#!/info" style="color:#FFF">Important notice! Info. importante!</a></popupSmall>
 
             <h3>Model Validation by Remote Sensing</h3>
-            <iframe src="http://meteolakes.ch/validation" class="iframe-scale-70" scrolling="no"></iframe>
+			<div class="iframe-container">
+				<div class="iframe-scale-70 iframe-click-overlay" ng-click="$ctrl.onClick()" ng-style="{'-webkit-transform': 'scale(' + $ctrl.scale + ')','-moz-transform':'scale(' + $ctrl.scale + ')','transform':'scale(' + $ctrl.scale + ')'}"></div>
+				<iframe src="http://meteolakes.ch/validation" class="iframe-scale-70" ng-style="{'-webkit-transform': 'scale(' + $ctrl.scale + ')','-moz-transform':'scale(' + $ctrl.scale + ')','transform':'scale(' + $ctrl.scale + ')'}" scrolling="no"></iframe>
+			</div>
         </div>
     </div>
 
