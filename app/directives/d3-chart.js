@@ -64,12 +64,12 @@ angular.module('meteolakesApp').directive('d3Chart', function($window) {
 
             var area = d3.svg.area()
                 .interpolate('monotone')
-                .x(function (d) { return x(d.date) || 1; })
-                .y0(function (d) { return y(d.max_value); })
-                .y1(function (d) { return y(d.min_value); });
+                .x(function(d) { return x(d.date) || 1; })
+                .y0(function(d) { return y(d.max_value); })
+                .y1(function(d) { return y(d.min_value); });
 
             var line = d3.svg.line()
-				.interpolate("monotone")
+                .interpolate('monotone')
                 .x(function(d) { return x(d.date); })
                 .y(function(d) { return y(d.value); });
 
@@ -132,7 +132,7 @@ angular.module('meteolakesApp').directive('d3Chart', function($window) {
                         label = 'Location: ' + values.x + ' / ' + values.y + ' m';
                     }
                     x.domain(d3.extent(data, function(d) { return d.date; }));
-                    if(data[0].min_value && data[0].max_value) {
+                    if (data[0].min_value && data[0].max_value) {
                         y.domain([
                             d3.min(data, function(d) { return d.min_value; }),
                             d3.max(data, function(d) { return d.max_value; })
@@ -169,7 +169,7 @@ angular.module('meteolakesApp').directive('d3Chart', function($window) {
                         .text(label)
                         .attr('transform', 'translate(' + (width / 2) + ')');
 
-                    if(data[0].min_value && data[0].max_value) {
+                    if (data[0].min_value && data[0].max_value) {
                         renderRoot.select('.chart-area')
                             .attr('d', area(data));
                     } else {

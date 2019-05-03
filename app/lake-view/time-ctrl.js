@@ -10,11 +10,10 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
                 DataIndex.loadNetcdf($scope.netcdfAvailabilityFile).then(function(netcdfIndex) {
                     $scope.netcdfIndex = netcdfIndex;
                     saveIndex();
-            });
+                });
             } else {
                 saveIndex();
             }
-            
         }, function(err) {
             console.error('Failed to load data index!', err);
         });
@@ -134,10 +133,10 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
     $scope.stop = function() {
         $scope.pause();
         var nowMoment = moment();
-        if ($scope.selection.week == nowMoment.isoWeek() && $scope.selection.year == nowMoment.year()){
-            var nowStep = closestStep(nowMoment,steps);
+        if ($scope.selection.week == nowMoment.isoWeek() && $scope.selection.year == nowMoment.year()) {
+            var nowStep = closestStep(nowMoment, steps);
             Time.tIndex = nowStep;
-        }else{
+        } else {
             Time.tIndex = 0;
         }
     };
@@ -158,8 +157,8 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
     };
 
     $scope.PrettyPrintDepth = function(depth) {
-        return depth ? Math.abs(depth).toString() + " m" : "";
-    }
+        return depth ? Math.abs(depth).toString() + ' m' : '';
+    };
 
     $scope.ChangeWeek = function(week) {
         $scope.selection.week = week;
@@ -189,10 +188,10 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
     };
 
     $scope.hasDepthList = function() {
-        return ($scope.netcdfIndex && $scope.netcdfIndex[$scope.selection.lake] && 
+        return ($scope.netcdfIndex && $scope.netcdfIndex[$scope.selection.lake] &&
             $scope.netcdfIndex[$scope.selection.lake].data.get($scope.selection.year) &&
             $scope.netcdfIndex[$scope.selection.lake].data.get($scope.selection.year).includes($scope.selection.week));
-    }
+    };
 
     $scope.$on('$destroy', function() {
         if (tickTimerId) {
@@ -205,8 +204,8 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
     }
 
     function selectClosestYear() {
-      var lakeData = $scope.index[$scope.selection.lake];
-      $scope.selection.year = Util.closest(lakeData.years, $scope.selection.year);
+        var lakeData = $scope.index[$scope.selection.lake];
+        $scope.selection.year = Util.closest(lakeData.years, $scope.selection.year);
     }
 
     function selectClosestWeek() {
@@ -219,21 +218,21 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
         $scope.selection.depth = null;
         $scope.selection.needNetcdf = false;
     }
-	
-	function selectSurfaceDepth() {
-		if($scope.hasDepthList()) {
-			$scope.ChangeDepth($scope.netcdfIndex[$scope.selection.lake].depths[0]);
-		} else {
-			selectDefaultDepth();
-		}
-	}
-	
-	function tryKeepDepth() {
-		if(!($scope.hasDepthList() && 
+
+    function selectSurfaceDepth() {
+        if ($scope.hasDepthList()) {
+            $scope.ChangeDepth($scope.netcdfIndex[$scope.selection.lake].depths[0]);
+        } else {
+            selectDefaultDepth();
+        }
+    }
+
+    function tryKeepDepth() {
+        if (!($scope.hasDepthList() &&
 			$scope.netcdfIndex[$scope.selection.lake].depths.indexOf(-$scope.selection.depth) !== -1)) {
-			selectSurfaceDepth();
-		}
-	}
+            selectSurfaceDepth();
+        }
+    }
 
     $scope.$on('moveToNextWeek', moveToNextWeek);
 
@@ -283,129 +282,126 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
 
     function resumeIfReady() {
         if (allClientsReady()) {
-
             updateSliderCSS('input[type="range"]');
 
 
             var nowMoment = moment();
-            if ($scope.selection.week == nowMoment.isoWeek() && $scope.selection.year == nowMoment.year()){
-              var nowStep = closestStep(nowMoment,steps);
-              Time.tIndex = nowStep;
+            if ($scope.selection.week == nowMoment.isoWeek() && $scope.selection.year == nowMoment.year()) {
+                var nowStep = closestStep(nowMoment, steps);
+                Time.tIndex = nowStep;
 
               // Kind of bad fix but nice as "animation"
-              setTimeout(function(){
-                updateBubbleCSS();
-              }, 1000);
+                setTimeout(function() {
+                    updateBubbleCSS();
+                }, 1000);
 
-              $scope.playTimeout = setTimeout(function(){
+                $scope.playTimeout = setTimeout(function() {
+                    if (wasPlaying && !$scope.isPlaying) {
+                        wasPlaying = false;
+                        $scope.play();
+                    }
+                }, 5000);
+            } else {
+                removeBubbleCSS();
                 if (wasPlaying && !$scope.isPlaying) {
-                  wasPlaying = false;
-                  $scope.play();
+                    wasPlaying = false;
+                    $scope.play();
                 }
-              }, 5000);
-            }else{
-              removeBubbleCSS();
-              if (wasPlaying && !$scope.isPlaying) {
-                  wasPlaying = false;
-                  $scope.play();
-              }
-          }
-
+            }
         }
     }
 
-    function closestStep(selectMoment,momentsArray){
-      var closestStep = NaN;
-      var bestDiff = Infinity;
+    function closestStep(selectMoment, momentsArray) {
+        var closestStep = NaN;
+        var bestDiff = Infinity;
 
-      var i;
-      for(i = 0; i < momentsArray.length; ++i){
-         var currDiff = Math.abs(momentsArray[i] - selectMoment);
-         if(currDiff < bestDiff){
-             closestStep = i;
-             bestDiff = currDiff;
-         }
-      }
-      return closestStep
+        var i;
+        for (i = 0; i < momentsArray.length; ++i) {
+            var currDiff = Math.abs(momentsArray[i] - selectMoment);
+            if (currDiff < bestDiff) {
+                closestStep = i;
+                bestDiff = currDiff;
+            }
+        }
+        return closestStep;
     }
 
     function updateSliderCSS(field) {
-      var nowMoment = moment();
-      var nowStep = closestStep(nowMoment,steps)+1;
-      if (nowStep == 1){
-        nowStep = 0;
-      }
-      var val = nowStep/Time.nSteps;
+        var nowMoment = moment();
+        var nowStep = closestStep(nowMoment, steps) + 1;
+        if (nowStep == 1) {
+            nowStep = 0;
+        }
+        var val = nowStep / Time.nSteps;
 
-      $(field).css('background-image',
+        $(field).css('background-image',
                   '-webkit-gradient(linear, left top, right top, '
                   + 'color-stop(' + val + ', #989898), '
                   + 'color-stop(' + val + ', #ADD8E6)'
                   + ')'
                   );
-      }
-	  
-	$scope.bubbleClick = function() {
-        $scope.stop();
-	}
+    }
 
-   function updateBubbleCSS(){
-     var el = $("input[type='range']");
-     var position = el.position();
-     var nowStep = closestStep(moment(),steps)+1;
-     var val = nowStep/Time.nSteps;
+    $scope.bubbleClick = function() {
+        $scope.stop();
+    };
+
+    function updateBubbleCSS() {
+        var el = $("input[type='range']");
+        var position = el.position();
+        var nowStep = closestStep(moment(), steps) + 1;
+        var val = nowStep / Time.nSteps;
 
      // Move large bubble
-     if ($scope.selection.week == moment().isoWeek()){
-       el
-         .next("bubble.large")
+        if ($scope.selection.week == moment().isoWeek()) {
+            el
+         .next('bubble.large')
          .css({
-           left: val*el.width() + "px",
-           marginLeft: position.left - 25 + "px",
-           visibility: "visible",
-           opacity: 0.82,
-           cursor: "pointer"
-          })
+             left: val * el.width() + 'px',
+             marginLeft: position.left - 25 + 'px',
+             visibility: 'visible',
+             opacity: 0.82,
+             cursor: 'pointer'
+         });
 
        // Move small bubble
-       el
-         .next("bubble.xs")
+            el
+         .next('bubble.xs')
          .css({
-           left: val*(window.innerWidth - 90) + "px",
-           marginLeft: position.left - 3 + "px",
-           visibility: "visible",
-           opacity: 0.82,
-           cursor: "pointer"
-          })
+             left: val * (window.innerWidth - 90) + 'px',
+             marginLeft: position.left - 3 + 'px',
+             visibility: 'visible',
+             opacity: 0.82,
+             cursor: 'pointer'
+         });
         }
-      }
+    }
 
-   function removeBubbleCSS() {
+    function removeBubbleCSS() {
         var el = $("input[type='range']");
         // Remove large bubble
         el
-          .next("bubble.large")
+          .next('bubble.large')
           .css({
-            visibility: "hidden",
-            opacity: 0
-          })
+              visibility: 'hidden',
+              opacity: 0
+          });
 
         // Remove small bubble
         el
-          .next("bubble.xs")
+          .next('bubble.xs')
           .css({
-            visibility: "hidden",
-            opacity: 0
-          })
-    };
+              visibility: 'hidden',
+              opacity: 0
+          });
+    }
 
-    window.addEventListener("resize",updateBubbleCSS);
+    window.addEventListener('resize', updateBubbleCSS);
 
     // Needed cause when changing main tabs fast while timeout the animation will become unstoppable
-    $scope.$on('$locationChangeSuccess', function(){
+    $scope.$on('$locationChangeSuccess', function() {
         clearTimeout($scope.playTimeout);
         $scope.pause();
         wasPlaying = false;
     });
-
 });
