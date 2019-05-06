@@ -30,20 +30,20 @@ angular.module('meteolakesApp').service('PlotIndex', function($q, DATA_HOST, DAT
         var loadingFiles = [];
         var processing = [];
         var endDate = startDate.clone().add(period, 'days').endOf('day');
-        //search files needed
+        // search files needed
         var dataFiles = new Set();
         me.plots.forEach(function(plot) {
             plot.columns.forEach(function(col) {
                 var files = InsituDataIndex.getFilesByColumn(col.name, startDate, endDate);
-                files.forEach(function(file){
+                files.forEach(function(file) {
                     dataFiles.add(file);
                 });
-                col.files = files.map(function(file){
-                    return file.series
+                col.files = files.map(function(file) {
+                    return file.series;
                 });
             });
         });
-        //Load files data
+        // Load files data
         dataFiles.forEach(function(file) {
             if (!(file.loading || file.ready)) {
                 // Asynchronously load the files
@@ -60,7 +60,7 @@ angular.module('meteolakesApp').service('PlotIndex', function($q, DATA_HOST, DAT
                     // Extract the needed column data, concatenated from all files
                     var files = [];
                     dataFiles.forEach(function(file) {
-                        if (col.files.includes(file.series)){
+                        if (col.files.includes(file.series)) {
                             files.push(file);
                         }
                     });

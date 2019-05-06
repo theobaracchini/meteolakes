@@ -1,3 +1,7 @@
+html {
+	margin-left: calc(100% - 100vw);
+}
+
 body {
     padding-bottom: 70px;
 }
@@ -11,8 +15,14 @@ div#tab-insitu {
     div#tab-insitu { padding-top: 80px; }
 }
 
+
 .lv-main-content {
-    padding-top: 100px; /* *** */
+    padding-top: 85px; /* *** */
+}
+@media (max-width: 767px) {	
+	.lv-main-content {
+		padding-top: 100px; /* *** */
+	}
 }
 
 .lv-container-dynamic {
@@ -222,7 +232,13 @@ left: 14px;
 .chart-line {
     fill: none;
     stroke: steelblue;
-    stroke-width: 1.5px;
+    stroke-width: 2px;
+}
+
+.chart-area {
+  fill: rgba(70,130,180, .25);
+  stroke: none;
+  stroke-width: 0;
 }
 
 .chart-legend {
@@ -414,9 +430,7 @@ table.variable th, table.variable td {
 .iframe-scale-70 {
     width:1900px;
     height:1000px;
-    -webkit-transform:scale(0.7);
-    -moz-transform:scale(0.7);
-    transform:scale(0.7);
+	position: absolute;
     -moz-transform-origin: top left;
     -webkit-transform-origin: top left;
     -o-transform-origin: top left;
@@ -426,7 +440,24 @@ table.variable th, table.variable td {
     border: 0;
     padding: 0;
     margin: 0;
+	margin-bottom: 100px;
 }
+
+.iframe-click-overlay{
+	z-index:10;
+	background: none;
+	height: 900px;
+}
+
+.margin-top-28-lg {
+  margin-top: 28px;
+}
+@media (max-width: 768px) {
+  .margin-top-28-lg {
+    margin-top: 0;
+  }
+}
+
 
 /*.navbar {
     color: #000000;
@@ -484,6 +515,7 @@ color:#FFF;
 -webkit-animation: opacityOnAndOff 15s normal forwards;
 -moz-animation: opacityOnAndOff 15s normal forwards;
 animation: opacityOnAndOff 15s normal forwards;
+z-index: 100;
 }
 
 @keyframes opacityOnAndOff {

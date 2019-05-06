@@ -62,7 +62,14 @@ angular.module('meteolakesApp').directive('d3Chart', function($window) {
                 .scale(y)
                 .orient('left');
 
+            var area = d3.svg.area()
+                .interpolate('monotone')
+                .x(function(d) { return x(d.date) || 1; })
+                .y0(function(d) { return y(d.max_value); })
+                .y1(function(d) { return y(d.min_value); });
+
             var line = d3.svg.line()
+                .interpolate('monotone')
                 .x(function(d) { return x(d.date); })
                 .y(function(d) { return y(d.value); });
 
@@ -87,6 +94,9 @@ angular.module('meteolakesApp').directive('d3Chart', function($window) {
             g.append('text')
                 .attr('class', 'chart-label')
                 .attr('text-anchor', 'middle');
+
+            g.append('path')
+                .attr('class', 'chart-area');
 
             g.append('path')
                 .attr('class', 'chart-line');
@@ -116,13 +126,20 @@ angular.module('meteolakesApp').directive('d3Chart', function($window) {
                     }
                     data = values.data;
                     // Don't display the surface elevation as it is not properly defined
-                    if (values.z < -1) {
+                    if (values.z) {
                         label = 'Location: ' + values.x + ' / ' + values.y + ' / ' + d3.round(values.z, 1) + ' m';
                     } else {
                         label = 'Location: ' + values.x + ' / ' + values.y + ' m';
                     }
                     x.domain(d3.extent(data, function(d) { return d.date; }));
-                    y.domain(d3.extent(data, function(d) { return d.value; }));
+                    if (data[0].min_value && data[0].max_value) {
+                        y.domain([
+                            d3.min(data, function(d) { return d.min_value; }),
+                            d3.max(data, function(d) { return d.max_value; })
+                        ]);
+                    } else {
+                        y.domain(d3.extent(data, function(d) { return d.value; }));
+                    }
                     show();
                     render();
                 } else {
@@ -151,6 +168,14 @@ angular.module('meteolakesApp').directive('d3Chart', function($window) {
                     renderRoot.select('.chart-label')
                         .text(label)
                         .attr('transform', 'translate(' + (width / 2) + ')');
+
+                    if (data[0].min_value && data[0].max_value) {
+                        renderRoot.select('.chart-area')
+                            .attr('d', area(data));
+                    } else {
+                        renderRoot.select('.chart-area')
+                            .attr('d', null);
+                    }
 
                     renderRoot.select('.chart-line')
                         .attr('d', line(data));

@@ -8,6 +8,7 @@ angular.module('meteolakesApp').component('lakeView', {
         legendVar: '@', // Name of Variable, in human-readable format with unit
         type: '@',  // Type of plotted data, 'value' or 'vector'
         hasTransects: '@', // Whether or not there is transect data available
+        lakeId: '<',
         maxExtentValue: '<',
         maxExtentForceValue: '<',
         minExtentValue: '<',
@@ -31,8 +32,8 @@ angular.module('meteolakesApp').component('lakeView', {
         me.tab = 'surface';
         me.dataReady = false;
         me.timeSelection = null;
-        me.vectorLabel = "Depth Averaged";
-        me.valueLabel = "Surface";
+        me.vectorLabel = 'Depth Averaged';
+        me.valueLabel = 'Surface';
 
         if (me.type === 'value') {
             me.surfaceData = new TemporalData(me.var, 0.03);
@@ -80,13 +81,13 @@ angular.module('meteolakesApp').component('lakeView', {
             me.dataReady = false;
             me.timeSelection = selection;
             if (selection.depth !== null) {
-                me.vectorLabel = "Layer " + Math.abs(selection.depth) + " m";
-                me.valueLabel = "Layer " + Math.abs(selection.depth) + " m";
+                me.vectorLabel = 'Layer ' + Math.abs(selection.depth) + ' m';
+                me.valueLabel = 'Layer ' + Math.abs(selection.depth) + ' m';
             } else {
-                me.vectorLabel = "Depth Averaged";
-                me.valueLabel = "Surface";
+                me.vectorLabel = 'Depth Averaged';
+                me.valueLabel = 'Surface';
             }
-            
+
             me.closeChart();
             if (!saveParticlesForNextWeek) {
                 hashes = [];
@@ -153,7 +154,7 @@ angular.module('meteolakesApp').component('lakeView', {
         };
 
         me.drawOverlay = function(data, options) {
-            if (!me.dataReady) {return new PIXI.Graphics();}
+            if (!me.dataReady) { return new PIXI.Graphics(); }
 
             if (me.type === 'vector') {
                 return drawVectorOverlay(data, options);
@@ -364,8 +365,8 @@ angular.module('meteolakesApp').component('lakeView', {
                 var tox = x + scaledDx;
                 var toy = y + scaledDy;
 
-                var newNorm = Math.sqrt(scaledDx * scaledDx + scaledDy * scaledDy)
-                var headlen = newNorm / 5 > 2 ? newNorm / 5 : 2 ;   // length of head in pixels
+                var newNorm = Math.sqrt(scaledDx * scaledDx + scaledDy * scaledDy);
+                var headlen = newNorm / 5 > 2 ? newNorm / 5 : 2;   // length of head in pixels
                 var angle = Math.atan2(scaledDy, scaledDx);
 
                 graphics.lineStyle(1 + 5 * extent, +color.replace('#', '0x'));
@@ -380,14 +381,13 @@ angular.module('meteolakesApp').component('lakeView', {
         }
 
         function scaling(norm, maxNorm) {
-            var maxLength = 30
+            var maxLength = 30;
             var minLength = 5;
             var result = (-1 / (norm / maxNorm + 1) + 1) * maxLength * 2;
             if (result < minLength) {
                 return minLength / norm;
-            } else {
-                return result / norm;
             }
+            return result / norm;
         }
 
         me.mapClicked = function(point) {
@@ -494,13 +494,24 @@ angular.module('meteolakesApp').component('lakeView', {
             if (point) {
                 var temporalData = me[me.tab + 'Data'];
                 var data = temporalData.Data[point.i][point.j];
-                var values = data.values.map(Util.norm);
-                me.chartData = {
-                    x: data.x,
-                    y: data.y,
-                    z: data.z,
-                    data: temporalData.withTimeSteps(values)
-                };
+
+                if (me.timeSelection.needNetcdf) {
+                    temporalData.getDataAtPoint(data).then(function(plotData) {
+                        me.chartData = {
+                            x: data.x,
+                            y: data.y,
+                            z: me.tab === 'surface' ? me.timeSelection.depth : data.z,
+                            data: plotData
+                        };
+                    });
+                } else {
+                    var values = data.values.map(Util.norm);
+                    me.chartData = {
+                        x: data.x,
+                        y: data.y,
+                        data: temporalData.withTimeSteps(values)
+                    };
+                }
             } else {
                 me.chartData = null;
             }

@@ -1,4 +1,4 @@
-angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, NETCDF_DATA_HOST, $q, DateHelpers, stats) {
+angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, NETCDF_DATA_HOST, $q, DateHelpers, stats, Util) {
     var TemporalData = function(fieldName, cropPercentile, suffix) {
         this.fieldName = fieldName;
         this.suffix = suffix || '';
@@ -238,6 +238,82 @@ angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, NETC
             });
         });
     };
+
+    TemporalData.prototype.parseDataCSV = function(data) {
+        let rows = [];
+        d3.csv.parseRows(data, function(row) {
+            rows.push(row.slice(1))
+        });
+        let result = [];
+        var regExp = /\(([^,)]+), ([^)]+)\)/;
+
+        for(let i = 0; i < rows[0].length; i++) {
+
+            let value = rows[1][i];
+            var matches = regExp.exec(value);
+            if(matches) {
+                value = Util.norm([matches[1], matches[2]]);
+            } else {
+                value = +value;
+            }
+
+            let object = {
+                'date': moment(rows[0][i], "DD/MM/YYY HH:mm"),
+                'value': value,
+            };
+            if(rows.length > 3) { // Add min/max if available to plot the range
+                let min_value = rows[2][i];
+                matches = regExp.exec(min_value);
+                if(matches) {
+                    min_value = Util.norm([matches[1], matches[2]]);
+                } else {
+                    min_value = +min_value;
+                }
+                object['min_value'] = min_value;
+
+                let max_value = rows[3][i];
+                matches = regExp.exec(max_value);
+                if(matches) {
+                    max_value = Util.norm([matches[1], matches[2]]);
+                } else {
+                    max_value = +max_value;
+                }
+                object['max_value'] = max_value;
+            }
+            result.push(object);
+        }
+        return result;
+    };
+
+	// Get data to plot graph e.g. http://aphyspc18.epfl.ch/api/range/coordinates/534700/144950/geneva/temperature/1537034400000/1537768800000/20
+	TemporalData.prototype.buildDataUrl = function(coord) {
+		var sel = this.timeSelection;
+        if (sel === null) return '';
+        
+        var lake = sel.folder === 'data' ? 'geneva' : sel.folder.slice(5);
+		var url = `${NETCDF_DATA_HOST}/range/coordinates/${coord.x}/${coord.y}/${lake}/${this.fieldName}/${+DateHelpers.firstDayOfWeek(sel.week, sel.year)}/${+DateHelpers.lastDayOfWeek(sel.week, sel.year)}`;
+		
+		if(coord.z) {
+			url = `${url}/${Math.abs(coord.z)}`;
+		}
+	
+        return url;
+    };
+	
+	TemporalData.prototype.getDataAtPoint = function(coord) {
+		var me = this;
+  
+        return $q(function(resolve, reject) {
+			var url = me.buildDataUrl(coord);
+			d3.text(url, function(err, data) {
+				if (err) {
+					reject('url not found: ' + url);
+				} else {
+					resolve(me.parseDataCSV(data));
+				}
+			});
+        });
+	}
 
     return TemporalData;
 });

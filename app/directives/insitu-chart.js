@@ -18,6 +18,7 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
             var height = 0;
              // More colorblind friendly scale
             var COLORS_G = ['#3366cc', '#dc3912', '#ff9900', '#990099', '#0099c6', '#dd4477', '#b82e2e', '#316395', '#994499', '#22aa99'];
+            var MINIMAL_TOOLTIP_GAP = 40;
 
             var x = d3.time.scale();
             var y = d3.scale.linear();
@@ -42,6 +43,7 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
                 .orient('left');
 
             var line = d3.svg.line()
+				.interpolate("monotone")
                 .x(function(d) { return x(d.date); })
                 .y(function(d) { return y(d.value); });
 
@@ -118,10 +120,10 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
                     var xExtent = [];
                     var yExtent = [];
                     spec.columns.forEach(function(col) {
-                    var plotXextent = d3.extent(col.data, function(d) { return d.date; });
-                    var plotYextent = d3.extent(col.data, function(d) { return d.value; });
-                    xExtent = xExtent.concat(plotXextent);
-                    yExtent = yExtent.concat(plotYextent);
+                        var plotXextent = d3.extent(col.data, function(d) { return d.date; });
+                        var plotYextent = d3.extent(col.data, function(d) { return d.value; });
+                        xExtent = xExtent.concat(plotXextent);
+                        yExtent = yExtent.concat(plotYextent);
                     });
                     xExtent = d3.extent(xExtent);
                     yExtent = d3.extent(yExtent);
@@ -172,27 +174,27 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
 
                     renderRoot.selectAll('.chart-data').remove();
                     spec.columns.forEach(function(col, idx) {
-                    if (spec.style === 'line' || spec.style === 'both') {
-                        renderRoot.append('path')
-                            .attr('class', 'chart-data chart-line')
-                            .attr('d', line(col.data))
-                            .style('stroke', colors[idx]);
-                    }
+                        if (spec.style === 'line' || spec.style === 'both') {
+                            renderRoot.append('path')
+                                .attr('class', 'chart-data chart-line')
+                                .attr('d', line(col.data))
+                                .style('stroke', colors[idx]);
+                        }
 
-                    if (spec.style === 'dots' || spec.style === 'both') {
-                        col.data.forEach(function(dot) {
-                            // Implement circles as zero-length lines in order
-                            // to change radius by CSS in browsers without
-                            // SVG2 support
-                            renderRoot.append('line')
-                            .attr('class', 'chart-data chart-circle')
-                            .attr('x1', x(dot.date))
-                            .attr('y1', y(dot.value))
-                            .attr('x2', x(dot.date))
-                            .attr('y2', y(dot.value))
-                            .style('stroke', colors[idx]);
-                        });
-                    }
+                        if (spec.style === 'dots' || spec.style === 'both') {
+                            col.data.forEach(function(dot) {
+                                // Implement circles as zero-length lines in order
+                                // to change radius by CSS in browsers without
+                                // SVG2 support
+                                renderRoot.append('line')
+                                .attr('class', 'chart-data chart-circle')
+                                .attr('x1', x(dot.date))
+                                .attr('y1', y(dot.value))
+                                .attr('x2', x(dot.date))
+                                .attr('y2', y(dot.value))
+                                .style('stroke', colors[idx]);
+                            });
+                        }
 
                         // We're passing in a function in d3.max to tell it what we're maxing (x value)
                         var xScale = d3.time.scale()
@@ -222,71 +224,109 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
                         textX += bbox.width + 15;
                     });
 
-                    // Display values when mouse hovering
-                    var hoverBox = g.append("g")
-                    hoverBox.append("rect")
-                          .attr('transform', 'translate(' + 0 + ',' + 0 + ')')
-                          //.style("display", "none");
+                    var focuses = [];
+                    var hoverBoxes = [];
 
-                    var focus = g.append("g")
-                          .attr("class", "focus")
-                          .style("display", "none");
+                    for(var i = 0; i < spec.columns.length; i++) {
+                        var color = COLORS_G[i%COLORS_G.length];
+                        // Display values when mouse hovering
+                        var hoverBox = g.append("g")
+                        hoverBox.append("rect")
+                            .attr('transform', 'translate(' + 0 + ',' + 0 + ')')
+                            .style("fill",color);
+                            //.style("display", "none");    
+                        hoverBoxes.push(hoverBox);
 
-                    focus.append("circle")
-                        .attr("r", 4.5);
+                        var focus = g.append("g")
+                            .attr("class", "focus")
+                            .style("display", "none");
 
-                    focus.append("text")
-                        .attr("x", 9)
-                        .attr("dy", "-0.35em");
+                        focus.append("circle")
+                            .attr("r", 4.5)
+                            .style("stroke",color);
+
+                        focus.append("text")
+                            .attr("x", 9)
+                            .attr("dy", "-0.35em");
+                        focuses.push(focus);
+
+
+                        g.append("rect")
+                            .attr("class", "overlay")
+                            .attr("width", width)
+                            .attr("height", height)
+                            .on("mouseover", function() {
+                                hoverBoxes.forEach(hoverBox => hoverBox.style("opacity", 1));
+                                focuses.forEach(focus => focus.style("display", null));
+                            })
+                            .on("mouseout", function() {
+                                hoverBoxes.forEach(hoverBox => hoverBox.style("opacity", 0));
+                                focuses.forEach(focus => focus.style("display", "none"));
+                            })
+                            .on("mousemove", mousemove);
+                    }
+
 
                     // Mouse hovering popup
                     function mousemove() {
-                      var x0 = x.invert(d3.mouse(this)[0]);
+                        var x0 = x.invert(d3.mouse(this)[0]);
+                        
+                        var prevY;
 
-                      var col = spec.columns[0].data,
-                          i = bisectDate(col, x0, 1),
-                          colInd = x0 - col[i-1].date > col[i].date - x0 ? i : i-1;
+                        spec.columns.forEach(function(column, idx) {
+                            var col = column.data;
+                            var i = bisectDate(col, x0, 1);
+							if(!col[i - 1] || !col[i]) {
+								return;
+							}
+                            var colInd = x0 - col[i-1].date > col[i].date - x0 ? i : i-1;
 
-                      var backShift;
-                      if (x(col[spec.columns[0].data.length-1].date) - x(col[colInd].date) < 100){
-                        backShift = -104;
-                      }  else {
-                        backShift = 8;
-                      }
+                            var backShift;
+                            if (x(col[spec.columns[0].data.length-1].date) - x(col[colInd].date) < 100){
+                            backShift = -104;
+                            }  else {
+                            backShift = 8;
+                            }
 
-                      // TODO: multiple hover bubbles when multiple lines
-                      focus.attr("transform", "translate(" + x(col[colInd].date) +"," + y(col[colInd].value) + ")");
+                            var hoverBox = hoverBoxes[idx];
+                            var focus = focuses[idx];
 
-                      focus.select("text")
-                          .attr("x", backShift+1)
-                          .text(formatUnit(col[colInd].value))
-                          .append('svg:tspan')
-                          .attr("x", backShift+1)
-                          .attr("dy", "1.35em")
-                          .text(col[colInd].date.format("DD-MMM HH:mm"));
+                            var currentY = y(col[colInd].value);
+                            var diff = 0;
+                            if(prevY) {
+                                if(currentY < prevY && prevY - currentY < MINIMAL_TOOLTIP_GAP) {
+                                    diff = prevY - currentY;
+                                    currentY = prevY - MINIMAL_TOOLTIP_GAP;
+                                    diff = currentY - y(col[colInd].value);
+                                }
+                                if(currentY > prevY && currentY - prevY < MINIMAL_TOOLTIP_GAP) {
+                                    currentY = prevY + MINIMAL_TOOLTIP_GAP;
+                                    diff = currentY - y(col[colInd].value);
+                                }
+                            } else {
+                                prevY = currentY;
+                            }
 
-                      hoverBox.select("rect")
-                        .attr("x", x(col[colInd].date)+backShift) // Fixed shift
-                        .attr("y", y(col[colInd].value)-17) // Fixed shift
-                        .attr("width", 95) // Fixed size for now
-                        .attr("height", 35) // Fixed size for now
-                        .style("opacity", 0.6)
-                        .style("fill","steelblue");
+                            focus.attr("transform", "translate(" + x(col[colInd].date) +"," + y(col[colInd].value) + ")");
+
+                            focus.select("text")
+                                .attr("x", backShift+1)
+                                .attr("fill", "white")
+                                .attr("transform", "translate(" + 0 +"," + diff + ")")
+                                .text(formatUnit(col[colInd].value))
+                                .append('svg:tspan')
+                                .attr("x", backShift+1)
+                                .attr("dy", "1.35em")
+                                .text(col[colInd].date.format("DD-MMM HH:mm"));
+
+                            hoverBox.select("rect")
+                                .attr("x", x(col[colInd].date)+backShift) // Fixed shift
+                                .attr("y", currentY-17) // Fixed shift
+                                .attr("width", 95) // Fixed size for now
+                                .attr("height", 35) // Fixed size for now
+                                .style("opacity", 0.6);
+                        });
                     }
-
-                    g.append("rect")
-                        .attr("class", "overlay")
-                        .attr("width", width)
-                        .attr("height", height)
-                        .on("mouseover", function() {
-                          hoverBox.style("opacity", 1);
-                          focus.style("display", null);
-                          })
-                        .on("mouseout", function() {
-                            focus.style("display", "none");
-                            hoverBox.style("opacity", "0");
-                          })
-                        .on("mousemove", mousemove);
 
                     margin.bottom = textY - height + 20;
                     svg.style('height', (height + margin.top + margin.bottom) + 'px');

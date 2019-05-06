@@ -6,9 +6,15 @@ angular.module('meteolakesApp').config(['$locationProvider', '$routeProvider',
 
         $routeProvider
         .when('/hydro', {
+            redirectTo: '/hydro/geneva'
+        })
+        .when('/hydro/:lakeId', {
             template: '<page-hydro></page-hydro>'
         })
         .when('/quality', {
+            redirectTo: '/quality/geneva'
+        })
+        .when('/quality/:lakeId', {
             template: '<page-quality></page-quality>'
         })
         .when('/remote', {

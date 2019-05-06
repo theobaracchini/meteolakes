@@ -7,7 +7,8 @@ var connect = require('gulp-connect');
 var eslint = require('gulp-eslint');
 var ngAnnotate = require('gulp-ng-annotate');
 var sourcemaps = require('gulp-sourcemaps');
-var uglify = require('gulp-uglify');
+var uglify = require('gulp-uglify-es').default;
+
 
 var sources = ['app/**/*.module.js', 'app/**/module.js', 'app/**/*.js'];
 
@@ -27,6 +28,7 @@ gulp.task('build-prod', function() {
         .pipe(ngAnnotate())
         .pipe(concat('bundle.min.js'))
         .pipe(uglify())
+        .on('error', function (err) { gutil.log(gutil.colors.red('[Error]'), err.toString()); })
         .pipe(gulp.dest('./dist/js/'));
 });
 
