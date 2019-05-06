@@ -1,4 +1,4 @@
-angular.module('meteolakesApp').service('DataIndex', function($q, DATA_HOST, DateHelpers) {
+angular.module('meteolakesApp').service('DataIndex', function($q, DATA_HOST, NETCDF_DATA_HOST, DateHelpers) {
     this.load = function(file) {
         return loadIndex(file).then(parseLakes);
     };
@@ -18,6 +18,22 @@ angular.module('meteolakesApp').service('DataIndex', function($q, DATA_HOST, Dat
             });
         });
     }
+
+    
+    this.apiStatus = function() {
+
+		let url = `${NETCDF_DATA_HOST}/status`;
+	  
+        return $q(function(resolve, reject) {
+			d3.text(url, function(err, data) {
+				if (err) {
+					reject(err);
+				} else {
+					resolve(data);
+				}
+			});
+        });
+    };
 
     function parseLakes(data) {
         return $q(function(resolve, reject) {
