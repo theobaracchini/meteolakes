@@ -8,6 +8,7 @@ angular.module('meteolakesApp').component('lakeView', {
         legendVar: '@', // Name of Variable, in human-readable format with unit
         type: '@',  // Type of plotted data, 'value' or 'vector'
         hasTransects: '@', // Whether or not there is transect data available
+        lakeId: '<',
         maxExtentValue: '<',
         maxExtentForceValue: '<',
         minExtentValue: '<',

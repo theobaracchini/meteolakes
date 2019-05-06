@@ -1,5 +1,5 @@
-angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interval, Time, DateHelpers, DataIndex, Util) {
-    $scope.init = function(availabilityFile, netcdfAvailabilityFile) {
+angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interval, $location, Time, DateHelpers, DataIndex, Util) {
+    $scope.init = function(availabilityFile, netcdfAvailabilityFile, lakeId) {
         $scope.availabilityFile = availabilityFile;
         $scope.netcdfAvailabilityFile = netcdfAvailabilityFile;
 
@@ -9,17 +9,17 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
             if ($scope.netcdfAvailabilityFile) {
                 DataIndex.loadNetcdf($scope.netcdfAvailabilityFile).then(function(netcdfIndex) {
                     $scope.netcdfIndex = netcdfIndex;
-                    saveIndex();
+                    saveIndex(lakeId);
                 });
             } else {
-                saveIndex();
+                saveIndex(lakeId);
             }
         }, function(err) {
             console.error('Failed to load data index!', err);
         });
     };
 
-    function saveIndex() {
+    function saveIndex(lakeId) {
         indexReady = true;
 
         // Initialize with current year/week, closest existing
@@ -31,7 +31,19 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
             week: now.isoWeek(),
             depth: null
         };
-        $scope.ChangeLake(0);
+        let lakeIndex = 0;
+        if(lakeId) {
+            lakeIndex = $scope.index.findIndex(x => {
+                var lake = x.folder === 'data' ? 'geneva' : x.folder.slice(5);
+                return lake === lakeId;
+            });
+            if(lakeIndex === -1) {
+                // Redirect to default
+                $location.path($location.path().replace(lakeId, ''));
+                lakeIndex = 0;
+            }
+        }
+        selectLake(lakeIndex);
     }
 
     var TICK_INTERVAL_MIN = 50;
@@ -171,7 +183,7 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
         tryKeepDepth();
     };
 
-    $scope.ChangeLake = function(lake) {
+    function selectLake(lake) {
         var lakeData = $scope.index[lake];
         $scope.selection.lake = lake;
         $scope.selection.folder = lakeData.folder;
@@ -180,6 +192,16 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
         selectClosestYear();
         selectClosestWeek();
         selectSurfaceDepth();
+    }
+
+    $scope.ChangeLake = function(lake) {
+        let lakeData = $scope.index[lake];
+        let lakeId = lakeData.folder === 'data' ? 'geneva' : lakeData.folder.slice(5);
+        let regex = /(\/[^\/]+)/;
+        let matches = $location.path().match(regex);
+        if(matches) {
+            $location.path(`${matches[1]}/${lakeId}`);
+        }
     };
 
     $scope.ChangeDepth = function(depth) {
