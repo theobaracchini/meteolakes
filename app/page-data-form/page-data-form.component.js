@@ -10,7 +10,7 @@ angular.module('meteolakesApp').component('pageDataForm', {
             var month = newDate.getMonth();
             var day = newDate.getDate();
             var hour = newDate.getHours();
-            $scope.result = new Date(Date.UTC(year, month, day, hour))
+            $scope.result = new Date(Date.UTC(year, month, day, hour));
         };
     }
 });

@@ -45,8 +45,6 @@ angular.module('meteolakesApp').factory('DataFile', function(DATA_HOST, DATA_WEA
                         me.loading = false;
                         resolve();
                     }
-
-                    
                 }
             });
         });

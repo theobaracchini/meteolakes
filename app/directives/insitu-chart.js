@@ -227,7 +227,7 @@ angular.module('meteolakesApp').directive('insituChart', function($window) {
                     var focuses = [];
                     var hoverBoxes = [];
 
-                    for(let i = 0; i < spec.columns.length; i++) {
+                    for(var i = 0; i < spec.columns.length; i++) {
                         var color = COLORS_G[i%COLORS_G.length];
                         // Display values when mouse hovering
                         var hoverBox = g.append("g")
