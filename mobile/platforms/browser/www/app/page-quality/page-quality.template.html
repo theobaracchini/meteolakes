@@ -1,0 +1,157 @@
+<div ng-controller="TimeCtrl" ng-init="init('available_data_quality', null, lakeId)">
+    <nav class="navbar navbar-default navbar-fixed-top">
+       <div class="container">
+        <!--<div class="snowflakes"><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf><sf></sf></div>-->
+           <div class="visible-xs-block lv-navbar-small-buttons">
+               <div class="pull-left width100">
+                   <a href="#!/about"><img src="img/logo_epfl_new.png" style="height:41px;margin:10px"></a>
+                   <div class="meteolakes-title">Meteolakes</div>
+                   <div class="navbar-text mobile-date"><strong><div style="font-size:70%" ng-bind="getDate()"></div><div style="font-size:130%" ng-bind="getTime()"></div></strong></div>
+               </div>
+               <div class="btn-group btn-group-justified">
+                   <div class="btn-group btn-group-sm">
+                       <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+                           {{ index[selection.lake].name }}
+                           <span class="caret"></span>
+                       </button>
+                       <ul class="dropdown-menu lv-scrollable-menu">
+                           <li ng-repeat="lake in index">
+                               <a ng-click="ChangeLake($index)">{{ lake.name }}</a>
+                           </li>
+                       </ul>
+                   </div>
+                   <div class="btn-group btn-group-sm">
+                       <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+                           {{ "Year " + selection.year }}
+                           <span class="caret"></span>
+                       </button>
+                       <ul class="dropdown-menu lv-scrollable-menu" role="menu">
+                           <li ng-repeat="year in index[selection.lake].years | orderBy:'-'">
+                               <a ng-click="ChangeYear(year)">{{ year }}</a>
+                           </li>
+                       </ul>
+                   </div>
+                   <div class="btn-group btn-group-sm">
+                       <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+                           {{ "Week " + selection.week }}
+                           <span class="caret"></span>
+                       </button>
+                       <ul class="dropdown-menu dropdown-menu-right lv-scrollable-menu" role="menu">
+                           <li ng-repeat="week in index[selection.lake].data.get(selection.year) | orderBy:'-'">
+                               <a ng-click="ChangeWeek(week)">{{ PrettyPrintWeek(week) }}</a>
+                           </li>
+                       </ul>
+                   </div>
+               </div>
+           </div>
+
+           <div class="hidden-xs">
+               <div class="pull-left">
+                   <a href="#!/about"><img src="img/logo_epfl_new.png" class="lv-navbar-logo"></a>
+               </div>
+               <div class="btn-group"><a class="navbar-brand" href="#!/quality" style="font-weight:bold">Meteolakes</a></div>
+               <div class="btn-group navbar-btn">
+                   <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+                       {{ index[selection.lake].name }}
+                       <span class="caret"></span>
+                   </button>
+                   <ul class="dropdown-menu lv-scrollable-menu">
+                       <li ng-repeat="lake in index">
+                           <a ng-click="ChangeLake($index)">{{ lake.name }}</a>
+                       </li>
+                   </ul>
+               </div>
+               <div class="btn-group navbar-btn">
+                   <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+                       {{ "Year " + selection.year }}
+                       <span class="caret"></span>
+                   </button>
+                   <ul class="dropdown-menu lv-scrollable-menu" role="menu">
+                       <li ng-repeat="year in index[selection.lake].years | orderBy:'-'">
+                           <a ng-click="ChangeYear(year)">{{ year }}</a>
+                       </li>
+                   </ul>
+               </div>
+               <div class="btn-group navbar-btn">
+                   <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+                       {{ "Week " + selection.week }}
+                       <span class="caret"></span>
+                   </button>
+                   <ul class="dropdown-menu lv-scrollable-menu" role="menu">
+                       <li ng-repeat="week in index[selection.lake].data.get(selection.year) | orderBy:'-'">
+                           <a ng-click="ChangeWeek(week)">{{ PrettyPrintWeek(week) }}</a>
+                       </li>
+                   </ul>
+               </div>
+               <div class="navbar-right">
+                   <div class="btn-group lv-navbar-margin">
+                       <button type="button" class="btn btn-default navbar-btn lv-slower" ng-click="slower()"><span class="glyphicon glyphicon-backward"></span></button>
+                       <button type="button" class="btn btn-default navbar-btn" ng-click="play()"><span class="glyphicon" ng-class="{'glyphicon-play': !isPlaying, 'glyphicon-pause': isPlaying}"></span></button>
+                       <button type="button" class="btn btn-default navbar-btn lv-faster" ng-click="faster()"><span class="glyphicon glyphicon-forward"></span></button>
+                       <button type="button" class="btn btn-default navbar-btn" ng-click="stop()"><span class="glyphicon glyphicon-stop"></span></button>
+                   </div>
+               </div>
+
+               <div>
+                   <div class="btn-group pull-left lv-navbar-margin">
+                       <button type="button" class="btn btn-default navbar-btn" ng-click="backward()"><span class="glyphicon glyphicon-step-backward"></span></button>
+                       <button type="button" class="btn btn-default navbar-btn" ng-click="forward()"><span class="glyphicon glyphicon-step-forward"></span></button>
+                   </div>
+                   <div class="navbar-right"><p class="navbar-text"><strong>Date: <span ng-bind="getDate()"></span><span class="lv-divider-vertical"></span>Time: <span ng-bind="getTime()"></span></strong></p></div>
+                   <div class="lv-timeslider">
+                       <input type="range" ng-model="Time.tIndex" min="0" max="{{ Time.nSteps - 1 }}">
+                       <bubble class="large" ng-click="bubbleClick()">Now</bubble>
+                   </div>
+               </div>
+           </div>
+       </div>
+    </nav>
+
+    <div class="lv-main-content">
+       <div class="lv-container-dynamic">
+           <div class="row" style="margin-top:-25px">
+            <div class="col-sm-12 lv-extra-padding" style="margin-top:15px;margin-bottom:-10px">
+             <div class="alert alert-info margin-top-28-lg">
+                 This feature is experimental, the 3D ecological model is still under development. Your feedback is welcome. Use this data with caution.
+             </div>
+            </div>
+
+               <div class="col-sm-12 col-lg-6 lv-extra-padding">
+
+                   <popupSmall class="glow" style="margin-top:0px"><a href="#!/info" style="color:#FFF">Important notice! Info importante!</a></popupSmall>
+
+                   <h3>Algae</h3>
+
+                   <lake-view var="chlfa" legend-var="Chlorophyll-a concentration (mg/m&#179;)" type="valueWAQchlfa" has-transects="true">
+                   </lake-view>
+               </div>
+
+               <div class="col-sm-12 col-lg-6 lv-extra-padding" style="margin-bottom:10px">
+                   <h3>Oxygen</h3>
+
+                   <lake-view var="oxygen" legend-var="Dissolved oxygen concentration (mg/L)" max-extent-value="14" type="valueWAQoxygen" has-transects="true">
+                   </lake-view>
+               </div>
+           </div>
+       </div>
+    </div>
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+       <div class="container">
+         <div class="visible-xs-block lv-navbar-small-buttons" style="margin-bottom:87px;margin-top:1px">
+          <div class="pull-right lv-controls-xs lv-timer-mobile">
+            <div class="lv-timeslider lv-timeslider-mobile">
+                <input type="range" ng-model="Time.tIndex" min="0" max="{{ Time.nSteps - 1 }}">
+                <bubble class="xs" ng-click="bubbleClick()">Now</bubble>
+            </div>
+            <button type="button" class="btn btn-default navbar-btn" ng-click="play()"><span class="glyphicon" ng-class="{'glyphicon-play': !isPlaying, 'glyphicon-pause': isPlaying}"></span></button>
+        </div>
+      </div>
+      </div>
+    </nav>
+</div>
+
+<script type="text/javascript">
+  $(function () {
+    $("#title").text("3D Water Quality");
+  })
+</script>
