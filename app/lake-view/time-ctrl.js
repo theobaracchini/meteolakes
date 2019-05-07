@@ -8,18 +8,18 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
 
         DataIndex.apiStatus().then(function (result) {
             me.apiAvailable = true;
-            loadData(lakeId);
+            loadData(lakeId, me.apiAvailable);
         }, function (err) {
             me.apiAvailable = false;
-            loadData(lakeId);
+            loadData(lakeId, me.apiAvailable);
         });
     };
 
-    function loadData(lakeId) {
+    function loadData(lakeId, apiAvailable) {
         DataIndex.load($scope.availabilityFile).then(function(index) {
             $scope.index = index;
 
-            if ($scope.netcdfAvailabilityFile) {
+            if ($scope.netcdfAvailabilityFile && apiAvailable) {
                 DataIndex.loadNetcdf($scope.netcdfAvailabilityFile).then(function(netcdfIndex) {
                     $scope.netcdfIndex = netcdfIndex;
                     saveIndex(lakeId);
