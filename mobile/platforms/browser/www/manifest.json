@@ -1,18 +1,24 @@
 {
-  "background_color": "#FFF",
-  "display": "standalone",
   "name": "Meteolakes",
   "short_name": "Meteolakes",
-  "version": "ch.epfl.meteolakes",
-  "description": "Meteolakes is an online platform for monitoring and forecasting the bio-physical state of Swiss lakes. The application visualizes the results of 3D hydrodynamic-biological simulations performed daily with the Delft3D modelling framework on a compute server. Additionally, it displays measurements from a field station with data connexion and remote sensing images downloaded from satellites in real-time.\n\n\t\tThis product is an outcome of Theo Baracchini's PhD thesis, conduced at EPFL in the Physics of Aquatic Systems Laboratory (APHYS) and part of a European Space Agency funded project (CORESIM). A web version is available for desktop computers on http://meteolakes.ch",
-  "author": "Theo Baracchini",
+  "description": "Description of your app from template",
+  "start_url": "index.html",
+  "scope": "index.html",
   "icons": [
     {
-      "src": "icon.png",
-      "type": "image/png",
-      "sizes": "undefinedxundefined"
+      "src": "img/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "img/splash.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ],
-  "orientation": "any",
-  "start_url": "index.html"
+  "default_locale": "en",
+  "display": "standalone",
+  "background_color": "#FFF",
+  "theme_color": "#000",
+  "orientation": "landscape"
 }
