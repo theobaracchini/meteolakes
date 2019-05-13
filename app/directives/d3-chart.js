@@ -134,11 +134,11 @@ angular.module('meteolakesApp').directive('d3Chart', function($window) {
                     x.domain(d3.extent(data, function(d) { return d.date; }));
                     if (data[0].min_value && data[0].max_value) {
                         y.domain([
-                            d3.min(data, function(d) { return d.min_value; }),
-                            d3.max(data, function(d) { return d.max_value; })
+                            d3.min(data, function(d) { return Math.max(0, (isNaN(d.min_value) ? d.value : d.min_value) - 0); }),
+                            d3.max(data, function(d) { return (isNaN(d.max_value) ? d.value : d.max_value) + 0; }) // TODO fine tuning
                         ]);
                     } else {
-                        y.domain(d3.extent(data, function(d) { return d.value; }));
+                        y.domain(d3.extent(data, function(d) { return d.value + 0; }));
                     }
                     show();
                     render();
@@ -171,7 +171,7 @@ angular.module('meteolakesApp').directive('d3Chart', function($window) {
 
                     if (data[0].min_value && data[0].max_value) {
                         renderRoot.select('.chart-area')
-                            .attr('d', area(data));
+                            .attr('d', area(data.filter(d => !isNaN(d.min_value) && !isNaN(d.max_value))));
                     } else {
                         renderRoot.select('.chart-area')
                             .attr('d', null);

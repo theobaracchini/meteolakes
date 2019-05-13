@@ -47,7 +47,7 @@ Android: Deployment
 3. Extract `lake-view-{version}.tgz` into the `www\` folder.
 4. Update the version in `config.xml` and `package.json`.
 5. Run `cordova build --release`.
-6. Sign the apk located in `platforms\android\build\outputs\apk\`.
+6. Sign the apk located in `platforms\android\app\build\outputs\apk\release`.
     1. You can use [apk-signer](https://shatter-box.com/knowledgebase/android-apk-signing-tool-apk-signer/) to sign and align the apk.
 7. Upload the signed apk to the server at the path `package/android/meteolakes_{version}.apk`.
 8. Upload the signed apk to Google Play.

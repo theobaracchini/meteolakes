@@ -1,12 +1,25 @@
 angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interval, $location, Time, DateHelpers, DataIndex, Util) {
+    var apiAvailable;
+
     $scope.init = function(availabilityFile, netcdfAvailabilityFile, lakeId) {
         $scope.availabilityFile = availabilityFile;
         $scope.netcdfAvailabilityFile = netcdfAvailabilityFile;
+        var me = this;
 
+        DataIndex.apiStatus().then(function (result) {
+            me.apiAvailable = true;
+            loadData(lakeId, me.apiAvailable);
+        }, function (err) {
+            me.apiAvailable = false;
+            loadData(lakeId, me.apiAvailable);
+        });
+    };
+
+    function loadData(lakeId, apiAvailable) {
         DataIndex.load($scope.availabilityFile).then(function(index) {
             $scope.index = index;
 
-            if ($scope.netcdfAvailabilityFile) {
+            if ($scope.netcdfAvailabilityFile && apiAvailable) {
                 DataIndex.loadNetcdf($scope.netcdfAvailabilityFile).then(function(netcdfIndex) {
                     $scope.netcdfIndex = netcdfIndex;
                     saveIndex(lakeId);
@@ -17,7 +30,7 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
         }, function(err) {
             console.error('Failed to load data index!', err);
         });
-    };
+    }
 
     function saveIndex(lakeId) {
         indexReady = true;
@@ -210,7 +223,7 @@ angular.module('meteolakesApp').controller('TimeCtrl', function($scope, $interva
     };
 
     $scope.hasDepthList = function() {
-        return ($scope.netcdfIndex && $scope.netcdfIndex[$scope.selection.lake] &&
+        return (this.apiAvailable && $scope.netcdfIndex && $scope.netcdfIndex[$scope.selection.lake] &&
             $scope.netcdfIndex[$scope.selection.lake].data.get($scope.selection.year) &&
             $scope.netcdfIndex[$scope.selection.lake].data.get($scope.selection.year).includes($scope.selection.week));
     };
