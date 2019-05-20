@@ -10,7 +10,7 @@
         <div class="col-md-3"></div>
         <div class="col-md-6 col-xs-12">
 
-            <popupSmall class="glow" style="margin-top:20px"><a href="#!/info" style="color:#FFF">Important notice Info. importante</a></popupSmall>
+            <popupSmall class="glow" style="margin-top:20px"><a href="#!/info" style="color:#FFF">Read me ! Lisez-moi !</a></popupSmall>
 
             <h2>Meteolakes API</h2>
             <div class="alert alert-info">
@@ -33,7 +33,7 @@
             <p>Generally, the steps are the following: </p>
             <ul type="square">
                 <li>Make sure the data you want (time numbers are isoweeks) is available <a href="http://meteolakes.ch/meteolac/available_data_netcdf.json" target="_blank">here</a>.</li>
-                <li>Find the coordinates (in the Swiss CH1903/LV03 system) of your point of interest. You can use <a href="https://map.geo.admin.ch" target="_blank">this website</a>.</li>
+                <li>Find the coordinates (in the Swiss CH1903/LV03 system) of your point of interest. You can click on Meteolakes' maps or use <a href="https://map.geo.admin.ch" target="_blank">this website</a>.</li>
                 <li>Generate a link (by following the structure down below) to request your data.</li>
                 <li>Download the CSV file (the server should extract your selection within a few seconds to minutes).</li>
             </ul>
@@ -48,7 +48,7 @@
             -->
 
             <h4>Coordinates Data Files</h4>
-            <p>Those files are tables of time-series at specific coordinates on the lake. The table shows the variable values for a given time period at a given depth (if depth is specified) or at all vertical layers available (if not specified).
+            <p>Those files are tables of time-series at specific coordinates on the lake. The table shows the variable values for a given time period at a given depth (if depth is specified) or for all vertical layers available (if not specified).
                The columns correspond to the time-steps, the lines to the depths.
                Values of indices are specified in the CSV file (i.e. the first line is the time-steps labels, while the first column is the depths labels).</p>
             <p>To request a file for download, generate a link with the following structure:</p>
@@ -97,7 +97,7 @@
                 <tr>
                     <td>:variable</td>
                     <td>name of the variable</td>
-                    <td>temperature / velocity</td>
+                    <td>temperature / velocity (east & north directions)</td>
                 </tr>
                 <tr>
                     <td>:depth</td>
