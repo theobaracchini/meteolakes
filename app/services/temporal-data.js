@@ -48,7 +48,7 @@ angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, NETC
     TemporalData.prototype.readData = function() {
         var me = this;
         me.ready = false;
-  
+
         return $q(function(resolve, reject) {
             if (!me.available) {
                 reject('No data available');
@@ -189,12 +189,12 @@ angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, NETC
         var sel = this.timeSelection;
         if (sel === null) return '';
         var suffix = (this.suffix !== '') ? '_' + this.suffix : '';
-        
+
         if (sel.needNetcdf && !json && suffix === '') {
             var lake = sel.folder === 'data' ? 'geneva' : sel.folder.slice(5);
             return NETCDF_DATA_HOST + '/week/' + sel.week + '/' + sel.year + '/' + lake + '/' + this.fieldName + '/' + sel.depth;
         }
-        
+
         return DATA_HOST + sel.folder + '/' + sel.year + '/' + this.fieldName + '/data_week' + sel.week + suffix + '.csv';
     };
 
@@ -289,20 +289,20 @@ angular.module('meteolakesApp').factory('TemporalData', function(DATA_HOST, NETC
 	TemporalData.prototype.buildDataUrl = function(coord) {
 		var sel = this.timeSelection;
         if (sel === null) return '';
-        
+
         var lake = sel.folder === 'data' ? 'geneva' : sel.folder.slice(5);
 		var url = `${NETCDF_DATA_HOST}/range/coordinates/${coord.x}/${coord.y}/${lake}/${this.fieldName}/${+DateHelpers.firstDayOfWeek(sel.week, sel.year)}/${+DateHelpers.lastDayOfWeek(sel.week, sel.year)}`;
-		
+
 		if(coord.z) {
 			url = `${url}/${Math.abs(coord.z)}`;
 		}
-	
+
         return url;
     };
-	
+
 	TemporalData.prototype.getDataAtPoint = function(coord) {
 		var me = this;
-  
+
         return $q(function(resolve, reject) {
 			var url = me.buildDataUrl(coord);
 			d3.text(url, function(err, data) {
