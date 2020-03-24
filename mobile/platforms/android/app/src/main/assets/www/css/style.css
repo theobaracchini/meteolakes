@@ -19,7 +19,7 @@ div#tab-insitu {
 .lv-main-content {
     padding-top: 85px; /* *** */
 }
-@media (max-width: 767px) {	
+@media (max-width: 767px) {
 	.lv-main-content {
 		padding-top: 100px; /* *** */
 	}
@@ -504,7 +504,7 @@ right: 0px;
 visibility: "visible";
 opacity: 0.6;
 transition: visibility 1s, opacity 1s linear;
-width: 128px;
+width: 121px;
 height: 50px;
 padding-top: 4px;
 padding-left: 10px;
