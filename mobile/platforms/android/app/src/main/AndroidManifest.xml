@@ -1,8 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<<<<<<< HEAD
-<manifest android:hardwareAccelerated="true" android:versionCode="10503" android:versionName="1.5.3" package="ch.epfl.meteolakes" xmlns:android="http://schemas.android.com/apk/res/android">
-=======
 <manifest android:hardwareAccelerated="true" android:versionCode="10504" android:versionName="1.5.4" package="ch.epfl.meteolakes" xmlns:android="http://schemas.android.com/apk/res/android">
+=======
+<manifest android:hardwareAccelerated="true" android:versionCode="10505" android:versionName="1.5.5" package="ch.epfl.meteolakes" xmlns:android="http://schemas.android.com/apk/res/android">
 >>>>>>> master
     <supports-screens android:anyDensity="true" android:largeScreens="true" android:normalScreens="true" android:resizeable="true" android:smallScreens="true" android:xlargeScreens="true" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -14,5 +13,5 @@
             </intent-filter>
         </activity>
     </application>
-    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="26" />
+    <uses-sdk android:minSdkVersion="28" android:targetSdkVersion="29" />
 </manifest>
