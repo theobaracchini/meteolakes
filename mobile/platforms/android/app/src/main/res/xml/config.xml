@@ -1,8 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<<<<<<< HEAD
-<widget id="ch.epfl.meteolakes" version="1.5.3" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
-=======
 <widget id="ch.epfl.meteolakes" version="1.5.4" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+=======
+<widget id="ch.epfl.meteolakes" version="1.5.6" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:gap="http://phonegap.com/ns/1.0">
 >>>>>>> master
     <feature name="Whitelist">
         <param name="android-package" value="org.apache.cordova.whitelist.WhitelistPlugin" />
@@ -27,6 +26,9 @@
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
     <allow-intent href="market:*" />
+    <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
+        <application android:usesCleartextTraffic="true" />
+    </edit-config>
     <preference name="loglevel" value="DEBUG" />
     <preference name="permissions" value="none" />
     <preference name="orientation" value="default" />
@@ -42,6 +44,6 @@
     <preference name="auto-hide-splash-screen" value="true" />
     <preference name="disable-cursor" value="false" />
     <preference name="android-minSdkVersion" value="21" />
-    <preference name="android-targetSdkVersion" value="26" />
+    <preference name="android-targetSdkVersion" value="28" />
     <preference name="android-installLocation" value="auto" />
 </widget>

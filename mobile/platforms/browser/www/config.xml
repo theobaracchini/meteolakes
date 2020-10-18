@@ -1,8 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<<<<<<< HEAD
-<widget id="ch.epfl.meteolakes" version="1.5.3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
-=======
 <widget id="ch.epfl.meteolakes" version="1.5.4" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
+=======
+<widget id="ch.epfl.meteolakes" version="1.5.6" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
 >>>>>>> master
     <name>Meteolakes</name>
     <description>
@@ -36,6 +35,6 @@
     <preference name="auto-hide-splash-screen" value="true" />
     <preference name="disable-cursor" value="false" />
     <preference name="android-minSdkVersion" value="21" />
-    <preference name="android-targetSdkVersion" value="26" />
+    <preference name="android-targetSdkVersion" value="28" />
     <preference name="android-installLocation" value="auto" />
 </widget>

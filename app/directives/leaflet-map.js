@@ -4,7 +4,8 @@ angular.module('meteolakesApp').directive('leafletMap', function(CanvasLayer, Sh
         var mbAttr = 'Map data &copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors, ' +
                      '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
                      'Imagery © <a href="https://mapbox.com">Mapbox</a>';
-        var mbUrl = 'https://{s}.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={access_token}';
+        //var mbUrl = 'https://{s}.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={access_token}';
+        var mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={access_token}';
 
         L.Map.mergeOptions({
             touchExtend: true
@@ -64,7 +65,10 @@ angular.module('meteolakesApp').directive('leafletMap', function(CanvasLayer, Sh
             subdomains: 'abcd',
             maxZoom: 18,
             attribution: mbAttr,
-            id: 'mapbox.streets',
+            tileSize: 512,
+            zoomOffset: -1,
+            id: 'mapbox/streets-v11',
+            //id: 'mapbox.streets',
             access_token: 'pk.eyJ1IjoiYXBoeXMiLCJhIjoiY2ltM2g1MzUwMDBwOXZtbTVzdnQ1ZHZpYiJ9.Cm1TVUsbCQLOhUbblOrHfw'
             // lake-view token for user aphys obtained from mapbox.com
         }).addTo(map);
