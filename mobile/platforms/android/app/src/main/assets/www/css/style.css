@@ -507,7 +507,7 @@ transition: visibility 1s, opacity 1s linear;
 width: 121px;
 height: 50px;
 padding-top: 4px;
-padding-left: 10px;
+padding-left: 6px;
 background: #FF0000;
 border-radius: 5px;
 font-size: 11pt;
@@ -727,3 +727,36 @@ z-index: 100;
   80%, 99.9% {
     bottom: 50%;
     margin-left: 80%; } }
+
+
+		/* The alert message box */
+.alertIndex {
+ padding: 20px;
+ background-color: #f44336; /* Red */
+ color: white;
+ margin-bottom: 0px;
+ z-index:1;
+ position:fixed;
+ opacity:0.8;
+ left: 0%;
+ right: 0%;
+ top: -5px;
+}
+
+/* The close button */
+.closebtn {
+ margin-left: 15px;
+ color: white;
+ font-weight: bold;
+ float: right;
+ font-size: 26px;
+ line-height: 20px;
+ padding: 5px;
+ cursor: pointer;
+ transition: 0.3s;
+}
+
+/* When moving the mouse over the close button */
+.closebtn:hover {
+ color: black;
+}
