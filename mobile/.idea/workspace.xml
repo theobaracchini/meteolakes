@@ -2,137 +2,175 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8d32b9df-9d59-40d4-8b95-08822a0b84fe" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mobile.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileChanges/last-build.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/gc.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/built.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties.lock" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/mobile.iml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/config.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/build/generated/source/buildConfig/release/org/apache/cordova/BuildConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/build/intermediates/incremental/mergeDebugShaders/merger.xml" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/build/intermediates/incremental/mergeDebugShaders/merger.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/build/intermediates/incremental/mergeReleaseJniLibFolders/merger.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/build/intermediates/incremental/mergeReleaseShaders/merger.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/build/intermediates/incremental/packageDebugResources/compile-file-map.properties" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/build/intermediates/incremental/packageDebugResources/compile-file-map.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/build/intermediates/incremental/packageDebugResources/merger.xml" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/build/intermediates/incremental/packageDebugResources/merger.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/build/intermediates/incremental/packageReleaseResources/compile-file-map.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/build/intermediates/incremental/packageReleaseResources/merger.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/cordova.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/cordova.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/project.properties" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/project.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/BuildHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/BuildHelper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/CordovaActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/CordovaActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/CordovaBridge.java" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/CordovaBridge.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/CordovaClientCertRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/CordovaClientCertRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/CordovaInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/CordovaInterface.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/CordovaInterfaceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/CordovaInterfaceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/CordovaResourceApi.java" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/CordovaResourceApi.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/CordovaWebView.java" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/CordovaWebView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/CordovaWebViewImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/CordovaWebViewImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/CoreAndroid.java" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/CoreAndroid.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/NativeToJsMessageQueue.java" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/NativeToJsMessageQueue.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/PermissionHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/PermissionHelper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/engine/SystemCookieManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/engine/SystemCookieManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/engine/SystemWebChromeClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/engine/SystemWebChromeClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/engine/SystemWebViewClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/engine/SystemWebViewClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/engine/SystemWebViewEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/CordovaLib/src/org/apache/cordova/engine/SystemWebViewEngine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platforms/android/android.json" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/android.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/platforms/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/app/page-about/page-about.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/app/page-about/page-about.template.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/app/page-data-form/page-data-form.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/app/page-data-form/page-data-form.template.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/app/page-hydro/page-hydro.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/app/page-hydro/page-hydro.template.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/app/page-insitu/page-insitu.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/app/page-insitu/page-insitu.template.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/app/page-quality/page-quality.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/app/page-quality/page-quality.template.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/app/page-remote/page-remote.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/app/page-remote/page-remote.template.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/cordova-js-src/exec.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/cordova-js-src/exec.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/cordova.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/cordova.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/cordova_plugins.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/cordova_plugins.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/app/page-info/page-info.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/app/page-info/page-info.template.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/assets/www/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/java/ch/epfl/meteolakes/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/java/ch/epfl/meteolakes/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-land-hdpi/screen.png" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-land-hdpi/screen.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-land-ldpi/screen.png" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-land-ldpi/screen.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-land-mdpi/screen.png" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-land-mdpi/screen.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-land-xhdpi/screen.png" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-land-xhdpi/screen.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-land-xxhdpi/screen.png" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-land-xxhdpi/screen.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-land-xxxhdpi/screen.png" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-land-xxxhdpi/screen.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-port-hdpi/screen.png" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-port-hdpi/screen.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-port-ldpi/screen.png" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-port-ldpi/screen.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-port-mdpi/screen.png" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-port-mdpi/screen.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-port-xhdpi/screen.png" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-port-xhdpi/screen.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-port-xxhdpi/screen.png" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-port-xxhdpi/screen.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-port-xxxhdpi/screen.png" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/res/drawable-port-xxxhdpi/screen.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/platforms/android/app/src/main/res/xml/config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/app/src/main/res/xml/config.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/Api.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/Api.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/android_sdk_version" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/android_sdk_version" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/android_sdk_version.bat" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/android_sdk_version.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/build" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/build" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/check_reqs" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/check_reqs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/check_reqs.bat" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/check_reqs.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/clean" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/clean" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/Adb.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/Adb.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/AndroidManifest.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/AndroidManifest.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/AndroidProject.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/AndroidProject.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/android_sdk.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/android_sdk.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/build.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/build.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/builders/ProjectBuilder.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/builders/ProjectBuilder.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/builders/builders.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/builders/builders.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/check_reqs.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/check_reqs.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/config/GradlePropertiesParser.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/config/GradlePropertiesParser.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/device.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/device.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/emulator.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/emulator.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/getASPath.bat" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/getASPath.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/install-device" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/install-device" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/install-device.bat" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/install-device.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/install-emulator" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/install-emulator" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/install-emulator.bat" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/install-emulator.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/list-devices" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/list-devices" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/list-devices.bat" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/list-devices.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/list-emulator-images" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/list-emulator-images" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/list-emulator-images.bat" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/list-emulator-images.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/list-started-emulators" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/list-started-emulators" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/list-started-emulators.bat" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/list-started-emulators.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/log.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/log.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/plugin-build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/plugin-build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/pluginHandlers.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/pluginHandlers.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/prepare.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/prepare.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/retry.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/retry.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/run.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/run.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/start-emulator" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/start-emulator" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/lib/start-emulator.bat" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/lib/start-emulator.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/log" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/run" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/run" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/cordova/version" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/cordova/version" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/platforms/android/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/gradle.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/platform_www/cordova-js-src/exec.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/platform_www/cordova-js-src/exec.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/platform_www/cordova.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/platform_www/cordova.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/platform_www/cordova_plugins.js" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/platform_www/cordova_plugins.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/android/project.properties" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/android/project.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/platforms/browser/config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/browser/config.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platforms/browser/www/app/page-about/page-about.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/browser/www/app/page-about/page-about.template.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platforms/browser/www/app/page-data-form/page-data-form.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/browser/www/app/page-data-form/page-data-form.template.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/platforms/browser/www/app/page-hydro/page-hydro.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/browser/www/app/page-hydro/page-hydro.template.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/browser/www/app/page-insitu/page-insitu.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/browser/www/app/page-insitu/page-insitu.template.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/browser/www/app/page-quality/page-quality.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/browser/www/app/page-quality/page-quality.template.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platforms/browser/www/app/page-remote/page-remote.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/browser/www/app/page-remote/page-remote.template.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platforms/browser/www/app/page-info/page-info.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/browser/www/app/page-info/page-info.template.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/platforms/browser/www/config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/browser/www/config.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/plugins/android.json" beforeDir="false" afterPath="$PROJECT_DIR$/plugins/android.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platforms/browser/www/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/browser/www/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platforms/browser/www/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/platforms/browser/www/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/app/page-about/page-about.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/www/app/page-about/page-about.template.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/app/page-data-form/page-data-form.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/www/app/page-data-form/page-data-form.template.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/www/app/page-hydro/page-hydro.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/www/app/page-hydro/page-hydro.template.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/www/app/page-insitu/page-insitu.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/www/app/page-insitu/page-insitu.template.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/www/app/page-quality/page-quality.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/www/app/page-quality/page-quality.template.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/www/app/page-remote/page-remote.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/www/app/page-remote/page-remote.template.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/app/page-info/page-info.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/www/app/page-info/page-info.template.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/www/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/dist/js/bundle.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/dist/js/bundle.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/www/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/angular/angular.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/angular/angular.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/angular/angular.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/angular/angular.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/angular/angular.min.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/angular/angular.min.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/angular/bower.json" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/angular/bower.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/angular/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/angular/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/angularjs-bootstrap-datetimepicker/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/angularjs-bootstrap-datetimepicker/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/ar-dz.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/ar-dz.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/ar-kw.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/ar-kw.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/ar-ly.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/ar-ly.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/ar-ma.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/ar-ma.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/ar-sa.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/ar-sa.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/ar.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/ar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/az.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/az.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/be.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/be.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/bg.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/bg.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/bn.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/bn.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/bo.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/bo.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/bs.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/bs.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/cs.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/cs.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/cv.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/cv.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/dv.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/dv.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/en-ie.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/en-ie.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/eo.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/eo.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/es-us.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/es-us.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/eu.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/eu.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/fa.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/fa.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/fo.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/fo.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/gom-latn.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/gom-latn.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/gu.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/gu.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/hi.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/hi.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/hr.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/hr.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/hy-am.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/hy-am.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/id.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/id.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/ja.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/ja.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/jv.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/jv.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/kk.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/kk.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/kn.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/kn.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/ky.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/ky.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/me.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/me.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/mk.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/mk.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/mr.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/mr.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/ms-my.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/ms-my.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/ms.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/ms.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/my.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/my.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/ne.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/ne.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/nl-be.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/nl-be.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/nl.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/nl.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/pa-in.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/pa-in.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/pt-br.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/pt-br.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/pt.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/pt.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/ro.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/ro.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/sl.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/sl.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/sr-cyrl.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/sr-cyrl.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/sr.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/sr.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/sw.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/sw.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/ta.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/ta.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/te.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/te.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/tr.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/tr.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/tzm-latn.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/tzm-latn.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/tzm.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/tzm.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/uk.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/uk.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/locale/uz-latn.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/locale/uz-latn.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/min/locales.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/min/locales.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/min/moment-with-locales.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/min/moment-with-locales.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/moment.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/moment.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/moment.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/moment.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/lib/create/date-from-array.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/lib/create/date-from-array.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/lib/create/from-array.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/lib/create/from-array.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/lib/duration/as.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/lib/duration/as.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/lib/duration/constructor.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/lib/duration/constructor.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/lib/duration/create.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/lib/duration/create.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/lib/duration/prototype.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/lib/duration/prototype.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/lib/moment/compare.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/lib/moment/compare.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/lib/moment/start-end-of.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/lib/moment/start-end-of.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/lib/units/day-of-week.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/lib/units/day-of-week.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/lib/units/week.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/lib/units/week.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ar-dz.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ar-dz.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ar-kw.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ar-kw.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ar-ly.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ar-ly.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ar-ma.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ar-ma.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ar-sa.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ar-sa.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ar.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/az.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/az.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/be.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/be.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/bg.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/bg.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/bn.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/bn.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/bo.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/bo.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/bs.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/bs.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/cs.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/cs.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/cv.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/cv.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/dv.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/dv.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/en-au.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/en-au.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/en-ie.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/en-ie.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/eo.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/eo.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/es-us.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/es-us.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/eu.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/eu.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/fa.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/fa.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/fo.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/fo.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/gom-latn.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/gom-latn.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/gu.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/gu.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/hi.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/hi.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/hr.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/hr.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/hy-am.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/hy-am.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/id.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/id.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ja.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ja.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/jv.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/jv.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/kk.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/kk.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/kn.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/kn.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ky.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ky.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/me.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/me.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/mk.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/mk.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/mr.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/mr.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ms-my.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ms-my.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ms.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ms.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/my.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/my.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ne.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ne.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/nl-be.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/nl-be.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/nl.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/nl.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/pa-in.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/pa-in.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/pt-br.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/pt-br.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/pt.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/pt.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ro.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ro.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/sl.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/sl.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/sr-cyrl.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/sr-cyrl.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/sr.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/sr.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/sw.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/sw.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ta.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/ta.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/te.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/te.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/tr.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/tr.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/tzm-latn.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/tzm-latn.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/tzm.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/tzm.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/uk.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/uk.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/locale/uz-latn.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/locale/uz-latn.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/node_modules/moment/src/moment.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/node_modules/moment/src/moment.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/www/package.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -201,7 +239,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
