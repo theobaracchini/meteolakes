@@ -127,8 +127,91 @@
                 </tr>
             </table>
 
-            <h4>Timestamp comuptation</h4>
-            <p>If you are not familiar with javascript times, you can use this tool to compute your desired timestamps:</p>
+            <h4>Lake Transects</h4>
+<p>This generates a transect through the lake. The returned json file is structured as follows:</p>
+<table class="variable">
+    <tbody><tr>
+        <th>Variable   </th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>x</td>
+        <td>Distance along transect (m)</td>
+    </tr>
+    <tr>
+        <td>y</td>
+        <td>Depth (m)</td>
+    </tr>
+    <tr>
+        <td>z</td>
+        <td>Water Temperature (°C)</td>
+    </tr>
+    <tr>
+        <td>u</td>
+        <td>Northward velocity (m/s)</td>
+    </tr>
+    <tr>
+        <td>v</td>
+        <td>Eastward velocity (m/s)</td>
+    </tr>
+    <tr>
+        <td>xcoords</td>
+        <td>X Coordinate of point</td>
+    </tr>
+    <tr>
+        <td>ycoords</td>
+        <td>Y Coordinate of point</td>
+    </tr>
+</tbody></table>
+<p>To request a file for download, generate a link with the following structure:</p>
+<!--<p>The link structure to download a csv file is as follow:</p>-->
+<p class="api ng-binding">http://meteolakes.ch/api/datalakes/exacttransectfull/:lake/:time/:x_coords/:y_coords</p>
+
+<h4>Example</h4>
+<p>
+  <a href="https://api.meteolakes.ch/api/datalakes/exacttransectfull/geneva/1532606400000/519631,518723,518361,517944/144283,141217,137090,133928"><strong>https://api.meteolakes.ch/api/datalakes/exacttransectfull/geneva/1532606400000/519631,518723,518361,517944/144283,141217,137090,133928</strong></a>
+</p>
+
+<p>The link above provides an example on how to retrieve data with the following caracteristics:</p>
+<ul type="square">
+    <li>Lake Geneva</li>
+    <li>A transect between four points (519631, 144283) > (518723, 141217) > (518361, 137090) > (517944, 133928)</li>
+    <li>Water temperature and Velocity</li>
+    <li>Thu Jul 26 2018 12:00:00 (1532606400000)</li>
+</ul>
+
+<h4>Variables</h4>
+<table class="variable">
+    <tbody><tr>
+        <th>Variable   </th>
+        <th>Description</th>
+        <th>Values available</th>
+    </tr>
+    <tr>
+        <td>:lake</td>
+        <td>name of the lake</td>
+        <td>geneva / greifensee / zurich </td>
+    </tr>
+    <tr>
+        <td>:startTime</td>
+        <td>javascript timestamp where to start selection</td>
+        <td>e.g.: 1539583200000</td>
+    </tr>
+    <tr>
+        <td>:x_coords</td>
+        <td>comma separated list of x coordinates (CH1903)</td>
+        <td>e.g. 518723</td>
+    </tr>
+    <tr>
+        <td>:y_coords</td>
+        <td>comma separated list of y coordinates (CH1903)</td>
+        <td>e.g. 133928</td>
+    </tr>
+</tbody></table>
+
+
+    <h4>Timestamp comuptation</h4>
+      <p>If you are not familiar with javascript times, you can use this tool to compute your desired timestamps:</p>
             <div class="dropdown">
                 <a class="dropdown-toggle" id="dropdown" role="button" data-toggle="dropdown" data-target=".dropdown">
                     <div class="input-group">
